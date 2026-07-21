@@ -13,19 +13,23 @@ export type PaymentRequestState =
   | { ok: false; error: string }
   | null;
 
-export async function submitPaymentRequest(
-  _prev: PaymentRequestState,
-  formData: FormData,
-): Promise<PaymentRequestState> {
-  const name = String(formData.get('name') ?? '').trim();
-  const email = String(formData.get('email') ?? '').trim();
-  const note = String(formData.get('note') ?? '').trim();
-  const amountRaw = String(formData.get('amount') ?? '').trim();
+export type PaymentRequestInput = {
+  name: string;
+  email: string;
+  note?: string;
+  amount: number;
+  promoCode?: string;
+};
+
+export async function submitPaymentRequest(input: PaymentRequestInput): Promise<PaymentRequestState> {
+  const name = input.name.trim();
+  const email = input.email.trim();
+  const note = input.note?.trim() ?? '';
 
   if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { ok: false, error: 'Please enter your name and a valid email address.' };
   }
-  const amount = Number(amountRaw);
+  const amount = input.amount;
   if (!Number.isFinite(amount) || amount <= 0 || amount > 100000) {
     return { ok: false, error: 'Please enter a valid amount between $1 and $100,000.' };
   }
@@ -49,7 +53,7 @@ export async function submitPaymentRequest(
     note: note || 'none',
   });
 
-  const promoCode = String(formData.get('promoCode') ?? '').trim();
+  const promoCode = input.promoCode?.trim() ?? '';
   let finalAmountCents = amountCents;
   if (promoCode) {
     const promo = await applyPromoToAmount(promoCode, amountCents);

@@ -142,7 +142,7 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
       customer: customer.id,
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice.payment_intent'],
+      expand: ['latest_invoice'],
       metadata: { order_id: orderId },
       items: recurringItems,
       ...(oneTimeLines.length
@@ -167,11 +167,8 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
       ...(promotionCodeId ? { discounts: [{ promotion_code: promotionCodeId }] } : {}),
     });
 
-    const invoice = subscription.latest_invoice as Stripe.Invoice & {
-      payment_intent?: Stripe.PaymentIntent | string | null;
-    };
-    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent | null;
-    clientSecret = paymentIntent?.client_secret;
+    const invoice = subscription.latest_invoice as Stripe.Invoice | null;
+    clientSecret = invoice?.confirmation_secret?.client_secret;
     referenceId = subscription.id;
   } else {
     let amountCents = totalCents;
