@@ -1,0 +1,35 @@
+MAXORA WEBSITE - PROJECT BRIEF
+================================
+
+Context:
+- Previous site existed but had bad design — rebuilding from scratch with the new stack (Next.js 15, React 19, TS, Tailwind v4, shadcn/ui, Motion, GSAP, Lenis, Stripe, next-sitemap, next-seo, GA4, Clarity).
+- Site should look futuristic, techy — a tech/marketing agency selling services (sites, flyers, branding, etc).
+- Theme: White - Blue - Black.
+- Name: Maxora
+
+Products/services to set up:
+
+1. Website Development (variable pricing) — from $180
+   - Package A: $180
+   - Package B: $250
+
+2. Logo Design (brand-design) (variable pricing) — from $20
+   - Basic Logo: $20
+   - Pro Logo: $50
+
+3. Social Media (variable/subscription, two separate listings)
+   - 6-month plan: $125
+   - 1-year plan: $100
+
+4. Flyer Design (variable/subscription, two separate listings)
+   - 6-month plan: $125
+   - 1-year plan: $100
+
+5. App Development — no listed price (external/contact for quote)
+6. Video Production — no listed price (external/contact for quote)
+7. Content Editing — no listed price (external/contact for quote)
+
+Notes:
+- User will provide images for each service/product.
+- User wants products actually set up (pricing, listings), not just placeholder content.
+- Site should feel like a polished tech services / marketing agency business, not a generic template.
