@@ -127,11 +127,12 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
     const recurringItems = await Promise.all(
       recurringLines.map(async (l) => {
         const product = await stripe.products.create({ name: `${l.product_name} — ${l.tier_name}` });
+        const interval = getTier(l.product_slug, l.tier_id)!.interval ?? 'month';
         return {
           price_data: {
             currency: 'usd',
             unit_amount: l.unit_price_cents,
-            recurring: { interval: 'month' as const },
+            recurring: { interval },
             product: product.id,
           },
           quantity: l.quantity,

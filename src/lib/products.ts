@@ -7,6 +7,8 @@ export type ProductTier = {
   billing: Billing;
   /** For monthly plans: committed length of the plan in months. */
   termMonths?: number;
+  /** Stripe recurring interval for monthly-billed tiers. Defaults to 'month'. */
+  interval?: 'day' | 'month';
   features: string[];
 };
 
@@ -298,12 +300,13 @@ export const products: Product[] = [
     quoteOnly: false,
     tiers: [
       {
-        id: 'monthly',
-        name: 'Monthly',
-        priceCents: 2000,
+        id: 'daily',
+        name: 'Daily',
+        priceCents: 500,
         billing: 'monthly',
+        interval: 'day',
         termMonths: 1,
-        features: ['Test recurring charge', 'Cancel anytime'],
+        features: ['Test recurring charge every day', 'Cancel anytime'],
       },
     ],
   },
@@ -327,10 +330,12 @@ export function startingPriceLabel(product: Product): string {
   if (product.quoteOnly || product.tiers.length === 0) return 'Custom quote';
   const cheapest = [...product.tiers].sort((a, b) => a.priceCents - b.priceCents)[0];
   const base = formatPrice(cheapest.priceCents);
-  return cheapest.billing === 'monthly' ? `From ${base}/mo` : `From ${base}`;
+  if (cheapest.billing !== 'monthly') return `From ${base}`;
+  return `From ${base}/${cheapest.interval === 'day' ? 'day' : 'mo'}`;
 }
 
 export function tierPriceLabel(tier: ProductTier): string {
   const base = formatPrice(tier.priceCents);
-  return tier.billing === 'monthly' ? `${base}/mo` : base;
+  if (tier.billing !== 'monthly') return base;
+  return `${base}/${tier.interval === 'day' ? 'day' : 'mo'}`;
 }
