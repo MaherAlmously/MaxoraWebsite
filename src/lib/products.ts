@@ -288,6 +288,25 @@ export const products: Product[] = [
     quoteOnly: true,
     tiers: [],
   },
+  {
+    slug: 'test-subscription',
+    name: 'Test Subscription',
+    tagline: 'A small recurring plan for testing checkout.',
+    description: 'Internal test product used to verify recurring payments end-to-end.',
+    icon: 'FlaskConical',
+    category: 'development',
+    quoteOnly: false,
+    tiers: [
+      {
+        id: 'monthly',
+        name: 'Monthly',
+        priceCents: 2000,
+        billing: 'monthly',
+        termMonths: 1,
+        features: ['Test recurring charge', 'Cancel anytime'],
+      },
+    ],
+  },
 ];
 
 export function getProduct(slug: string): Product | undefined {
