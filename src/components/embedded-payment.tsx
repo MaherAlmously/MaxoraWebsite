@@ -36,6 +36,9 @@ function InnerForm({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!stripe || !elements) return;
+    // Capture the form before any `await` — the browser nulls out
+    // e.currentTarget as soon as synchronous event dispatch finishes.
+    const form = e.currentTarget;
     setSubmitting(true);
     setError(null);
 
@@ -46,7 +49,7 @@ function InnerForm({
         return;
       }
 
-      const result = await onConfirmDetails(e.currentTarget);
+      const result = await onConfirmDetails(form);
       if (!result.ok) {
         setError(result.error);
         return;
