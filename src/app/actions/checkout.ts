@@ -117,6 +117,7 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
   const session = await stripe.checkout.sessions.create({
     mode: isSubscription ? 'subscription' : 'payment',
     line_items: stripeLineItems,
+    allow_promotion_codes: true,
     customer_email: email,
     client_reference_id: orderId,
     success_url: `${siteUrl}/checkout/success?order=${orderId}`,

@@ -17,8 +17,7 @@ export default function PayPage() {
           Pay an <span className="text-gradient">agreed amount</span>
         </h1>
         <p className="mx-auto mt-4 max-w-md text-muted-foreground">
-          Already spoke with us about a price? Enter it here and submit. We&apos;ll send you a
-          secure payment link to finish up.
+          Already spoke with us about a price? Enter it here and pay securely through Stripe.
         </p>
       </Reveal>
 

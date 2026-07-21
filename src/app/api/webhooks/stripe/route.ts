@@ -18,13 +18,25 @@ export async function POST(req: NextRequest) {
   if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
     const session = event.data.object as { id: string; metadata?: Record<string, string> | null };
     const orderId = session.metadata?.order_id;
+    const paymentRequestId = session.metadata?.payment_request_id;
+    const supabase = createServiceClient();
+
     if (orderId) {
-      const { error } = await createServiceClient()
+      const { error } = await supabase
         .from('orders')
         .update({ status: 'paid' })
         .eq('id', orderId)
         .eq('stripe_session_id', session.id);
       if (error) console.error('[stripe webhook] failed to mark order paid:', error);
+    }
+
+    if (paymentRequestId) {
+      const { error } = await supabase
+        .from('payment_requests')
+        .update({ status: 'paid' })
+        .eq('id', paymentRequestId)
+        .eq('stripe_session_id', session.id);
+      if (error) console.error('[stripe webhook] failed to mark payment request paid:', error);
     }
   }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import { CheckCircle2, Loader2, Wallet } from 'lucide-react';
+import { Loader2, Wallet } from 'lucide-react';
 import {
   submitPaymentRequest,
   type PaymentRequestState,
@@ -16,18 +16,6 @@ export function PaymentForm() {
     submitPaymentRequest,
     null,
   );
-
-  if (state?.ok) {
-    return (
-      <div className="rounded-xl border border-primary/30 bg-primary/5 p-10 text-center">
-        <CheckCircle2 className="mx-auto size-12 text-primary" />
-        <h2 className="mt-4 font-heading text-2xl font-semibold">Payment request received</h2>
-        <p className="mt-2 text-muted-foreground">
-          We&apos;ll email you a secure payment link shortly to complete the payment.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <form action={formAction} className="space-y-5">
@@ -78,10 +66,10 @@ export function PaymentForm() {
 
       <Button type="submit" size="lg" className="w-full glow" disabled={pending}>
         {pending ? <Loader2 className="size-4 animate-spin" /> : <Wallet className="size-4" />}
-        Submit Payment Request
+        Continue to Payment
       </Button>
       <p className="text-center text-xs text-muted-foreground">
-        No card is charged now. We send you a secure payment link by email.
+        You&apos;ll be redirected to Stripe to securely complete payment.
       </p>
     </form>
   );
