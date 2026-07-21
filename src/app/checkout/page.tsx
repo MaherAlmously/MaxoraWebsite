@@ -7,6 +7,7 @@ import { useCart } from '@/lib/cart-context';
 import { formatPrice, getTier } from '@/lib/products';
 import { placeOrder } from '@/app/actions/checkout';
 import { previewPromoCode } from '@/app/actions/promo';
+import { sendNotification } from '@/lib/web3forms';
 import { InlineCheckoutForm, type ConfirmDetailsResult } from '@/components/embedded-payment';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,6 +57,7 @@ export default function CheckoutPage() {
     });
     if (result.ok) {
       clear();
+      void sendNotification(result.notify.subject, result.notify.fields);
       return {
         ok: true,
         clientSecret: result.clientSecret,

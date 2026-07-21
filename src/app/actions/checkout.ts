@@ -4,7 +4,6 @@ import { randomUUID } from 'crypto';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { getTier, formatPrice } from '@/lib/products';
-import { sendNotification } from '@/lib/web3forms';
 import { getStripeClient } from '@/lib/stripe';
 import { applyPromoToAmount, findPromotionCodeId } from '@/lib/stripe-discount';
 import type Stripe from 'stripe';
@@ -26,7 +25,12 @@ export type CheckoutInput = {
 };
 
 export type CheckoutResult =
-  | { ok: true; orderId: string; clientSecret: string }
+  | {
+      ok: true;
+      orderId: string;
+      clientSecret: string;
+      notify: { subject: string; fields: Record<string, string | number> };
+    }
   | { ok: false; error: string };
 
 export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> {
@@ -88,17 +92,21 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
     return { ok: false, error: 'Something went wrong placing your order. Please try again.' };
   }
 
-  // Fire-and-forget: a slow/unreachable email API must never block payment creation.
-  void sendNotification(`New order: ${formatPrice(totalCents)} from ${name}`, {
-    order_id: orderId,
-    customer: `${name} <${email}>`,
-    phone: input.customerPhone || 'not provided',
-    total: formatPrice(totalCents),
-    items: lines
-      .map((l) => `${l.product_name} (${l.tier_name}) x${l.quantity} at ${formatPrice(l.unit_price_cents)}`)
-      .join('; '),
-    notes: input.notes || 'none',
-  });
+  // Web3Forms' free plan rejects server-side requests, so the actual email
+  // send happens client-side after this action returns; we just build the payload here.
+  const notify = {
+    subject: `New order: ${formatPrice(totalCents)} from ${name}`,
+    fields: {
+      order_id: orderId,
+      customer: `${name} <${email}>`,
+      phone: input.customerPhone || 'not provided',
+      total: formatPrice(totalCents),
+      items: lines
+        .map((l) => `${l.product_name} (${l.tier_name}) x${l.quantity} at ${formatPrice(l.unit_price_cents)}`)
+        .join('; '),
+      notes: input.notes || 'none',
+    },
+  };
 
   const isSubscription = input.items.some((i) => getTier(i.productSlug, i.tierId)?.billing === 'monthly');
   const promoCode = input.promoCode?.trim();
@@ -233,5 +241,5 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
     console.error('[checkout] failed to save stripe_session_id:', sessionUpdateError);
   }
 
-  return { ok: true, orderId, clientSecret };
+  return { ok: true, orderId, clientSecret, notify };
 }

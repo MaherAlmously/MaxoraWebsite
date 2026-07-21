@@ -5,6 +5,7 @@ import { Loader2, Tag } from 'lucide-react';
 import { submitPaymentRequest } from '@/app/actions/payment-request';
 import { previewPromoCode } from '@/app/actions/promo';
 import { formatPrice } from '@/lib/products';
+import { sendNotification } from '@/lib/web3forms';
 import { InlineCheckoutForm, type ConfirmDetailsResult } from '@/components/embedded-payment';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,6 +46,7 @@ export function PaymentForm() {
       promoCode,
     });
     if (result?.ok) {
+      void sendNotification(result.notify.subject, result.notify.fields);
       return { ok: true, clientSecret: result.clientSecret };
     }
     return { ok: false, error: result?.error ?? 'Something went wrong. Please try again.' };

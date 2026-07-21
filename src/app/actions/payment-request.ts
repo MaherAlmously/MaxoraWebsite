@@ -4,12 +4,16 @@ import { randomUUID } from 'crypto';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { formatPrice } from '@/lib/products';
-import { sendNotification } from '@/lib/web3forms';
 import { getStripeClient } from '@/lib/stripe';
 import { applyPromoToAmount } from '@/lib/stripe-discount';
 
 export type PaymentRequestState =
-  | { ok: true; requestId: string; clientSecret: string }
+  | {
+      ok: true;
+      requestId: string;
+      clientSecret: string;
+      notify: { subject: string; fields: Record<string, string | number> };
+    }
   | { ok: false; error: string }
   | null;
 
@@ -47,12 +51,16 @@ export async function submitPaymentRequest(input: PaymentRequestInput): Promise<
     return { ok: false, error: 'Something went wrong submitting your payment. Please try again.' };
   }
 
-  // Fire-and-forget: a slow/unreachable email API must never block payment creation.
-  void sendNotification(`Payment request: ${formatPrice(amountCents)} from ${name}`, {
-    from: `${name} <${email}>`,
-    amount: formatPrice(amountCents),
-    note: note || 'none',
-  });
+  // Web3Forms' free plan rejects server-side requests, so the actual email
+  // send happens client-side after this action returns; we just build the payload here.
+  const notify = {
+    subject: `Payment request: ${formatPrice(amountCents)} from ${name}`,
+    fields: {
+      from: `${name} <${email}>`,
+      amount: formatPrice(amountCents),
+      note: note || 'none',
+    },
+  };
 
   const promoCode = input.promoCode?.trim() ?? '';
   let paymentIntent;
@@ -93,5 +101,5 @@ export async function submitPaymentRequest(input: PaymentRequestInput): Promise<
     console.error('[payment-request] failed to save stripe_session_id:', sessionUpdateError);
   }
 
-  return { ok: true, requestId, clientSecret: paymentIntent.client_secret };
+  return { ok: true, requestId, clientSecret: paymentIntent.client_secret, notify };
 }
