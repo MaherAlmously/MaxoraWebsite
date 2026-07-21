@@ -1,0 +1,269 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-space-grotesk);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Maxora brand. Light mode: white base, navy text, teal accents.
+   Dark mode (default, set via .dark on <html>): neutral charcoal, cyan accents. */
+:root {
+  --background: oklch(0.93 0.008 245);
+  --foreground: oklch(0.22 0.016 250);
+  --card: oklch(0.97 0.004 242);
+  --card-foreground: oklch(0.22 0.016 250);
+  --popover: oklch(0.97 0.004 242);
+  --popover-foreground: oklch(0.22 0.016 250);
+  --primary: oklch(0.48 0.1 205);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.89 0.009 240);
+  --secondary-foreground: oklch(0.26 0.016 250);
+  --muted: oklch(0.885 0.008 240);
+  --muted-foreground: oklch(0.44 0.013 245);
+  --accent: oklch(0.865 0.014 225);
+  --accent-foreground: oklch(0.24 0.016 250);
+  --destructive: oklch(0.55 0.19 25);
+  --border: oklch(0 0 0 / 14%);
+  --input: oklch(0 0 0 / 16%);
+  --ring: oklch(0.55 0.11 200 / 55%);
+  --chart-1: oklch(0.55 0.11 200);
+  --chart-2: oklch(0.5 0.1 220);
+  --chart-3: oklch(0.45 0.08 250);
+  --chart-4: oklch(0.6 0.05 240);
+  --chart-5: oklch(0.7 0.03 238);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.975 0.003 240);
+  --sidebar-foreground: oklch(0.24 0.015 250);
+  --sidebar-primary: oklch(0.55 0.11 200);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.94 0.008 220);
+  --sidebar-accent-foreground: oklch(0.26 0.015 250);
+  --sidebar-border: oklch(0 0 0 / 10%);
+  --sidebar-ring: oklch(0.55 0.11 200 / 55%);
+  /* theme-dependent pieces of the custom utilities below */
+  --glass-bg: oklch(1 0 0 / 72%);
+  --grad-a: oklch(0.55 0.12 200);
+  --grad-b: oklch(0.45 0.11 220);
+  --art-line: oklch(0 0 0 / 25%);
+  --art-fill: oklch(0 0 0 / 7%);
+}
+
+.dark {
+  --background: oklch(0.2 0.006 250);
+  --foreground: oklch(0.965 0.004 240);
+  --card: oklch(0.24 0.007 250);
+  --card-foreground: oklch(0.965 0.004 240);
+  --popover: oklch(0.235 0.007 250);
+  --popover-foreground: oklch(0.965 0.004 240);
+  --primary: oklch(0.85 0.135 190);
+  --primary-foreground: oklch(0.2 0.01 250);
+  --secondary: oklch(0.285 0.008 250);
+  --secondary-foreground: oklch(0.95 0.004 240);
+  --muted: oklch(0.275 0.007 250);
+  --muted-foreground: oklch(0.71 0.008 240);
+  --accent: oklch(0.3 0.01 245);
+  --accent-foreground: oklch(0.96 0.004 240);
+  --destructive: oklch(0.65 0.2 25);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.85 0.135 190 / 60%);
+  --chart-1: oklch(0.85 0.135 190);
+  --chart-2: oklch(0.7 0.12 220);
+  --chart-3: oklch(0.6 0.1 250);
+  --chart-4: oklch(0.5 0.06 240);
+  --chart-5: oklch(0.4 0.04 238);
+  --sidebar: oklch(0.235 0.007 250);
+  --sidebar-foreground: oklch(0.965 0.004 240);
+  --sidebar-primary: oklch(0.85 0.135 190);
+  --sidebar-primary-foreground: oklch(0.2 0.01 250);
+  --sidebar-accent: oklch(0.285 0.008 250);
+  --sidebar-accent-foreground: oklch(0.96 0.004 240);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.85 0.135 190 / 60%);
+  --glass-bg: oklch(0.235 0.007 250 / 72%);
+  --grad-a: oklch(0.88 0.13 185);
+  --grad-b: oklch(0.75 0.13 200);
+  --art-line: oklch(1 0 0 / 22%);
+  --art-fill: oklch(1 0 0 / 9%);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading), var(--font-geist-sans), sans-serif;
+  }
+  ::selection {
+    background: oklch(0.85 0.135 190 / 30%);
+  }
+}
+
+/* Gradient text: logo teal into deeper cyan */
+@utility text-gradient {
+  background: linear-gradient(100deg, var(--grad-a), var(--grad-b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Animated gradient text for the hero headline */
+@utility text-gradient-flow {
+  background: linear-gradient(100deg, var(--grad-a), var(--grad-b), var(--grad-a));
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-flow 5s linear infinite;
+}
+
+@keyframes gradient-flow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 220% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-gradient-flow {
+    animation: none;
+  }
+}
+
+/* Cyan glow for primary CTAs and the logo mark */
+@utility glow {
+  box-shadow:
+    0 0 24px oklch(0.85 0.135 190 / 25%),
+    0 0 64px oklch(0.85 0.135 190 / 12%);
+}
+
+/* Glass panel used by navbar and floating cards */
+@utility glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid oklch(1 0 0 / 8%);
+}
+
+/* Signature: faceted corner cut echoing the logo's parallelogram geometry */
+@utility facet-cut {
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+}
+
+/* Cursor/touch-following glow behind the hero text */
+/* Pointer-following glow. Fallbacks live in var() so the values JS sets on
+   the parent always win, and --glow-power lets speed drive size/brightness. */
+.hero-glow-core {
+  background: radial-gradient(
+    calc(9rem + var(--glow-power, 0) * 5rem) circle at var(--gx1, 50%) var(--gy1, 38%),
+    var(--grad-a) 0%,
+    transparent 64%
+  );
+  opacity: calc(0.3 + var(--glow-power, 0) * 0.35);
+}
+
+.hero-glow-mid {
+  background: radial-gradient(
+    calc(20rem + var(--glow-power, 0) * 6rem) circle at var(--gx2, 50%) var(--gy2, 38%),
+    var(--grad-a) 0%,
+    transparent 66%
+  );
+  opacity: calc(0.26 + var(--glow-power, 0) * 0.16);
+}
+
+.hero-glow-halo {
+  background: radial-gradient(
+    36rem circle at var(--gx3, 50%) var(--gy3, 38%),
+    var(--grad-b) 0%,
+    transparent 70%
+  );
+  opacity: 0.28;
+}
+
+/* Client logo marquee: each row's content is doubled, so translating by
+   exactly -50% loops seamlessly. animationDirection (set inline per row)
+   flips some rows to travel right instead of left. */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-row {
+  animation-name: marquee-scroll;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-row {
+    animation: none;
+    overflow-x: auto;
+  }
+}
+
+/* Wide-tracked cyan eyebrow, echoing the "TECH" line under the wordmark */
+@utility eyebrow {
+  font-family: var(--font-space-grotesk), sans-serif;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: var(--primary);
+}
