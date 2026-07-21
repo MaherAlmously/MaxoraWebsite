@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 
 export default function CheckoutPage() {
-  const { items, subtotalCents, ready, clear } = useCart();
+  const { items, subtotalCents, ready } = useCart();
 
   const [promoCode, setPromoCode] = useState('');
   const [promoChecking, setPromoChecking] = useState(false);
@@ -56,7 +56,6 @@ export default function CheckoutPage() {
       })),
     });
     if (result.ok) {
-      clear();
       void sendNotification(result.notify.subject, result.notify.fields);
       return {
         ok: true,
