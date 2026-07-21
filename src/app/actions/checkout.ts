@@ -122,6 +122,23 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
     const recurringLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing === 'monthly');
     const oneTimeLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing !== 'monthly');
 
+    // If any recurring tier is capped at N cycles, auto-cancel the whole
+    // subscription just before the (N+1)th charge would fire.
+    const cancelTimestamps = recurringLines
+      .map((l) => {
+        const tier = getTier(l.product_slug, l.tier_id)!;
+        if (!tier.cancelAfterCycles) return null;
+        const d = new Date();
+        if ((tier.interval ?? 'month') === 'day') {
+          d.setUTCDate(d.getUTCDate() + tier.cancelAfterCycles);
+        } else {
+          d.setUTCMonth(d.getUTCMonth() + tier.cancelAfterCycles);
+        }
+        return Math.floor(d.getTime() / 1000) - 3600; // 1hr safety buffer
+      })
+      .filter((v): v is number => v !== null);
+    const cancelAt = cancelTimestamps.length ? Math.min(...cancelTimestamps) : undefined;
+
     const customer = await stripe.customers.create({ name, email, metadata: { order_id: orderId } });
 
     // Subscription items need a real Product id (unlike Checkout/PaymentIntent
@@ -169,6 +186,7 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
           }
         : {}),
       ...(promotionCodeId ? { discounts: [{ promotion_code: promotionCodeId }] } : {}),
+      ...(cancelAt ? { cancel_at: cancelAt } : {}),
     });
 
       const invoice = subscription.latest_invoice as Stripe.Invoice | null;

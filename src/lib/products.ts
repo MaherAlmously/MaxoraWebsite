@@ -9,6 +9,8 @@ export type ProductTier = {
   termMonths?: number;
   /** Stripe recurring interval for monthly-billed tiers. Defaults to 'month'. */
   interval?: 'day' | 'month';
+  /** If set, the subscription auto-cancels after this many billing cycles. */
+  cancelAfterCycles?: number;
   features: string[];
 };
 
@@ -306,7 +308,8 @@ export const products: Product[] = [
         billing: 'monthly',
         interval: 'day',
         termMonths: 1,
-        features: ['Test recurring charge every day', 'Cancel anytime'],
+        cancelAfterCycles: 2,
+        features: ['Charges today, then once more tomorrow, then stops'],
       },
     ],
   },
