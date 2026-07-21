@@ -171,7 +171,7 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
       customer: customer.id,
       payment_behavior: 'default_incomplete',
       payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice'],
+      expand: ['latest_invoice.confirmation_secret'],
       metadata: { order_id: orderId },
       items: recurringItems,
       ...(oneTimeLines.length
