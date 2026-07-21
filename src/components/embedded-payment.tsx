@@ -63,7 +63,7 @@ function InnerForm({
       }
     } catch (err) {
       console.error('[payment] unexpected error:', err);
-      setError('Something went wrong. Please try again.');
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setSubmitting(false);
     }

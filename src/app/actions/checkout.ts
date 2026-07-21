@@ -101,22 +101,23 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
   });
 
   const isSubscription = input.items.some((i) => getTier(i.productSlug, i.tierId)?.billing === 'monthly');
-  const stripe = getStripeClient();
-
   const promoCode = input.promoCode?.trim();
-  let promotionCodeId: string | null = null;
-  if (promoCode) {
-    const promo = await findPromotionCodeId(promoCode);
-    if (!promo) {
-      return { ok: false, error: 'That promo code is invalid or expired.' };
-    }
-    promotionCodeId = promo;
-  }
 
   let clientSecret: string | null | undefined;
   let referenceId: string | undefined;
 
   try {
+    const stripe = getStripeClient();
+
+    let promotionCodeId: string | null = null;
+    if (promoCode) {
+      const promo = await findPromotionCodeId(promoCode);
+      if (!promo) {
+        return { ok: false, error: 'That promo code is invalid or expired.' };
+      }
+      promotionCodeId = promo;
+    }
+
     if (isSubscription) {
     const recurringLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing === 'monthly');
     const oneTimeLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing !== 'monthly');

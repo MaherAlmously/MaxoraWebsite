@@ -55,18 +55,18 @@ export async function submitPaymentRequest(input: PaymentRequestInput): Promise<
   });
 
   const promoCode = input.promoCode?.trim() ?? '';
-  let finalAmountCents = amountCents;
-  if (promoCode) {
-    const promo = await applyPromoToAmount(promoCode, amountCents);
-    if (!promo.ok) {
-      return { ok: false, error: promo.error };
-    }
-    finalAmountCents = promo.discountedAmountCents;
-  }
-
-  const stripe = getStripeClient();
   let paymentIntent;
   try {
+    let finalAmountCents = amountCents;
+    if (promoCode) {
+      const promo = await applyPromoToAmount(promoCode, amountCents);
+      if (!promo.ok) {
+        return { ok: false, error: promo.error };
+      }
+      finalAmountCents = promo.discountedAmountCents;
+    }
+
+    const stripe = getStripeClient();
     paymentIntent = await stripe.paymentIntents.create({
       amount: Math.max(finalAmountCents, 50),
       currency: 'usd',
