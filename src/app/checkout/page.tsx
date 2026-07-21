@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Loader2, Lock, Tag } from 'lucide-react';
+import { ArrowLeft, Loader2, Tag } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
-import { formatPrice } from '@/lib/products';
+import { formatPrice, getTier } from '@/lib/products';
 import { placeOrder } from '@/app/actions/checkout';
 import { previewPromoCode } from '@/app/actions/promo';
-import { EmbeddedPayment } from '@/components/embedded-payment';
+import { InlineCheckoutForm, type ConfirmDetailsResult } from '@/components/embedded-payment';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,9 +16,6 @@ import { Separator } from '@/components/ui/separator';
 
 export default function CheckoutPage() {
   const { items, subtotalCents, ready, clear } = useCart();
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [payment, setPayment] = useState<{ orderId: string; clientSecret: string } | null>(null);
 
   const [promoCode, setPromoCode] = useState('');
   const [promoChecking, setPromoChecking] = useState(false);
@@ -26,6 +23,7 @@ export default function CheckoutPage() {
   const [discountedCents, setDiscountedCents] = useState<number | null>(null);
 
   const totalCents = discountedCents ?? subtotalCents;
+  const isSubscription = items.some((i) => getTier(i.productSlug, i.tierId)?.billing === 'monthly');
 
   async function handleApplyPromo() {
     if (!promoCode.trim()) return;
@@ -41,16 +39,13 @@ export default function CheckoutPage() {
     setPromoChecking(false);
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
-    setSubmitting(true);
-    const form = new FormData(e.currentTarget);
+  async function handleConfirmDetails(form: HTMLFormElement): Promise<ConfirmDetailsResult> {
+    const fd = new FormData(form);
     const result = await placeOrder({
-      customerName: String(form.get('name') ?? ''),
-      customerEmail: String(form.get('email') ?? ''),
-      customerPhone: String(form.get('phone') ?? ''),
-      notes: String(form.get('notes') ?? ''),
+      customerName: String(fd.get('name') ?? ''),
+      customerEmail: String(fd.get('email') ?? ''),
+      customerPhone: String(fd.get('phone') ?? ''),
+      notes: String(fd.get('notes') ?? ''),
       promoCode,
       items: items.map((i) => ({
         productSlug: i.productSlug,
@@ -61,14 +56,16 @@ export default function CheckoutPage() {
     });
     if (result.ok) {
       clear();
-      setPayment({ orderId: result.orderId, clientSecret: result.clientSecret });
-    } else {
-      setError(result.error);
+      return {
+        ok: true,
+        clientSecret: result.clientSecret,
+        returnUrl: `${window.location.origin}/checkout/success?order=${result.orderId}`,
+      };
     }
-    setSubmitting(false);
+    return { ok: false, error: result.error };
   }
 
-  const cartIsEmpty = ready && items.length === 0 && !payment;
+  const cartIsEmpty = ready && items.length === 0;
 
   return (
     <div className="mx-auto max-w-5xl px-4 pt-32 pb-24 sm:px-6">
@@ -91,89 +88,68 @@ export default function CheckoutPage() {
         </div>
       ) : (
         <div className="mt-10 grid gap-10 lg:grid-cols-[1.2fr_1fr]">
-          {payment ? (
-            <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
-              <h2 className="font-heading font-semibold">Enter payment details</h2>
-              <div className="mt-6">
-                <EmbeddedPayment
-                  clientSecret={payment.clientSecret}
-                  returnUrl={`${window.location.origin}/checkout/success?order=${payment.orderId}`}
-                  label={`Pay ${formatPrice(totalCents)}`}
-                />
+          <InlineCheckoutForm
+            mode={isSubscription ? 'subscription' : 'payment'}
+            amountCents={totalCents}
+            returnUrl={typeof window !== 'undefined' ? `${window.location.origin}/checkout/success` : ''}
+            submitLabel={`Pay ${formatPrice(totalCents)}`}
+            onConfirmDetails={handleConfirmDetails}
+          >
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full name</Label>
+                <Input id="name" name="name" required placeholder="Jordan Smith" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" name="email" type="email" required placeholder="you@company.com" />
               </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full name</Label>
-                  <Input id="name" name="name" required placeholder="Jordan Smith" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" type="email" required placeholder="you@company.com" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone (optional)</Label>
-                <Input id="phone" name="phone" type="tel" placeholder="+1 555 000 0000" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="notes">Project notes (optional)</Label>
-                <Textarea
-                  id="notes"
-                  name="notes"
-                  rows={4}
-                  placeholder="Anything we should know: links, goals, deadlines"
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone (optional)</Label>
+              <Input id="phone" name="phone" type="tel" placeholder="+1 555 000 0000" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="notes">Project notes (optional)</Label>
+              <Textarea
+                id="notes"
+                name="notes"
+                rows={4}
+                placeholder="Anything we should know: links, goals, deadlines"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="promoCode">Promo code (optional)</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="promoCode"
+                  name="promoCode"
+                  placeholder="TEST95"
+                  value={promoCode}
+                  onChange={(e) => {
+                    setPromoCode(e.target.value);
+                    setDiscountedCents(null);
+                    setPromoError(null);
+                  }}
                 />
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={promoChecking || !promoCode.trim()}
+                  onClick={handleApplyPromo}
+                >
+                  {promoChecking ? <Loader2 className="size-4 animate-spin" /> : 'Apply'}
+                </Button>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="promoCode">Promo code (optional)</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="promoCode"
-                    name="promoCode"
-                    placeholder="TEST95"
-                    value={promoCode}
-                    onChange={(e) => {
-                      setPromoCode(e.target.value);
-                      setDiscountedCents(null);
-                      setPromoError(null);
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    disabled={promoChecking || !promoCode.trim()}
-                    onClick={handleApplyPromo}
-                  >
-                    {promoChecking ? <Loader2 className="size-4 animate-spin" /> : 'Apply'}
-                  </Button>
-                </div>
-                {promoError && <p className="text-sm text-destructive">{promoError}</p>}
-                {discountedCents !== null && (
-                  <p className="flex items-center gap-1.5 text-sm text-primary">
-                    <Tag className="size-3.5" />
-                    Promo applied — new total {formatPrice(discountedCents)}
-                  </p>
-                )}
-              </div>
-
-              {error && (
-                <p className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                  {error}
+              {promoError && <p className="text-sm text-destructive">{promoError}</p>}
+              {discountedCents !== null && (
+                <p className="flex items-center gap-1.5 text-sm text-primary">
+                  <Tag className="size-3.5" />
+                  Promo applied — new total {formatPrice(discountedCents)}
                 </p>
               )}
-
-              <Button type="submit" size="lg" className="w-full glow" disabled={submitting}>
-                {submitting ? <Loader2 className="size-4 animate-spin" /> : <Lock className="size-4" />}
-                Continue to Payment ({formatPrice(totalCents)})
-              </Button>
-              <p className="text-center text-xs text-muted-foreground">
-                You&apos;ll enter your card right here — no redirect.
-              </p>
-            </form>
-          )}
+            </div>
+          </InlineCheckoutForm>
 
           <aside className="h-fit rounded-xl border border-border bg-card p-6">
             <h2 className="font-heading font-semibold">Order Summary</h2>

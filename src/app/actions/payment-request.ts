@@ -64,13 +64,20 @@ export async function submitPaymentRequest(input: PaymentRequestInput): Promise<
   }
 
   const stripe = getStripeClient();
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: Math.max(finalAmountCents, 50),
-    currency: 'usd',
-    receipt_email: email,
-    automatic_payment_methods: { enabled: true },
-    metadata: { payment_request_id: requestId },
-  });
+  let paymentIntent;
+  try {
+    paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.max(finalAmountCents, 50),
+      currency: 'usd',
+      receipt_email: email,
+      automatic_payment_methods: { enabled: true },
+      metadata: { payment_request_id: requestId },
+    });
+  } catch (err) {
+    console.error('[payment-request] Stripe payment creation failed:', err);
+    const message = err instanceof Error ? err.message : 'Could not start payment. Please try again.';
+    return { ok: false, error: message };
+  }
 
   if (!paymentIntent.client_secret) {
     console.error('[payment-request] Stripe payment created without a client secret', paymentIntent.id);

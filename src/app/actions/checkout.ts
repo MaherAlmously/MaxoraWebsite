@@ -115,7 +115,8 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
   let clientSecret: string | null | undefined;
   let referenceId: string | undefined;
 
-  if (isSubscription) {
+  try {
+    if (isSubscription) {
     const recurringLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing === 'monthly');
     const oneTimeLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing !== 'monthly');
 
@@ -167,28 +168,33 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
       ...(promotionCodeId ? { discounts: [{ promotion_code: promotionCodeId }] } : {}),
     });
 
-    const invoice = subscription.latest_invoice as Stripe.Invoice | null;
-    clientSecret = invoice?.confirmation_secret?.client_secret;
-    referenceId = subscription.id;
-  } else {
-    let amountCents = totalCents;
-    if (promoCode) {
-      const promo = await applyPromoToAmount(promoCode, totalCents);
-      if (!promo.ok) {
-        return { ok: false, error: promo.error };
+      const invoice = subscription.latest_invoice as Stripe.Invoice | null;
+      clientSecret = invoice?.confirmation_secret?.client_secret;
+      referenceId = subscription.id;
+    } else {
+      let amountCents = totalCents;
+      if (promoCode) {
+        const promo = await applyPromoToAmount(promoCode, totalCents);
+        if (!promo.ok) {
+          return { ok: false, error: promo.error };
+        }
+        amountCents = promo.discountedAmountCents;
       }
-      amountCents = promo.discountedAmountCents;
-    }
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.max(amountCents, 50),
-      currency: 'usd',
-      receipt_email: email,
-      automatic_payment_methods: { enabled: true },
-      metadata: { order_id: orderId },
-    });
-    clientSecret = paymentIntent.client_secret;
-    referenceId = paymentIntent.id;
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.max(amountCents, 50),
+        currency: 'usd',
+        receipt_email: email,
+        automatic_payment_methods: { enabled: true },
+        metadata: { order_id: orderId },
+      });
+      clientSecret = paymentIntent.client_secret;
+      referenceId = paymentIntent.id;
+    }
+  } catch (err) {
+    console.error('[checkout] Stripe payment creation failed:', err);
+    const message = err instanceof Error ? err.message : 'Could not start payment. Please try again.';
+    return { ok: false, error: message };
   }
 
   if (!clientSecret) {
