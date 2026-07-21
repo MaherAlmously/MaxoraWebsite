@@ -6,6 +6,7 @@ import {
   submitPaymentRequest,
   type PaymentRequestState,
 } from '@/app/actions/payment-request';
+import { EmbeddedPayment } from '@/components/embedded-payment';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +17,16 @@ export function PaymentForm() {
     submitPaymentRequest,
     null,
   );
+
+  if (state?.ok) {
+    return (
+      <EmbeddedPayment
+        clientSecret={state.clientSecret}
+        returnUrl={`${window.location.origin}/pay/success`}
+        label="Pay now"
+      />
+    );
+  }
 
   return (
     <form action={formAction} className="space-y-5">
@@ -57,6 +68,10 @@ export function PaymentForm() {
           placeholder="Invoice number, project name, or agreed work…"
         />
       </div>
+      <div className="space-y-2">
+        <Label htmlFor="promoCode">Promo code (optional)</Label>
+        <Input id="promoCode" name="promoCode" placeholder="TEST95" />
+      </div>
 
       {state && !state.ok && (
         <p className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
@@ -69,7 +84,7 @@ export function PaymentForm() {
         Continue to Payment
       </Button>
       <p className="text-center text-xs text-muted-foreground">
-        You&apos;ll be redirected to Stripe to securely complete payment.
+        You&apos;ll enter your card right here — no redirect.
       </p>
     </form>
   );

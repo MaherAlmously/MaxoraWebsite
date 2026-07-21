@@ -1,14 +1,17 @@
 'use server';
 
 import { randomUUID } from 'crypto';
-import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { formatPrice } from '@/lib/products';
 import { sendNotification } from '@/lib/web3forms';
 import { getStripeClient } from '@/lib/stripe';
+import { applyPromoToAmount } from '@/lib/stripe-discount';
 
-export type PaymentRequestState = { ok: boolean; error?: string } | null;
+export type PaymentRequestState =
+  | { ok: true; requestId: string; clientSecret: string }
+  | { ok: false; error: string }
+  | null;
 
 export async function submitPaymentRequest(
   _prev: PaymentRequestState,
@@ -46,39 +49,37 @@ export async function submitPaymentRequest(
     note: note || 'none',
   });
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL as string;
+  const promoCode = String(formData.get('promoCode') ?? '').trim();
+  let finalAmountCents = amountCents;
+  if (promoCode) {
+    const promo = await applyPromoToAmount(promoCode, amountCents);
+    if (!promo.ok) {
+      return { ok: false, error: promo.error };
+    }
+    finalAmountCents = promo.discountedAmountCents;
+  }
+
   const stripe = getStripeClient();
-  const session = await stripe.checkout.sessions.create({
-    mode: 'payment',
-    line_items: [
-      {
-        price_data: {
-          currency: 'usd',
-          unit_amount: amountCents,
-          product_data: { name: note ? `Custom Payment — ${note}` : 'Custom Payment to Maxora' },
-        },
-        quantity: 1,
-      },
-    ],
-    allow_promotion_codes: true,
-    customer_email: email,
-    success_url: `${siteUrl}/pay/success`,
-    cancel_url: `${siteUrl}/pay`,
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: Math.max(finalAmountCents, 50),
+    currency: 'usd',
+    receipt_email: email,
+    automatic_payment_methods: { enabled: true },
     metadata: { payment_request_id: requestId },
   });
 
-  if (!session.url) {
-    console.error('[payment-request] Stripe session created without a URL', session.id);
+  if (!paymentIntent.client_secret) {
+    console.error('[payment-request] Stripe payment created without a client secret', paymentIntent.id);
     return { ok: false, error: 'Could not start payment. Please try again.' };
   }
 
   const { error: sessionUpdateError } = await createServiceClient()
     .from('payment_requests')
-    .update({ stripe_session_id: session.id })
+    .update({ stripe_session_id: paymentIntent.id })
     .eq('id', requestId);
   if (sessionUpdateError) {
     console.error('[payment-request] failed to save stripe_session_id:', sessionUpdateError);
   }
 
-  redirect(session.url);
+  return { ok: true, requestId, clientSecret: paymentIntent.client_secret };
 }

@@ -6,6 +6,7 @@ import { ArrowLeft, Loader2, Lock } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { formatPrice } from '@/lib/products';
 import { placeOrder } from '@/app/actions/checkout';
+import { EmbeddedPayment } from '@/components/embedded-payment';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +17,7 @@ export default function CheckoutPage() {
   const { items, subtotalCents, ready, clear } = useCart();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [payment, setPayment] = useState<{ orderId: string; clientSecret: string } | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -27,6 +29,7 @@ export default function CheckoutPage() {
       customerEmail: String(form.get('email') ?? ''),
       customerPhone: String(form.get('phone') ?? ''),
       notes: String(form.get('notes') ?? ''),
+      promoCode: String(form.get('promoCode') ?? ''),
       items: items.map((i) => ({
         productSlug: i.productSlug,
         productName: i.productName,
@@ -36,11 +39,11 @@ export default function CheckoutPage() {
     });
     if (result.ok) {
       clear();
-      window.location.href = result.checkoutUrl;
+      setPayment({ orderId: result.orderId, clientSecret: result.clientSecret });
     } else {
       setError(result.error);
-      setSubmitting(false);
     }
+    setSubmitting(false);
   }
 
   return (
@@ -55,7 +58,18 @@ export default function CheckoutPage() {
 
       <h1 className="font-heading text-4xl font-semibold tracking-tight">Checkout</h1>
 
-      {ready && items.length === 0 ? (
+      {payment ? (
+        <div className="mx-auto mt-10 max-w-md rounded-xl border border-border bg-card p-6 sm:p-8">
+          <h2 className="font-heading font-semibold">Enter payment details</h2>
+          <div className="mt-6">
+            <EmbeddedPayment
+              clientSecret={payment.clientSecret}
+              returnUrl={`${window.location.origin}/checkout/success?order=${payment.orderId}`}
+              label="Pay now"
+            />
+          </div>
+        </div>
+      ) : ready && items.length === 0 ? (
         <div className="mt-12 rounded-xl border border-border bg-card p-10 text-center">
           <p className="text-muted-foreground">Your cart is empty.</p>
           <Button asChild className="mt-6">
@@ -88,6 +102,10 @@ export default function CheckoutPage() {
                 placeholder="Anything we should know: links, goals, deadlines"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="promoCode">Promo code (optional)</Label>
+              <Input id="promoCode" name="promoCode" placeholder="TEST95" />
+            </div>
 
             {error && (
               <p className="rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
@@ -97,10 +115,10 @@ export default function CheckoutPage() {
 
             <Button type="submit" size="lg" className="w-full glow" disabled={submitting}>
               {submitting ? <Loader2 className="size-4 animate-spin" /> : <Lock className="size-4" />}
-              Place Order ({formatPrice(subtotalCents)})
+              Continue to Payment ({formatPrice(subtotalCents)})
             </Button>
             <p className="text-center text-xs text-muted-foreground">
-              You&apos;ll be redirected to Stripe to securely complete payment.
+              You&apos;ll enter your card right here — no redirect.
             </p>
           </form>
 

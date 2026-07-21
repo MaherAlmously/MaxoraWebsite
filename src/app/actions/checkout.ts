@@ -6,6 +6,7 @@ import { createServiceClient } from '@/lib/supabase/service';
 import { getTier, formatPrice } from '@/lib/products';
 import { sendNotification } from '@/lib/web3forms';
 import { getStripeClient } from '@/lib/stripe';
+import { applyPromoToAmount, findPromotionCodeId } from '@/lib/stripe-discount';
 import type Stripe from 'stripe';
 
 export type CheckoutItemInput = {
@@ -20,11 +21,12 @@ export type CheckoutInput = {
   customerEmail: string;
   customerPhone?: string;
   notes?: string;
+  promoCode?: string;
   items: CheckoutItemInput[];
 };
 
 export type CheckoutResult =
-  | { ok: true; orderId: string; checkoutUrl: string }
+  | { ok: true; orderId: string; clientSecret: string }
   | { ok: false; error: string };
 
 export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> {
@@ -97,37 +99,103 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
     notes: input.notes || 'none',
   });
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL as string;
   const isSubscription = input.items.some((i) => getTier(i.productSlug, i.tierId)?.billing === 'monthly');
-
-  const stripeLineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = lines.map((l) => {
-    const tier = getTier(l.product_slug, l.tier_id)!;
-    const priceData: Stripe.Checkout.SessionCreateParams.LineItem.PriceData = {
-      currency: 'usd',
-      unit_amount: l.unit_price_cents,
-      product_data: { name: `${l.product_name} — ${l.tier_name}` },
-    };
-    if (tier.billing === 'monthly') {
-      priceData.recurring = { interval: 'month' };
-    }
-    return { price_data: priceData, quantity: l.quantity };
-  });
-
   const stripe = getStripeClient();
-  const session = await stripe.checkout.sessions.create({
-    mode: isSubscription ? 'subscription' : 'payment',
-    line_items: stripeLineItems,
-    allow_promotion_codes: true,
-    customer_email: email,
-    client_reference_id: orderId,
-    success_url: `${siteUrl}/checkout/success?order=${orderId}`,
-    cancel_url: `${siteUrl}/checkout`,
-    metadata: { order_id: orderId },
-    ...(isSubscription ? { subscription_data: { metadata: { order_id: orderId } } } : {}),
-  });
 
-  if (!session.url) {
-    console.error('[checkout] Stripe session created without a URL', session.id);
+  const promoCode = input.promoCode?.trim();
+  let promotionCodeId: string | null = null;
+  if (promoCode) {
+    const promo = await findPromotionCodeId(promoCode);
+    if (!promo) {
+      return { ok: false, error: 'That promo code is invalid or expired.' };
+    }
+    promotionCodeId = promo;
+  }
+
+  let clientSecret: string | null | undefined;
+  let referenceId: string | undefined;
+
+  if (isSubscription) {
+    const recurringLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing === 'monthly');
+    const oneTimeLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing !== 'monthly');
+
+    const customer = await stripe.customers.create({ name, email, metadata: { order_id: orderId } });
+
+    // Subscription items need a real Product id (unlike Checkout/PaymentIntent
+    // price_data, which allow inline product_data), so create one per line.
+    const recurringItems = await Promise.all(
+      recurringLines.map(async (l) => {
+        const product = await stripe.products.create({ name: `${l.product_name} — ${l.tier_name}` });
+        return {
+          price_data: {
+            currency: 'usd',
+            unit_amount: l.unit_price_cents,
+            recurring: { interval: 'month' as const },
+            product: product.id,
+          },
+          quantity: l.quantity,
+        };
+      }),
+    );
+
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+      metadata: { order_id: orderId },
+      items: recurringItems,
+      ...(oneTimeLines.length
+        ? {
+            add_invoice_items: await Promise.all(
+              oneTimeLines.map(async (l) => {
+                const product = await stripe.products.create({
+                  name: `${l.product_name} — ${l.tier_name}`,
+                });
+                return {
+                  price_data: {
+                    currency: 'usd',
+                    unit_amount: l.unit_price_cents,
+                    product: product.id,
+                  },
+                  quantity: l.quantity,
+                };
+              }),
+            ),
+          }
+        : {}),
+      ...(promotionCodeId ? { discounts: [{ promotion_code: promotionCodeId }] } : {}),
+    });
+
+    const invoice = subscription.latest_invoice as Stripe.Invoice & {
+      payment_intent?: Stripe.PaymentIntent | string | null;
+    };
+    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent | null;
+    clientSecret = paymentIntent?.client_secret;
+    referenceId = subscription.id;
+  } else {
+    let amountCents = totalCents;
+    if (promoCode) {
+      const promo = await applyPromoToAmount(promoCode, totalCents);
+      if (!promo.ok) {
+        return { ok: false, error: promo.error };
+      }
+      amountCents = promo.discountedAmountCents;
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.max(amountCents, 50),
+      currency: 'usd',
+      receipt_email: email,
+      automatic_payment_methods: { enabled: true },
+      metadata: { order_id: orderId },
+    });
+    clientSecret = paymentIntent.client_secret;
+    referenceId = paymentIntent.id;
+  }
+
+  if (!clientSecret) {
+    console.error('[checkout] Stripe payment created without a client secret', orderId);
     return { ok: false, error: 'Could not start payment. Please try again.' };
   }
 
@@ -135,11 +203,11 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
   // which is safe here: orderId was just generated in this request, not user input.
   const { error: sessionUpdateError } = await createServiceClient()
     .from('orders')
-    .update({ stripe_session_id: session.id })
+    .update({ stripe_session_id: referenceId })
     .eq('id', orderId);
   if (sessionUpdateError) {
     console.error('[checkout] failed to save stripe_session_id:', sessionUpdateError);
   }
 
-  return { ok: true, orderId, checkoutUrl: session.url };
+  return { ok: true, orderId, clientSecret };
 }
