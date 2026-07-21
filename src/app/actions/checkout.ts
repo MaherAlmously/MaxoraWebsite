@@ -127,75 +127,56 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
     }
 
     if (isSubscription) {
-    const recurringLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing === 'monthly');
-    const oneTimeLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing !== 'monthly');
+      const recurringLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing === 'monthly');
+      const oneTimeLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing !== 'monthly');
 
-    // If any recurring tier is capped at N cycles, auto-cancel the whole
-    // subscription just before the (N+1)th charge would fire.
-    const cancelTimestamps = recurringLines
-      .map((l) => {
-        const tier = getTier(l.product_slug, l.tier_id)!;
-        if (!tier.cancelAfterCycles) return null;
-        const d = new Date();
-        if ((tier.interval ?? 'month') === 'day') {
-          d.setUTCDate(d.getUTCDate() + tier.cancelAfterCycles);
-        } else {
-          d.setUTCMonth(d.getUTCMonth() + tier.cancelAfterCycles);
-        }
-        return Math.floor(d.getTime() / 1000) - 3600; // 1hr safety buffer
-      })
-      .filter((v): v is number => v !== null);
-    const cancelAt = cancelTimestamps.length ? Math.min(...cancelTimestamps) : undefined;
+      const customer = await stripe.customers.create({ name, email, metadata: { order_id: orderId } });
 
-    const customer = await stripe.customers.create({ name, email, metadata: { order_id: orderId } });
+      // Subscription items need a real Product id (unlike Checkout/PaymentIntent
+      // price_data, which allow inline product_data), so create one per line.
+      const recurringItems = await Promise.all(
+        recurringLines.map(async (l) => {
+          const product = await stripe.products.create({ name: `${l.product_name} — ${l.tier_name}` });
+          return {
+            price_data: {
+              currency: 'usd',
+              unit_amount: l.unit_price_cents,
+              recurring: { interval: 'month' as const },
+              product: product.id,
+            },
+            quantity: l.quantity,
+          };
+        }),
+      );
 
-    // Subscription items need a real Product id (unlike Checkout/PaymentIntent
-    // price_data, which allow inline product_data), so create one per line.
-    const recurringItems = await Promise.all(
-      recurringLines.map(async (l) => {
-        const product = await stripe.products.create({ name: `${l.product_name} — ${l.tier_name}` });
-        const interval = getTier(l.product_slug, l.tier_id)!.interval ?? 'month';
-        return {
-          price_data: {
-            currency: 'usd',
-            unit_amount: l.unit_price_cents,
-            recurring: { interval },
-            product: product.id,
-          },
-          quantity: l.quantity,
-        };
-      }),
-    );
-
-    const subscription = await stripe.subscriptions.create({
-      customer: customer.id,
-      payment_behavior: 'default_incomplete',
-      payment_settings: { save_default_payment_method: 'on_subscription' },
-      expand: ['latest_invoice.confirmation_secret'],
-      metadata: { order_id: orderId },
-      items: recurringItems,
-      ...(oneTimeLines.length
-        ? {
-            add_invoice_items: await Promise.all(
-              oneTimeLines.map(async (l) => {
-                const product = await stripe.products.create({
-                  name: `${l.product_name} — ${l.tier_name}`,
-                });
-                return {
-                  price_data: {
-                    currency: 'usd',
-                    unit_amount: l.unit_price_cents,
-                    product: product.id,
-                  },
-                  quantity: l.quantity,
-                };
-              }),
-            ),
-          }
-        : {}),
-      ...(promotionCodeId ? { discounts: [{ promotion_code: promotionCodeId }] } : {}),
-      ...(cancelAt ? { cancel_at: cancelAt } : {}),
-    });
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        payment_behavior: 'default_incomplete',
+        payment_settings: { save_default_payment_method: 'on_subscription' },
+        expand: ['latest_invoice.confirmation_secret'],
+        metadata: { order_id: orderId },
+        items: recurringItems,
+        ...(oneTimeLines.length
+          ? {
+              add_invoice_items: await Promise.all(
+                oneTimeLines.map(async (l) => {
+                  const product = await stripe.products.create({
+                    name: `${l.product_name} — ${l.tier_name}`,
+                  });
+                  return {
+                    price_data: {
+                      currency: 'usd',
+                      unit_amount: l.unit_price_cents,
+                      product: product.id,
+                    },
+                    quantity: l.quantity,
+                  };
+                }),
+              ),
+            }
+          : {}),
+        ...(promotionCodeId ? { discounts: [{ promotion_code: promotionCodeId }] } : {}),
+      });
 
       const invoice = subscription.latest_invoice as Stripe.Invoice | null;
       clientSecret = invoice?.confirmation_secret?.client_secret;

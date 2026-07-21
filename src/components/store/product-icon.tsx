@@ -2,7 +2,6 @@ import {
   Clapperboard,
   Cloud,
   FileImage,
-  FlaskConical,
   Globe,
   PenTool,
   Scissors,
@@ -23,7 +22,6 @@ const icons: Record<string, LucideIcon> = {
   Scissors,
   Wrench,
   Cloud,
-  FlaskConical,
 };
 
 export function ProductIcon({ name, className }: { name: string; className?: string }) {
