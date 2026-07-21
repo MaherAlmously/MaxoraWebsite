@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
+import { useEffect, useState } from 'react';
+import { loadStripe, type Appearance } from '@stripe/stripe-js';
 import {
   Elements,
   PaymentElement,
@@ -12,6 +12,48 @@ import { Loader2, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
+
+// Mirrors the color tokens in globals.css so the card form matches the
+// site's actual palette instead of Stripe's default blue theme.
+const lightAppearance: Appearance = {
+  theme: 'stripe',
+  variables: {
+    colorPrimary: 'oklch(0.48 0.1 205)',
+    colorBackground: 'oklch(0.97 0.004 242)',
+    colorText: 'oklch(0.22 0.016 250)',
+    colorDanger: 'oklch(0.55 0.19 25)',
+    borderRadius: '10px',
+    fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+  },
+};
+
+const darkAppearance: Appearance = {
+  theme: 'night',
+  variables: {
+    colorPrimary: 'oklch(0.85 0.135 190)',
+    colorBackground: 'oklch(0.24 0.007 250)',
+    colorText: 'oklch(0.965 0.004 240)',
+    colorDanger: 'oklch(0.65 0.2 25)',
+    borderRadius: '10px',
+    fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+  },
+};
+
+function useIsDarkTheme() {
+  const [isDark, setIsDark] = useState(() =>
+    typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : true,
+  );
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  return isDark;
+}
 
 export type ConfirmDetailsResult =
   | { ok: true; clientSecret: string; returnUrl?: string }
@@ -111,10 +153,17 @@ export function InlineCheckoutForm({
   onConfirmDetails: (form: HTMLFormElement) => Promise<ConfirmDetailsResult>;
   children: React.ReactNode;
 }) {
+  const isDark = useIsDarkTheme();
+
   return (
     <Elements
       stripe={stripePromise}
-      options={{ mode, amount: Math.max(amountCents, 50), currency: 'usd' }}
+      options={{
+        mode,
+        amount: Math.max(amountCents, 50),
+        currency: 'usd',
+        appearance: isDark ? darkAppearance : lightAppearance,
+      }}
     >
       <InnerForm returnUrl={returnUrl} submitLabel={submitLabel} onConfirmDetails={onConfirmDetails}>
         {children}
