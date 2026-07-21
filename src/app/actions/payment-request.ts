@@ -47,7 +47,8 @@ export async function submitPaymentRequest(input: PaymentRequestInput): Promise<
     return { ok: false, error: 'Something went wrong submitting your payment. Please try again.' };
   }
 
-  await sendNotification(`Payment request: ${formatPrice(amountCents)} from ${name}`, {
+  // Fire-and-forget: a slow/unreachable email API must never block payment creation.
+  void sendNotification(`Payment request: ${formatPrice(amountCents)} from ${name}`, {
     from: `${name} <${email}>`,
     amount: formatPrice(amountCents),
     note: note || 'none',

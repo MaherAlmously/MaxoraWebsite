@@ -19,6 +19,7 @@ export async function sendNotification(
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ access_key: key, subject, from_name: 'Maxora Website', ...fields }),
+      signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) console.error('[web3forms] notification failed:', res.status);
   } catch (err) {

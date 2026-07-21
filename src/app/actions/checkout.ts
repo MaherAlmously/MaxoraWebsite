@@ -88,7 +88,8 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
     return { ok: false, error: 'Something went wrong placing your order. Please try again.' };
   }
 
-  await sendNotification(`New order: ${formatPrice(totalCents)} from ${name}`, {
+  // Fire-and-forget: a slow/unreachable email API must never block payment creation.
+  void sendNotification(`New order: ${formatPrice(totalCents)} from ${name}`, {
     order_id: orderId,
     customer: `${name} <${email}>`,
     phone: input.customerPhone || 'not provided',

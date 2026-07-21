@@ -39,28 +39,32 @@ function InnerForm({
     setSubmitting(true);
     setError(null);
 
-    const { error: elementsError } = await elements.submit();
-    if (elementsError) {
-      setError(elementsError.message ?? 'Please check your payment details.');
-      setSubmitting(false);
-      return;
-    }
+    try {
+      const { error: elementsError } = await elements.submit();
+      if (elementsError) {
+        setError(elementsError.message ?? 'Please check your payment details.');
+        return;
+      }
 
-    const result = await onConfirmDetails(e.currentTarget);
-    if (!result.ok) {
-      setError(result.error);
-      setSubmitting(false);
-      return;
-    }
+      const result = await onConfirmDetails(e.currentTarget);
+      if (!result.ok) {
+        setError(result.error);
+        return;
+      }
 
-    const { error: confirmError } = await stripe.confirmPayment({
-      elements,
-      clientSecret: result.clientSecret,
-      confirmParams: { return_url: result.returnUrl ?? returnUrl },
-    });
+      const { error: confirmError } = await stripe.confirmPayment({
+        elements,
+        clientSecret: result.clientSecret,
+        confirmParams: { return_url: result.returnUrl ?? returnUrl },
+      });
 
-    if (confirmError) {
-      setError(confirmError.message ?? 'Payment failed. Please try again.');
+      if (confirmError) {
+        setError(confirmError.message ?? 'Payment failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('[payment] unexpected error:', err);
+      setError('Something went wrong. Please try again.');
+    } finally {
       setSubmitting(false);
     }
   }
