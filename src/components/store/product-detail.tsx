@@ -4,20 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Check, MessageSquare, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatPrice, tierPriceLabel, type Product, type ProductTier } from '@/lib/products';
+import { formatPrice, tierPriceLabel, type Product } from '@/lib/products';
 import { useCart } from '@/lib/cart-context';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Reveal } from '@/components/reveal';
 import { cn } from '@/lib/utils';
-
-function billingSummary(tier: ProductTier): string {
-  if (tier.billing === 'one_time') return 'One-time payment';
-  if (tier.termMonths) {
-    return `Per month for ${tier.termMonths} months`;
-  }
-  return 'Billed monthly';
-}
 
 export function ProductDetail({ product }: { product: Product }) {
   const { addItem } = useCart();
@@ -147,7 +139,6 @@ export function ProductDetail({ product }: { product: Product }) {
                     {tier.billing === 'monthly' && (
                       <span className="ml-1 text-muted-foreground">/mo</span>
                     )}
-                    <p className="mt-1 text-xs text-muted-foreground">{billingSummary(tier)}</p>
                   </div>
                   <ul className="mt-6 space-y-2.5 border-t border-border pt-5">
                     {tier.features.map((feature) => (
@@ -167,11 +158,9 @@ export function ProductDetail({ product }: { product: Product }) {
               <ShoppingCart className="size-4" />
               Add to Cart{selectedTier ? ` for ${tierPriceLabel(selectedTier)}` : ''}
             </Button>
-            {selectedTier && (
-              <p className="mt-3 text-center text-xs text-muted-foreground">
-                {billingSummary(selectedTier)}. No payment is taken until we confirm your order.
-              </p>
-            )}
+            <p className="mt-3 text-center text-xs text-muted-foreground">
+              No payment is taken until we confirm your order.
+            </p>
           </div>
         </Reveal>
       )}
