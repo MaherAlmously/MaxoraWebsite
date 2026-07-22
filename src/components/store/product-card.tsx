@@ -15,7 +15,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/services/${product.slug}`}
-      className="group facet-cut relative block h-full rounded-xl border border-border bg-card p-2.5 transition-colors duration-200 hover:border-primary/50 hover:bg-accent/40 sm:p-4"
+      className="group relative block h-full rounded-2xl border border-border bg-card p-2.5 transition-all duration-200 hover:-translate-y-1 hover:border-primary/50 hover:bg-accent/40 hover:shadow-xl sm:p-4"
     >
       {product.tags && product.tags.length > 0 && (
         <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-1 sm:top-3 sm:left-3">

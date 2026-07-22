@@ -117,31 +117,46 @@ export function Navbar() {
             >
               <Menu className="size-5" />
             </SheetTrigger>
-            <SheetContent side="right" className="w-72">
+            <SheetContent
+              side="right"
+              className="glass inset-0 h-dvh w-full max-w-none border-0 data-[side=right]:border-0 sm:max-w-none"
+            >
               <SheetTitle className="sr-only">Menu</SheetTitle>
-              <div className="mt-10 flex flex-col gap-1 px-4">
-                {links.map((link) => (
+              <div className="flex h-full flex-col justify-center px-8 py-16">
+                <nav className="flex flex-col items-center gap-3 text-center">
+                  {links.map((link, i) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={cn(
+                        'w-full rounded-xl px-4 py-4 font-heading text-2xl font-semibold transition-colors',
+                        pathname === link.href
+                          ? 'text-primary'
+                          : 'text-foreground hover:text-primary',
+                      )}
+                      style={{ animationDelay: `${i * 40}ms` }}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                   <Link
-                    key={link.href}
-                    href={link.href}
+                    href={user ? '/account' : '/login'}
                     onClick={() => setMobileOpen(false)}
-                    className={cn(
-                      'rounded-md px-3 py-2.5 text-base transition-colors',
-                      pathname === link.href
-                        ? 'bg-secondary text-primary'
-                        : 'text-muted-foreground hover:text-foreground',
-                    )}
+                    className="w-full rounded-xl px-4 py-4 font-heading text-2xl font-semibold text-foreground transition-colors hover:text-primary"
                   >
-                    {link.label}
+                    {user ? 'My Account' : 'Log In'}
                   </Link>
-                ))}
-                <Link
-                  href={user ? '/account' : '/login'}
+                </nav>
+
+                <Button
+                  asChild
+                  size="lg"
+                  className="glow mt-10 w-full max-w-xs self-center"
                   onClick={() => setMobileOpen(false)}
-                  className="rounded-md px-3 py-2.5 text-base text-muted-foreground hover:text-foreground"
                 >
-                  {user ? 'My Account' : 'Log In'}
-                </Link>
+                  <Link href="/services">Get Started</Link>
+                </Button>
               </div>
             </SheetContent>
           </Sheet>

@@ -35,7 +35,7 @@ function LogoTile({ client }: { client: Client }) {
 export function ClientsMarquee() {
   return (
     <div className="overflow-hidden py-2 [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
-      <div className="marquee-row flex w-max gap-4" style={{ animationDuration: '52s' }}>
+      <div className="marquee-row flex w-max gap-4" style={{ animationDuration: '30s' }}>
         {items.map((client, j) => (
           <LogoTile key={`${client.name}-${j}`} client={client} />
         ))}

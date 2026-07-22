@@ -149,7 +149,7 @@ const artBySlug: Record<string, () => React.ReactNode> = {
 export function ServiceArt({ slug }: { slug: string }) {
   const Art = artBySlug[slug] ?? WebsiteArt;
   return (
-    <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-secondary/60 to-background sm:h-36">
+    <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-secondary/60 to-background sm:h-36">
       <Art />
     </div>
   );
