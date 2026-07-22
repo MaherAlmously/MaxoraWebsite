@@ -12,7 +12,6 @@ export function CtaBanner() {
             aria-hidden
             className="pointer-events-none absolute -top-20 left-1/2 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl"
           />
-          <p className="eyebrow mb-4">Ready when you are</p>
           <h2 className="font-heading text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
             Start your project today
           </h2>
