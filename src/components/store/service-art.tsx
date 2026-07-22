@@ -8,8 +8,8 @@ const imageBySlug: Record<string, string> = {
   'app-development': '/images/services/app-development.jpg',
   'video-production': '/images/services/video-production.jpg',
   'content-editing': '/images/services/content-editing.jpg',
-  'website-care-plan': '/images/services/website-development.jpg',
-  'saas-development': '/images/services/app-development.jpg',
+  'website-care-plan': '/images/services/website-care-plan.jpg',
+  'saas-development': '/images/services/saas-development.jpg',
 };
 
 export function ServiceArt({ slug }: { slug: string }) {
