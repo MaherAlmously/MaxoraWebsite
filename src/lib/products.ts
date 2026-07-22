@@ -30,6 +30,8 @@ export type Product = {
   slug: string;
   name: string;
   tagline: string;
+  /** 2-3 word summary shown on mobile cards where space is tight. */
+  shortTagline: string;
   description: string;
   icon: string; // lucide icon name, resolved in components
   category: 'development' | 'design' | 'marketing' | 'media';
@@ -44,6 +46,7 @@ export const products: Product[] = [
     slug: 'website-development',
     name: 'Website Development',
     tagline: 'Sleek, responsive websites that capture attention and perform on every device.',
+    shortTagline: 'Custom websites',
     description:
       'A custom-built, mobile-first website designed around your brand and your goals. Choose Informative for a professional presence, or Ecommerce to sell your products online.',
     icon: 'Globe',
@@ -84,6 +87,7 @@ export const products: Product[] = [
     slug: 'logo-design',
     name: 'Logo Design',
     tagline: 'Logos that give your brand a unique and memorable identity.',
+    shortTagline: 'Custom logos',
     description:
       'Professional logo design built for your brand. Delivered in every format you need for print, web, and social, with full ownership of the final files.',
     icon: 'PenTool',
@@ -117,6 +121,7 @@ export const products: Product[] = [
     slug: 'social-media-management',
     name: 'Social Media Management',
     tagline: 'Posting, content creation, and engagement that keeps your brand visible online.',
+    shortTagline: 'Social growth',
     description:
       'We plan, design, and publish content for your social channels so your brand stays active and growing. Billed monthly for the length of your plan; the longer commitment gets the better rate.',
     icon: 'Share2',
@@ -170,6 +175,7 @@ export const products: Product[] = [
     slug: 'flyer-design',
     name: 'Flyer Design',
     tagline: 'Print-ready flyers, delivered on a schedule.',
+    shortTagline: 'Print flyers',
     description:
       'Flyers for promotions, events, and campaigns, designed fresh each month for the length of your plan. Ready for print and social.',
     icon: 'FileImage',
@@ -211,6 +217,7 @@ export const products: Product[] = [
     slug: 'website-care-plan',
     name: 'Website Care Plan',
     tagline: 'We keep your website updated, backed up, and running smoothly.',
+    shortTagline: 'Site maintenance',
     description:
       'Ongoing care for your website: software updates, backups, security checks, and small content edits whenever you need them. Cancel anytime.',
     icon: 'Wrench',
@@ -247,6 +254,7 @@ export const products: Product[] = [
     slug: 'app-development',
     name: 'Mobile App Development',
     tagline: 'Custom iOS and Android apps that engage your users and simplify your business.',
+    shortTagline: 'Mobile apps',
     description:
       'We design and build apps for iOS and Android, from a first version to a full product. Every project is different, so tell us what you want to build and we will send you a quote.',
     icon: 'Smartphone',
@@ -258,6 +266,7 @@ export const products: Product[] = [
     slug: 'saas-development',
     name: 'Custom SaaS Development',
     tagline: 'Cloud-based software built for your business.',
+    shortTagline: 'Custom software',
     description:
       'We design and develop custom software tailored to your business: a CRM, employee management system, scheduling platform, inventory tracker, customer portal, or a complete business management solution. Every build includes a custom web application with responsive design, secure login and authentication, database integration, an admin dashboard, user management, API integrations, and analytics and reporting, with ongoing support available. Every project is different, so tell us what you want to build and we will send you a quote.',
     icon: 'Cloud',
@@ -270,6 +279,7 @@ export const products: Product[] = [
     slug: 'video-production',
     name: 'Video Production',
     tagline: 'Commercial videos and whiteboard animations that make your brand memorable.',
+    shortTagline: 'Video production',
     description:
       'Scripted, shot, and edited video for your brand: commercials, whiteboard animations, product promos, and social ads. Pricing depends on scope, so reach out for a quote.',
     icon: 'Clapperboard',
@@ -281,6 +291,7 @@ export const products: Product[] = [
     slug: 'content-editing',
     name: 'Content Editing',
     tagline: 'Raw footage turned into polished, ready-to-use videos and posts.',
+    shortTagline: 'Video editing',
     description:
       'Send us your raw footage or drafts and get back clean, professional edits: reels, YouTube videos, podcasts, and marketing materials. Contact us for a quote.',
     icon: 'Scissors',

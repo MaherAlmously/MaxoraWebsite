@@ -32,7 +32,10 @@ export function ProductCard({ product }: { product: Product }) {
           <h3 className="font-heading text-base font-semibold sm:text-lg">{product.name}</h3>
           <ArrowUpRight className="hidden size-5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary sm:block" />
         </div>
-        <p className="mt-1.5 text-sm text-muted-foreground text-pretty">{product.tagline}</p>
+        <p className="mt-1.5 text-sm text-muted-foreground sm:hidden">{product.shortTagline}</p>
+        <p className="mt-1.5 hidden text-sm text-muted-foreground text-pretty sm:block">
+          {product.tagline}
+        </p>
 
         {product.quoteOnly ? (
           <p className="mt-3 text-xs font-medium text-primary sm:mt-4 sm:text-sm">
