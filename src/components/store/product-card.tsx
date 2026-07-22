@@ -32,35 +32,26 @@ export function ProductCard({ product }: { product: Product }) {
           <h3 className="font-heading text-base font-semibold sm:text-lg">{product.name}</h3>
           <ArrowUpRight className="hidden size-5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary sm:block" />
         </div>
-        <p className="mt-1.5 hidden text-sm text-muted-foreground text-pretty sm:block">
-          {product.tagline}
-        </p>
+        <p className="mt-1.5 text-sm text-muted-foreground text-pretty">{product.tagline}</p>
 
         {product.quoteOnly ? (
           <p className="mt-3 text-xs font-medium text-primary sm:mt-4 sm:text-sm">
             Free quote, priced per project
           </p>
         ) : (
-          <>
-            <ul className="mt-3 space-y-1.5 sm:mt-4">
-              {product.tiers.map((tier) => (
-                <li
-                  key={tier.id}
-                  className="flex items-center justify-between gap-1 rounded-md bg-secondary/50 px-2 py-1.5 text-xs sm:px-3 sm:text-sm"
-                >
-                  <span className="text-muted-foreground">{tier.name}</span>
-                  <span className="font-semibold whitespace-nowrap text-primary">
-                    {tierPriceLabel(tier)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-2.5 text-xs text-muted-foreground">
-              {product.tiers[0]?.billing === 'monthly'
-                ? 'Billed monthly for the length of the plan'
-                : 'One-time payment'}
-            </p>
-          </>
+          <ul className="mt-3 space-y-1.5 sm:mt-4">
+            {product.tiers.map((tier) => (
+              <li
+                key={tier.id}
+                className="flex items-center justify-between gap-1 rounded-md bg-secondary/50 px-2 py-1.5 text-xs sm:px-3 sm:text-sm"
+              >
+                <span className="text-muted-foreground">{tier.name}</span>
+                <span className="font-semibold whitespace-nowrap text-primary">
+                  {tierPriceLabel(tier)}
+                </span>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </Link>
