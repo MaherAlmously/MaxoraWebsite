@@ -56,7 +56,7 @@ export default async function AdminOrdersPage({
     .filter((o) => o.status === 'paid' || o.status === 'fulfilled')
     .reduce((sum, o) => sum + o.total_cents, 0);
   const guestCount = orderList.filter((o) => !o.user_id).length;
-  const memberCount = orderList.length - guestCount;
+  const clientCount = orderList.length - guestCount;
 
   return (
     <div>
@@ -66,9 +66,9 @@ export default async function AdminOrdersPage({
           <p className="mt-1 font-heading text-2xl font-semibold">{orderList.length}</p>
         </div>
         <div className="facet-cut rounded-xl border border-border bg-card p-5">
-          <p className="text-xs text-muted-foreground">Members vs guests</p>
+          <p className="text-xs text-muted-foreground">Clients vs guests</p>
           <p className="mt-1 font-heading text-2xl font-semibold">
-            {memberCount} / {guestCount}
+            {clientCount} / {guestCount}
           </p>
         </div>
         <div className="facet-cut rounded-xl border border-border bg-card p-5">
@@ -123,7 +123,7 @@ export default async function AdminOrdersPage({
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="font-heading text-base font-semibold">{order.customer_name}</p>
                       <Badge variant={order.user_id ? 'default' : 'secondary'}>
-                        {order.user_id ? 'Member' : 'Guest'}
+                        {order.user_id ? 'Client' : 'Guest'}
                       </Badge>
                     </div>
                     <p className="mt-1 text-sm text-muted-foreground">{order.customer_email}</p>

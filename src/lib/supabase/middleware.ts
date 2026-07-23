@@ -31,11 +31,10 @@ export async function updateSession(request: NextRequest) {
 
   // Treat an unconfirmed account as signed out on protected routes, even if
   // it holds a valid session (e.g. a stale session from before confirmation
-  // was required).
+  // was required). Actual sign-out happens client-side on login attempt
+  // (auth-form.tsx) - doing it here too would mean an extra network call to
+  // Supabase on every single request while the stale cookie exists.
   const user = rawUser?.email_confirmed_at ? rawUser : null;
-  if (rawUser && !rawUser.email_confirmed_at) {
-    await supabase.auth.signOut();
-  }
 
   if (!user && request.nextUrl.pathname.startsWith('/account')) {
     const url = request.nextUrl.clone();
