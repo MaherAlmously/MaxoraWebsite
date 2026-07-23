@@ -61,6 +61,17 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
           setUnconfirmedEmail(email);
           return;
         }
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+        if (profile?.role === 'admin') {
+          router.push('/admin');
+          router.refresh();
+          return;
+        }
       }
       router.push(next);
       router.refresh();

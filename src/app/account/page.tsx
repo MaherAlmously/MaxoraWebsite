@@ -46,6 +46,13 @@ export default async function AccountPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+  if (profile?.role === 'admin') redirect('/admin');
+
   const { data: orders } = await supabase
     .from('orders')
     .select('id, total_cents, status, created_at, order_items(product_name, tier_name, unit_price_cents, quantity)')
