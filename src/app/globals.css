@@ -46,6 +46,16 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Fluid display scale for hero/section-scale headings */
+  --text-display-sm: clamp(2.5rem, 1.7rem + 3.2vw, 4rem);
+  --text-display: clamp(3.25rem, 2rem + 5vw, 6rem);
+  --text-display-lg: clamp(3.75rem, 2rem + 7vw, 7.5rem);
+
+  /* Fluid section rhythm */
+  --section-py-sm: clamp(3rem, 2.2rem + 3vw, 5rem);
+  --section-py: clamp(4.5rem, 3.2rem + 5vw, 8rem);
+  --section-py-lg: clamp(6rem, 4rem + 8vw, 11rem);
 }
 
 /* Maxora brand. Light mode: white base, navy text, teal accents.
@@ -89,6 +99,13 @@
   --grad-b: oklch(0.45 0.11 220);
   --art-line: oklch(0 0 0 / 25%);
   --art-fill: oklch(0 0 0 / 7%);
+  /* Shared easing language. --ease-spring-* are Motion spring params (read via JS),
+     the rest are CSS-usable cubic-beziers. Keep every hand-rolled transition on one
+     of these so motion feels like one system instead of per-component guesses. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-spring-stiffness: 300;
+  --ease-spring-damping: 30;
 }
 
 .dark {
@@ -204,6 +221,30 @@
   clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
 }
 
+/* Smaller facet for compact elements (chips, art frames) */
+@utility facet-cut-sm {
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+}
+
+/* Fades content to transparent at the top/bottom edge, for section seams */
+@utility grid-fade {
+  mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+}
+
+/* Fluid display heading size, tight tracking so large type reads closed-up */
+@utility text-display {
+  font-size: var(--text-display);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+@utility text-display-sm {
+  font-size: var(--text-display-sm);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
 /* Cursor/touch-following glow behind the hero text */
 /* Pointer-following glow. Fallbacks live in var() so the values JS sets on
    the parent always win, and --glow-power lets speed drive size/brightness. */
@@ -256,6 +297,12 @@
   .marquee-row {
     animation: none;
     overflow-x: auto;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
   }
 }
 

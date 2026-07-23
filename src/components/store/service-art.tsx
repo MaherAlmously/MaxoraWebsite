@@ -15,7 +15,7 @@ const imageBySlug: Record<string, string> = {
 export function ServiceArt({ slug }: { slug: string }) {
   const src = imageBySlug[slug] ?? imageBySlug['website-development'];
   return (
-    <div className="relative h-24 w-full overflow-hidden rounded-xl bg-secondary/40 sm:h-36">
+    <div className="facet-cut-sm relative h-24 w-full overflow-hidden rounded-xl bg-secondary/40 sm:h-36">
       <Image
         src={src}
         alt=""
