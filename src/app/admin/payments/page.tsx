@@ -1,11 +1,12 @@
 import Link from 'next/link';
-import { CreditCard, Wallet, Mail } from 'lucide-react';
+import { CreditCard, Wallet } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { formatPrice } from '@/lib/products';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { InitialsAvatar } from '../_components/initials-avatar';
 import { StatCard } from '../_components/stat-card';
+import { DetailField } from '../_components/detail-field';
 
 type PaymentRequest = {
   id: string;
@@ -26,9 +27,9 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
 export default async function AdminPaymentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; from?: string; to?: string }>;
 }) {
-  const { q = '' } = await searchParams;
+  const { q = '', status = '', from = '', to = '' } = await searchParams;
   const supabase = await createClient();
 
   let query = supabase
@@ -36,11 +37,15 @@ export default async function AdminPaymentsPage({
     .select('id, name, email, amount_cents, note, status, created_at')
     .order('created_at', { ascending: false });
 
+  if (status) query = query.eq('status', status);
+  if (from) query = query.gte('created_at', new Date(from).toISOString());
+  if (to) query = query.lte('created_at', new Date(`${to}T23:59:59`).toISOString());
   if (q) query = query.or(`name.ilike.%${q}%,email.ilike.%${q}%`);
 
   const { data } = await query;
   const requests = (data ?? []) as PaymentRequest[];
   const totalRequested = requests.reduce((sum, r) => sum + r.amount_cents, 0);
+  const hasFilters = q || status || from || to;
 
   return (
     <div>
@@ -49,16 +54,56 @@ export default async function AdminPaymentsPage({
         <StatCard icon={Wallet} label="Total requested" value={formatPrice(totalRequested)} accent />
       </div>
 
-      <form className="mt-8 flex flex-wrap items-center gap-3" method="get">
-        <Input name="q" defaultValue={q} placeholder="Search by name or email..." className="max-w-xs" />
+      <form
+        className="facet-cut mt-8 flex flex-wrap items-end gap-3 rounded-xl border border-border bg-card p-4"
+        method="get"
+      >
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">Name or email</label>
+          <Input name="q" defaultValue={q} placeholder="Search..." className="w-56" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">Status</label>
+          <select
+            name="status"
+            defaultValue={status}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          >
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">From</label>
+          <input
+            type="date"
+            name="from"
+            defaultValue={from}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">To</label>
+          <input
+            type="date"
+            name="to"
+            defaultValue={to}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          />
+        </div>
         <button
           type="submit"
           className="h-9 rounded-md border border-border bg-card px-4 text-sm font-medium hover:border-primary/40"
         >
           Filter
         </button>
-        {q && (
-          <Link href="/admin/payments" className="text-sm text-muted-foreground hover:text-primary">
+        {hasFilters && (
+          <Link
+            href="/admin/payments"
+            className="flex h-9 items-center px-2 text-sm text-muted-foreground hover:text-primary"
+          >
             Clear
           </Link>
         )}
@@ -82,13 +127,8 @@ export default async function AdminPaymentsPage({
                     <InitialsAvatar name={r.name} />
                     <div>
                       <p className="font-heading text-base font-semibold">{r.name}</p>
-                      <span className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-                        <Mail className="size-3.5" />
-                        {r.email}
-                      </span>
-                      {r.note && <p className="mt-2 text-sm text-muted-foreground">{r.note}</p>}
-                      <p className="mt-1.5 font-mono text-xs text-muted-foreground/70">
-                        {new Date(r.created_at).toLocaleString()}
+                      <p className="mt-0.5 font-mono text-xs text-muted-foreground/70">
+                        Request #{r.id}
                       </p>
                     </div>
                   </div>
@@ -101,6 +141,24 @@ export default async function AdminPaymentsPage({
                     </Badge>
                   </div>
                 </div>
+
+                <div className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-4 sm:grid-cols-3">
+                  <DetailField label="Email" value={r.email} />
+                  <DetailField
+                    label="Requested"
+                    value={new Date(r.created_at).toLocaleString(undefined, {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    })}
+                  />
+                  <DetailField label="Amount" value={formatPrice(r.amount_cents)} />
+                </div>
+
+                {r.note && (
+                  <div className="mt-4 border-t border-border pt-4">
+                    <DetailField label="Note" value={r.note} />
+                  </div>
+                )}
               </div>
             ))}
           </div>

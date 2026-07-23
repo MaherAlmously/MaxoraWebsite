@@ -1,11 +1,12 @@
 import Link from 'next/link';
-import { PackageOpen, Receipt, Users, Wallet, Mail, Phone } from 'lucide-react';
+import { PackageOpen, Receipt, Users, Wallet } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { formatPrice } from '@/lib/products';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { StatCard } from './_components/stat-card';
 import { InitialsAvatar } from './_components/initials-avatar';
+import { DetailField } from './_components/detail-field';
 
 type OrderItem = {
   product_name: string;
@@ -20,6 +21,7 @@ type OrderRow = {
   customer_name: string;
   customer_email: string;
   customer_phone: string | null;
+  notes: string | null;
   total_cents: number;
   status: string;
   created_at: string;
@@ -36,20 +38,27 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'destructive'> = {
 export default async function AdminOrdersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; type?: string; from?: string; to?: string }>;
 }) {
-  const { q = '', status = '' } = await searchParams;
+  const { q = '', status = '', type = '', from = '', to = '' } = await searchParams;
   const supabase = await createClient();
 
   let query = supabase
     .from('orders')
     .select(
-      'id, user_id, customer_name, customer_email, customer_phone, total_cents, status, created_at, order_items(product_name, tier_name, unit_price_cents, quantity)',
+      'id, user_id, customer_name, customer_email, customer_phone, notes, total_cents, status, created_at, order_items(product_name, tier_name, unit_price_cents, quantity)',
     )
     .order('created_at', { ascending: false });
 
   if (status) query = query.eq('status', status);
-  if (q) query = query.or(`customer_name.ilike.%${q}%,customer_email.ilike.%${q}%`);
+  if (type === 'client') query = query.not('user_id', 'is', null);
+  if (type === 'guest') query = query.is('user_id', null);
+  if (from) query = query.gte('created_at', new Date(from).toISOString());
+  if (to) query = query.lte('created_at', new Date(`${to}T23:59:59`).toISOString());
+  if (q)
+    query = query.or(
+      `customer_name.ilike.%${q}%,customer_email.ilike.%${q}%,customer_phone.ilike.%${q}%`,
+    );
 
   const { data: orders } = await query;
   const orderList = (orders ?? []) as OrderRow[];
@@ -59,6 +68,8 @@ export default async function AdminOrdersPage({
     .reduce((sum, o) => sum + o.total_cents, 0);
   const guestCount = orderList.filter((o) => !o.user_id).length;
   const clientCount = orderList.length - guestCount;
+
+  const hasFilters = q || status || type || from || to;
 
   return (
     <div>
@@ -74,32 +85,66 @@ export default async function AdminOrdersPage({
         <StatCard icon={PackageOpen} label="Guest checkouts" value={String(guestCount)} />
       </div>
 
-      <form className="mt-8 flex flex-wrap items-center gap-3" method="get">
-        <Input
-          name="q"
-          defaultValue={q}
-          placeholder="Search by name or email..."
-          className="max-w-xs"
-        />
-        <select
-          name="status"
-          defaultValue={status}
-          className="h-9 rounded-md border border-input bg-background px-3 text-sm"
-        >
-          <option value="">All statuses</option>
-          <option value="pending">Pending</option>
-          <option value="paid">Paid</option>
-          <option value="fulfilled">Fulfilled</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
+      <form className="facet-cut mt-8 flex flex-wrap items-end gap-3 rounded-xl border border-border bg-card p-4" method="get">
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">Name, email, or phone</label>
+          <Input name="q" defaultValue={q} placeholder="Search..." className="w-56" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">Status</label>
+          <select
+            name="status"
+            defaultValue={status}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          >
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="fulfilled">Fulfilled</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">Type</label>
+          <select
+            name="type"
+            defaultValue={type}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          >
+            <option value="">Clients + guests</option>
+            <option value="client">Clients only</option>
+            <option value="guest">Guests only</option>
+          </select>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">From</label>
+          <input
+            type="date"
+            name="from"
+            defaultValue={from}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">To</label>
+          <input
+            type="date"
+            name="to"
+            defaultValue={to}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          />
+        </div>
         <button
           type="submit"
           className="h-9 rounded-md border border-border bg-card px-4 text-sm font-medium hover:border-primary/40"
         >
           Filter
         </button>
-        {(q || status) && (
-          <Link href="/admin" className="text-sm text-muted-foreground hover:text-primary">
+        {hasFilters && (
+          <Link
+            href="/admin"
+            className="h-9 px-2 text-sm text-muted-foreground hover:text-primary flex items-center"
+          >
             Clear
           </Link>
         )}
@@ -130,20 +175,8 @@ export default async function AdminOrdersPage({
                           {order.user_id ? 'Client' : 'Guest'}
                         </Badge>
                       </div>
-                      <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1.5">
-                          <Mail className="size-3.5" />
-                          {order.customer_email}
-                        </span>
-                        {order.customer_phone && (
-                          <span className="flex items-center gap-1.5">
-                            <Phone className="size-3.5" />
-                            {order.customer_phone}
-                          </span>
-                        )}
-                      </div>
-                      <p className="mt-1.5 font-mono text-xs text-muted-foreground/70">
-                        {order.id.slice(0, 8)} · {new Date(order.created_at).toLocaleString()}
+                      <p className="mt-0.5 font-mono text-xs text-muted-foreground/70">
+                        Order #{order.id}
                       </p>
                     </div>
                   </div>
@@ -159,6 +192,26 @@ export default async function AdminOrdersPage({
                     </Badge>
                   </div>
                 </div>
+
+                <div className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-4 sm:grid-cols-4">
+                  <DetailField label="Email" value={order.customer_email} />
+                  <DetailField label="Phone" value={order.customer_phone || '—'} />
+                  <DetailField
+                    label="Placed"
+                    value={new Date(order.created_at).toLocaleString(undefined, {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    })}
+                  />
+                  <DetailField label="Account" value={order.user_id ? 'Registered client' : 'Guest checkout'} />
+                </div>
+
+                {order.notes && (
+                  <div className="mt-4 border-t border-border pt-4">
+                    <DetailField label="Notes" value={order.notes} />
+                  </div>
+                )}
+
                 <ul className="mt-4 space-y-1 border-t border-border pt-4 text-sm">
                   {order.order_items.map((item, i) => (
                     <li key={i} className="flex justify-between gap-3 text-muted-foreground">

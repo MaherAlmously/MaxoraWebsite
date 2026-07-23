@@ -1,10 +1,11 @@
-import { MailOpen, Mail } from 'lucide-react';
+import Link from 'next/link';
+import { MailOpen } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { InitialsAvatar } from '../_components/initials-avatar';
 import { StatCard } from '../_components/stat-card';
-import Link from 'next/link';
+import { DetailField } from '../_components/detail-field';
 
 type Message = {
   id: string;
@@ -19,9 +20,9 @@ type Message = {
 export default async function AdminMessagesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; from?: string; to?: string }>;
 }) {
-  const { q = '' } = await searchParams;
+  const { q = '', from = '', to = '' } = await searchParams;
   const supabase = await createClient();
 
   let query = supabase
@@ -29,10 +30,13 @@ export default async function AdminMessagesPage({
     .select('id, name, email, subject, service, message, created_at')
     .order('created_at', { ascending: false });
 
+  if (from) query = query.gte('created_at', new Date(from).toISOString());
+  if (to) query = query.lte('created_at', new Date(`${to}T23:59:59`).toISOString());
   if (q) query = query.or(`name.ilike.%${q}%,email.ilike.%${q}%`);
 
   const { data } = await query;
   const messages = (data ?? []) as Message[];
+  const hasFilters = q || from || to;
 
   return (
     <div>
@@ -40,16 +44,43 @@ export default async function AdminMessagesPage({
         <StatCard icon={MailOpen} label="Total messages" value={String(messages.length)} accent />
       </div>
 
-      <form className="mt-8 flex flex-wrap items-center gap-3" method="get">
-        <Input name="q" defaultValue={q} placeholder="Search by name or email..." className="max-w-xs" />
+      <form
+        className="facet-cut mt-8 flex flex-wrap items-end gap-3 rounded-xl border border-border bg-card p-4"
+        method="get"
+      >
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">Name or email</label>
+          <Input name="q" defaultValue={q} placeholder="Search..." className="w-56" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">From</label>
+          <input
+            type="date"
+            name="from"
+            defaultValue={from}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground">To</label>
+          <input
+            type="date"
+            name="to"
+            defaultValue={to}
+            className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+          />
+        </div>
         <button
           type="submit"
           className="h-9 rounded-md border border-border bg-card px-4 text-sm font-medium hover:border-primary/40"
         >
           Filter
         </button>
-        {q && (
-          <Link href="/admin/messages" className="text-sm text-muted-foreground hover:text-primary">
+        {hasFilters && (
+          <Link
+            href="/admin/messages"
+            className="flex h-9 items-center px-2 text-sm text-muted-foreground hover:text-primary"
+          >
             Clear
           </Link>
         )}
@@ -73,25 +104,31 @@ export default async function AdminMessagesPage({
                     <InitialsAvatar name={m.name} />
                     <div>
                       <p className="font-heading text-base font-semibold">{m.name}</p>
-                      <span className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-                        <Mail className="size-3.5" />
-                        {m.email}
-                      </span>
                       {(m.subject || m.service) && (
-                        <div className="mt-2 flex flex-wrap gap-2">
+                        <div className="mt-1.5 flex flex-wrap gap-2">
                           {m.subject && <Badge variant="outline">{m.subject}</Badge>}
                           {m.service && <Badge variant="secondary">{m.service}</Badge>}
                         </div>
                       )}
                     </div>
                   </div>
-                  <p className="font-mono text-xs text-muted-foreground/70">
-                    {new Date(m.created_at).toLocaleString()}
-                  </p>
                 </div>
-                <p className="mt-4 whitespace-pre-wrap border-t border-border pt-4 text-sm">
-                  {m.message}
-                </p>
+
+                <div className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-4 sm:grid-cols-3">
+                  <DetailField label="Email" value={m.email} />
+                  <DetailField
+                    label="Received"
+                    value={new Date(m.created_at).toLocaleString(undefined, {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    })}
+                  />
+                  <DetailField label="Message ID" value={`#${m.id.slice(0, 8)}`} />
+                </div>
+
+                <div className="mt-4 border-t border-border pt-4">
+                  <DetailField label="Message" value={<span className="whitespace-pre-wrap">{m.message}</span>} />
+                </div>
               </div>
             ))}
           </div>
