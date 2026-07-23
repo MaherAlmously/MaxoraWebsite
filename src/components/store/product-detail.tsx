@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Check, MessageSquare, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatPrice, tierPriceLabel, type Product } from '@/lib/products';
+import { formatPrice, tierPriceLabel, tierDiscountPercent, type Product } from '@/lib/products';
 import { useCart } from '@/lib/cart-context';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -94,6 +94,7 @@ export function ProductDetail({ product }: { product: Product }) {
             {displayTiers.map((tier) => {
               const selected = tier.id === selectedTierId;
               const highlight = tier.billing === 'monthly' && tier.termMonths === 12;
+              const discount = tierDiscountPercent(tier);
               return (
                 <button
                   key={tier.id}
@@ -114,6 +115,17 @@ export function ProductDetail({ product }: { product: Product }) {
                       Best Value
                     </Badge>
                   )}
+                  {discount !== null && (
+                    <Badge
+                      className={cn(
+                        'absolute -top-3',
+                        highlight ? 'right-4' : 'left-1/2 -translate-x-1/2',
+                      )}
+                      variant="destructive"
+                    >
+                      Limited Time · {discount}% OFF
+                    </Badge>
+                  )}
                   <div className="flex items-center justify-between">
                     <span className="font-heading text-lg font-semibold">{tier.name}</span>
                     <span
@@ -127,7 +139,7 @@ export function ProductDetail({ product }: { product: Product }) {
                       )}
                     </span>
                   </div>
-                  <div className="mt-4">
+                  <div className="mt-4 flex items-baseline gap-2">
                     <span
                       className={cn(
                         'font-heading font-semibold text-primary',
@@ -137,7 +149,12 @@ export function ProductDetail({ product }: { product: Product }) {
                       {formatPrice(tier.priceCents)}
                     </span>
                     {tier.billing === 'monthly' && (
-                      <span className="ml-1 text-muted-foreground">/mo</span>
+                      <span className="text-muted-foreground">/mo</span>
+                    )}
+                    {discount !== null && (
+                      <span className="text-base text-muted-foreground/70 line-through tabular-nums">
+                        {formatPrice(tier.originalPriceCents!)}
+                      </span>
                     )}
                   </div>
                   <ul className="mt-6 space-y-2.5 border-t border-border pt-5">

@@ -4,7 +4,13 @@ import { useRef, type PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
 import { motion, useSpring, useReducedMotion } from 'motion/react';
 import { ArrowUpRight } from 'lucide-react';
-import { productTagLabels, tierPriceLabel, type Product } from '@/lib/products';
+import {
+  productTagLabels,
+  tierPriceLabel,
+  tierDiscountPercent,
+  formatPrice,
+  type Product,
+} from '@/lib/products';
 import { ServiceArt } from '@/components/store/service-art';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -78,17 +84,32 @@ export function ProductCard({ product }: { product: Product }) {
           </p>
         ) : (
           <ul className="mt-3 space-y-1.5 sm:mt-4">
-            {product.tiers.map((tier) => (
-              <li
-                key={tier.id}
-                className="flex items-center justify-between gap-1 rounded-md bg-secondary/50 px-2 py-1.5 text-xs sm:px-3 sm:text-sm"
-              >
-                <span className="text-muted-foreground">{tier.name}</span>
-                <span className="font-heading font-semibold whitespace-nowrap text-primary tabular-nums">
-                  {tierPriceLabel(tier)}
-                </span>
-              </li>
-            ))}
+            {product.tiers.map((tier) => {
+              const discount = tierDiscountPercent(tier);
+              return (
+                <li
+                  key={tier.id}
+                  className="flex items-center justify-between gap-1 rounded-md bg-secondary/50 px-2 py-1.5 text-xs sm:px-3 sm:text-sm"
+                >
+                  <span className="text-muted-foreground">{tier.name}</span>
+                  <span className="flex items-center gap-1.5 whitespace-nowrap">
+                    {discount !== null && (
+                      <>
+                        <span className="text-muted-foreground/70 line-through tabular-nums">
+                          {formatPrice(tier.originalPriceCents!)}
+                        </span>
+                        <Badge variant="destructive" className="px-1.5 py-0 text-[10px]">
+                          {discount}% OFF
+                        </Badge>
+                      </>
+                    )}
+                    <span className="font-heading font-semibold text-primary tabular-nums">
+                      {tierPriceLabel(tier)}
+                    </span>
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

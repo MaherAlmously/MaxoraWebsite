@@ -4,6 +4,8 @@ export type ProductTier = {
   id: string;
   name: string;
   priceCents: number;
+  /** If set, this tier is on a limited-time sale: priceCents is the sale price, this is the original. */
+  originalPriceCents?: number;
   billing: Billing;
   /** For monthly plans: committed length of the plan in months. */
   termMonths?: number;
@@ -53,12 +55,13 @@ export const products: Product[] = [
     category: 'development',
     quoteOnly: false,
     featured: true,
-    tags: ['best-seller'],
+    tags: ['best-seller', 'limited-time'],
     tiers: [
       {
         id: 'informative',
         name: 'Informative',
-        priceCents: 18000,
+        priceCents: 9900,
+        originalPriceCents: 19900,
         billing: 'one_time',
         features: [
           'Professional site that presents your business',
@@ -71,7 +74,8 @@ export const products: Product[] = [
       {
         id: 'ecommerce',
         name: 'Ecommerce',
-        priceCents: 25000,
+        priceCents: 19900,
+        originalPriceCents: 24900,
         billing: 'one_time',
         features: [
           'Online store with product listings and cart',
@@ -325,4 +329,10 @@ export function startingPriceLabel(product: Product): string {
 export function tierPriceLabel(tier: ProductTier): string {
   const base = formatPrice(tier.priceCents);
   return tier.billing === 'monthly' ? `${base}/mo` : base;
+}
+
+/** Whole-percent discount, e.g. 50 for "50% off". */
+export function tierDiscountPercent(tier: ProductTier): number | null {
+  if (!tier.originalPriceCents || tier.originalPriceCents <= tier.priceCents) return null;
+  return Math.round((1 - tier.priceCents / tier.originalPriceCents) * 100);
 }
