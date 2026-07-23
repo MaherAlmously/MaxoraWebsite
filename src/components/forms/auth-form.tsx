@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2, LogIn, UserPlus } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -11,9 +11,13 @@ import { Label } from '@/components/ui/label';
 
 export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get('next') || '/account';
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmSent, setConfirmSent] = useState(false);
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
+  const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent'>('idle');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,37 +28,91 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
     const password = String(form.get('password') ?? '');
     const supabase = createClient();
 
-    if (mode === 'signup') {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+    try {
+      if (mode === 'signup') {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${location.origin}/auth/callback` },
+        });
+        if (error) {
+          setError(error.message);
+          return;
+        }
+        if (!data.session) {
+          // Email confirmation is on, no session until the link is clicked.
+          setConfirmSent(true);
+          return;
+        }
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          setError(
+            error.message === 'Invalid login credentials'
+              ? 'Email or password is incorrect.'
+              : error.message,
+          );
+          return;
+        }
+        if (!data.user.email_confirmed_at) {
+          // Signed in but never confirmed (e.g. confirmation requirement was
+          // toggled on after this account was created) - don't let it through.
+          await supabase.auth.signOut();
+          setUnconfirmedEmail(email);
+          return;
+        }
+      }
+      router.push(next);
+      router.refresh();
+    } catch {
+      // Network hiccup or unexpected client throw - surface it instead of
+      // leaving the button stuck spinning until a manual refresh.
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function handleResend() {
+    if (!unconfirmedEmail) return;
+    setResendState('sending');
+    try {
+      const supabase = createClient();
+      await supabase.auth.resend({
+        type: 'signup',
+        email: unconfirmedEmail,
         options: { emailRedirectTo: `${location.origin}/auth/callback` },
       });
-      if (error) {
-        setError(error.message);
-        setPending(false);
-        return;
-      }
-      if (!data.session) {
-        // Email confirmation is on, no session until the link is clicked.
-        setConfirmSent(true);
-        setPending(false);
-        return;
-      }
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        setError(
-          error.message === 'Invalid login credentials'
-            ? 'Email or password is incorrect.'
-            : error.message,
-        );
-        setPending(false);
-        return;
-      }
+      setResendState('sent');
+    } catch {
+      setResendState('idle');
     }
-    router.push('/account');
-    router.refresh();
+  }
+
+  if (unconfirmedEmail) {
+    return (
+      <div className="rounded-xl border border-primary/30 bg-primary/5 p-8 text-center">
+        <h2 className="font-heading text-xl font-semibold">Please confirm your email</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {unconfirmedEmail} hasn&apos;t been confirmed yet. Check your inbox for the confirmation
+          link, or we can send a new one.
+        </p>
+        <Button
+          type="button"
+          className="mt-5"
+          onClick={handleResend}
+          disabled={resendState !== 'idle'}
+        >
+          {resendState === 'sending' ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : resendState === 'sent' ? (
+            'Confirmation email sent'
+          ) : (
+            'Resend confirmation email'
+          )}
+        </Button>
+      </div>
+    );
   }
 
   if (confirmSent) {

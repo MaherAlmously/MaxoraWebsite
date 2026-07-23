@@ -26,13 +26,40 @@ export async function updateSession(request: NextRequest) {
   // Do not add code between createServerClient and getUser, a bug here can
   // cause users to be randomly logged out.
   const {
-    data: { user },
+    data: { user: rawUser },
   } = await supabase.auth.getUser();
+
+  // Treat an unconfirmed account as signed out on protected routes, even if
+  // it holds a valid session (e.g. a stale session from before confirmation
+  // was required).
+  const user = rawUser?.email_confirmed_at ? rawUser : null;
+  if (rawUser && !rawUser.email_confirmed_at) {
+    await supabase.auth.signOut();
+  }
 
   if (!user && request.nextUrl.pathname.startsWith('/account')) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
     return NextResponse.redirect(url);
+  }
+
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.searchParams.set('next', request.nextUrl.pathname);
+      return NextResponse.redirect(url);
+    }
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    if (profile?.role !== 'admin') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/';
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;

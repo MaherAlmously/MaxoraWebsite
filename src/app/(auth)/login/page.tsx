@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { AuthForm } from '@/components/forms/auth-form';
 import { Reveal } from '@/components/reveal';
 
@@ -16,7 +17,9 @@ export default function LoginPage() {
       </Reveal>
       <Reveal delay={0.1} className="mt-8">
         <div className="facet-cut rounded-xl border border-border bg-card p-6 sm:p-8">
-          <AuthForm mode="login" />
+          <Suspense fallback={null}>
+            <AuthForm mode="login" />
+          </Suspense>
         </div>
       </Reveal>
     </div>
