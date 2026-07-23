@@ -1,9 +1,11 @@
 import Link from 'next/link';
-import { PackageOpen } from 'lucide-react';
+import { PackageOpen, Receipt, Users, Wallet, Mail, Phone } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { formatPrice } from '@/lib/products';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { StatCard } from './_components/stat-card';
+import { InitialsAvatar } from './_components/initials-avatar';
 
 type OrderItem = {
   product_name: string;
@@ -60,21 +62,16 @@ export default async function AdminOrdersPage({
 
   return (
     <div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="facet-cut rounded-xl border border-border bg-card p-5">
-          <p className="text-xs text-muted-foreground">Total orders</p>
-          <p className="mt-1 font-heading text-2xl font-semibold">{orderList.length}</p>
-        </div>
-        <div className="facet-cut rounded-xl border border-border bg-card p-5">
-          <p className="text-xs text-muted-foreground">Clients vs guests</p>
-          <p className="mt-1 font-heading text-2xl font-semibold">
-            {clientCount} / {guestCount}
-          </p>
-        </div>
-        <div className="facet-cut rounded-xl border border-border bg-card p-5">
-          <p className="text-xs text-muted-foreground">Revenue (paid/fulfilled)</p>
-          <p className="mt-1 font-heading text-2xl font-semibold">{formatPrice(totalRevenue)}</p>
-        </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard icon={Receipt} label="Total orders" value={String(orderList.length)} />
+        <StatCard
+          icon={Wallet}
+          label="Revenue (paid/fulfilled)"
+          value={formatPrice(totalRevenue)}
+          accent
+        />
+        <StatCard icon={Users} label="Registered clients" value={String(clientCount)} />
+        <StatCard icon={PackageOpen} label="Guest checkouts" value={String(guestCount)} />
       </div>
 
       <form className="mt-8 flex flex-wrap items-center gap-3" method="get">
@@ -117,28 +114,47 @@ export default async function AdminOrdersPage({
         ) : (
           <div className="space-y-4">
             {orderList.map((order) => (
-              <div key={order.id} className="facet-cut rounded-xl border border-border bg-card p-6">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-heading text-base font-semibold">{order.customer_name}</p>
-                      <Badge variant={order.user_id ? 'default' : 'secondary'}>
-                        {order.user_id ? 'Client' : 'Guest'}
-                      </Badge>
+              <div
+                key={order.id}
+                className="facet-cut group rounded-xl border border-border bg-card p-6 transition-colors hover:border-primary/30"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="flex items-start gap-4">
+                    <InitialsAvatar name={order.customer_name} />
+                    <div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-heading text-base font-semibold">
+                          {order.customer_name}
+                        </p>
+                        <Badge variant={order.user_id ? 'default' : 'secondary'}>
+                          {order.user_id ? 'Client' : 'Guest'}
+                        </Badge>
+                      </div>
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1.5">
+                          <Mail className="size-3.5" />
+                          {order.customer_email}
+                        </span>
+                        {order.customer_phone && (
+                          <span className="flex items-center gap-1.5">
+                            <Phone className="size-3.5" />
+                            {order.customer_phone}
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1.5 font-mono text-xs text-muted-foreground/70">
+                        {order.id.slice(0, 8)} · {new Date(order.created_at).toLocaleString()}
+                      </p>
                     </div>
-                    <p className="mt-1 text-sm text-muted-foreground">{order.customer_email}</p>
-                    {order.customer_phone && (
-                      <p className="text-sm text-muted-foreground">{order.customer_phone}</p>
-                    )}
-                    <p className="mt-1 font-mono text-xs text-muted-foreground">
-                      {order.id.slice(0, 8)} · {new Date(order.created_at).toLocaleString()}
-                    </p>
                   </div>
                   <div className="text-right">
                     <p className="font-heading text-lg font-semibold">
                       {formatPrice(order.total_cents)}
                     </p>
-                    <Badge variant={statusVariant[order.status] ?? 'secondary'} className="mt-1 capitalize">
+                    <Badge
+                      variant={statusVariant[order.status] ?? 'secondary'}
+                      className="mt-1 capitalize"
+                    >
                       {order.status}
                     </Badge>
                   </div>

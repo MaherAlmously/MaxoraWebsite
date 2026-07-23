@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { LayoutDashboard, MessageSquare, CreditCard, LogOut } from 'lucide-react';
+import { LogOut, ShieldCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
+import { AdminNav } from './_components/admin-nav';
 
 export const metadata: Metadata = { title: 'Admin Dashboard' };
 
@@ -28,42 +28,36 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     .single();
   if (profile?.role !== 'admin') redirect('/');
 
-  const nav = [
-    { href: '/admin', label: 'Orders', icon: LayoutDashboard },
-    { href: '/admin/messages', label: 'Messages', icon: MessageSquare },
-    { href: '/admin/payments', label: 'Payment Requests', icon: CreditCard },
-  ];
-
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-28 pb-24 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="eyebrow mb-2">Admin</p>
-          <h1 className="font-heading text-3xl font-semibold tracking-tight">Dashboard</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{user.email}</p>
+    <div className="min-h-screen">
+      <div className="mx-auto max-w-6xl px-4 pt-28 pb-24 sm:px-6">
+        <div className="facet-cut glass flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--grad-a)] to-[var(--grad-b)] text-primary-foreground shadow-[0_0_20px_oklch(0.85_0.135_190_/_25%)]">
+              <ShieldCheck className="size-6" />
+            </div>
+            <div>
+              <p className="eyebrow mb-1">Admin</p>
+              <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+                Dashboard
+              </h1>
+              <p className="mt-0.5 text-sm text-muted-foreground">{user.email}</p>
+            </div>
+          </div>
+          <form action={signOut}>
+            <Button variant="outline" type="submit">
+              <LogOut className="size-4" />
+              Sign Out
+            </Button>
+          </form>
         </div>
-        <form action={signOut}>
-          <Button variant="outline" type="submit">
-            <LogOut className="size-4" />
-            Sign Out
-          </Button>
-        </form>
+
+        <div className="mt-6">
+          <AdminNav />
+        </div>
+
+        <div className="mt-8">{children}</div>
       </div>
-
-      <nav className="mt-8 flex flex-wrap gap-2 border-b border-border pb-4">
-        {nav.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex items-center gap-2 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary"
-          >
-            <item.icon className="size-4" />
-            {item.label}
-          </Link>
-        ))}
-      </nav>
-
-      <div className="mt-8">{children}</div>
     </div>
   );
 }
