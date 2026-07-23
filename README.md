@@ -39,11 +39,12 @@ Copy `.env.local.example` to `.env.local` and fill in real values:
 | `NEXT_PUBLIC_CLARITY_ID` | Microsoft Clarity project (optional) |
 
 The Stripe webhook must point to `/api/webhooks/stripe` on the deployed
-domain, listening for `checkout.session.completed` (and
-`checkout.session.async_payment_succeeded`).
+domain, listening for `payment_intent.succeeded` (one-time payments) and
+`invoice.paid` (subscriptions).
 
 ## Deployment
 
+Live on Vercel at [maxora.tech](https://maxora.tech), deploying automatically from `main`.
 This app uses Next.js server actions and API routes (Stripe checkout,
 Stripe webhook), so it needs a Node-capable host — it cannot run on
 static shared hosting. See `docs/vercel-deployment.md` for the deploy
@@ -52,6 +53,15 @@ runbook.
 ## Data
 
 The product catalog is defined in `src/lib/products.ts` (no CMS). Orders,
-order items, and contact messages are stored in Supabase; table
+order items, contact messages, payment requests, and user profiles
+(role-based access - `client`/`admin`) are stored in Supabase; table
 definitions live in the Supabase project itself (project ref
-`qcejbzcrpipgqiuelvqr`), not in this repo.
+`qcejbzcrpipgqiuelvqr`), not in this repo. There is no `supabase/migrations`
+directory — inspect/change schema via the `mcp__maxora__*` tools.
+
+## Admin dashboard
+
+`/admin` (role-gated, see `src/lib/supabase/middleware.ts`) lists all orders,
+contact messages, and payment requests with search/filter. To grant a
+signed-up account admin access, set its `profiles.role` to `'admin'` in
+Supabase — every new signup defaults to `'client'`.

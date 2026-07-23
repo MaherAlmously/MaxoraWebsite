@@ -38,6 +38,14 @@ the Maxora-branded template below (no Supabase mention).
 2. Set Subject to: `Confirm your Maxora account`
 3. Replace the body with the HTML below and save.
 
+**Note on the link:** the button uses `{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=signup`,
+not Supabase's default `{{ .ConfirmationURL }}`. The default link routes through Supabase's
+hosted PKCE verify endpoint, which only works if opened in the same browser that started the
+signup - it fails (silently, landing on `/login` unauthenticated) when the link opens in a
+different browser or mail-client webview, which is common. The `token_hash` link verifies
+directly via `src/app/auth/callback/route.ts` (`supabase.auth.verifyOtp`) regardless of which
+browser opens it. See `docs/confirm-email-template.html` for the full current template.
+
 ```html
 <div style="margin:0;padding:32px 16px;background-color:#111a21;font-family:Arial,Helvetica,sans-serif;">
   <div style="max-width:480px;margin:0 auto;background-color:#16212b;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:36px 32px;">
@@ -49,7 +57,7 @@ the Maxora-branded template below (no Supabase mention).
       Thanks for creating a Maxora account. Click the button below to confirm your
       email address and activate your account.
     </p>
-    <a href="{{ .ConfirmationURL }}"
+    <a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=signup"
        style="display:inline-block;background-color:#35e0e0;color:#111a21;font-size:14px;font-weight:bold;text-decoration:none;padding:12px 28px;border-radius:8px;">
       Confirm my account
     </a>

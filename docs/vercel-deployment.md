@@ -1,6 +1,8 @@
 # Deploying to Vercel
 
-Status: not deployed yet. This is the plan we agreed on.
+Status: **deployed**. `maxora.tech` is live on Vercel, deploying automatically from `main` on
+every push to GitHub. The steps below are kept as the runbook for redeploys, adding env vars for
+a new integration, or setting this up again from scratch.
 
 ## Why Vercel instead of HostGator
 

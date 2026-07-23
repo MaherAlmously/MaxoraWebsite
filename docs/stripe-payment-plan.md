@@ -1,63 +1,49 @@
 # Stripe Payment Plan
 
-Status: planned, not built yet.
+Status: **built and live**. This doc now describes what was implemented, kept as the
+reference for how the flow actually works.
 
-## Where things stand today
+## How checkout works today
 
-When someone checks out, we save their order in Supabase and email you. **No money is
-actually charged yet.** Stripe is installed but not connected. The API keys are already in
-`.env.local`, so we're ready to wire it up.
+One page, one flow, no redirects:
 
-## What checkout will feel like
+1. Customer lands on `/checkout`, sees their cart summary, fills in name/email/phone/notes.
+2. `placeOrder` (`src/app/actions/checkout.ts`) validates every line against the canonical
+   catalog (`src/lib/products.ts` - client-submitted prices are never trusted), inserts the
+   order + order_items into Supabase, then creates a Stripe **PaymentIntent** (one-time items)
+   or **Subscription** (recurring plans, e.g. the monthly social-media/flyer tiers) and returns
+   a `clientSecret`.
+3. `src/components/embedded-payment.tsx` renders Stripe's Payment Element inline using that
+   `clientSecret` - still on `/checkout`, no new tab.
+4. On success the page redirects to `/checkout/success`.
 
-One page, one flow, no redirects and no separate "next step":
+**Mixed carts** (one-time item + monthly plan together): a subscription is created with the
+recurring line(s) as subscription items and the one-time line(s) as `add_invoice_items` on the
+same first invoice, so it's still a single payment confirmation, not two separate charges.
 
-1. Customer lands on `/checkout` and sees their cart summary (like today).
-2. Below it, on the same page: name, email, phone, notes, **and** the card fields, all
-   visible at once.
-3. They fill it in and hit **Pay $X**.
-4. The charge happens right there. On success, the page shows a confirmation — no new
-   tab, no leaving maxora.tech.
+**Monthly plans have a fixed term** (6 or 12 months, `termMonths` on the tier in
+`src/lib/products.ts`) but this is currently just descriptive data - nothing schedules the
+Stripe subscription to auto-cancel at the end of the term yet. If that matters, it still needs
+to be wired up (e.g. `cancel_at` on subscription creation, or a scheduled job).
 
-## The two things that make this slightly more than "one click"
+## Payment confirmation
 
-1. **Mixed orders (one-time item + monthly plan in the same cart).** Stripe can only
-   charge one or the other per payment, so if a cart has both, the customer pays for the
-   one-time part first, then the same page immediately shows a second "confirm your
-   monthly plan" card form right after — still on `/checkout`, still no redirect, just two
-   quick taps instead of one.
-2. **Monthly plans have a fixed term** (6 or 12 months), not forever. Stripe is told to
-   automatically stop billing once the term is up — nobody has to remember to cancel it.
+`src/app/api/webhooks/stripe/route.ts` is the only source of truth for marking an order or
+payment request `paid` - the client finishing the Payment Element flow is never trusted on its
+own. It listens for `payment_intent.succeeded` (one-time) and `invoice.paid` (subscriptions,
+via the invoice's parent subscription) and flips `orders.status`/`payment_requests.status` using
+`order_id`/`payment_request_id` from the Stripe object's metadata.
 
-## What we'll build, step by step
+## Promo codes
 
-**1. Add a few tracking fields to the `orders` table**
-So we can tell whether an order has actually been paid, or is just sitting there
-unconfirmed.
+`src/app/actions/promo.ts` + `src/lib/stripe-discount.ts`: one-time PaymentIntents apply the
+discount to the amount up front (PaymentIntents have no `coupon` param); subscriptions pass the
+Stripe promotion code directly as a `discounts` entry so Stripe tracks it as a recurring
+discount rather than a one-off deduction.
 
-**2. Add Stripe's card fields directly into the checkout form**
-Using Stripe's "Payment Element," which renders inline next to your name/email/phone
-fields — not a popup, not a redirect. One "Pay" button submits everything together.
+## Quick payment requests
 
-**3. Listen for Stripe to confirm payment**
-Stripe calls our server the moment a payment succeeds. That's the only signal we trust to
-mark an order as "paid" — we never mark it paid just because the customer's browser says
-it finished.
-
-**4. Update the success/cancel screens**
-"Success" should say the payment went through, not "we'll send you a payment link" like it
-does now. Add a proper "cancelled" state too, so a failed or abandoned payment doesn't
-lose the cart.
-
-**5. Test it with fake cards**
-Before going live, we'll run through all three cases — one-time order, subscription order,
-mixed order — using Stripe's test mode.
-
-## Build order
-
-1. Database changes
-2. Add card fields to the checkout form
-3. Wire up the Pay button
-4. Listen for payment confirmation
-5. Update success/cancelled screens
-6. Test everything
+A separate, simpler flow (`src/app/actions/payment-request.ts`, `payment_requests` table,
+`/pay`) for one-off payment links outside the product catalog - same guest-friendly pattern
+(anonymous insert, service-role client patches `stripe_session_id` back after Stripe object
+creation).
