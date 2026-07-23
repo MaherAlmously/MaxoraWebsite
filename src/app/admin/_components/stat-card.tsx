@@ -12,7 +12,7 @@ export function StatCard({
   accent?: boolean;
 }) {
   return (
-    <div className="facet-cut relative overflow-hidden rounded-xl border border-border bg-card p-5">
+    <div className="facet-cut relative overflow-hidden rounded-xl border border-border bg-card p-5 transition-transform duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_8px_24px_oklch(0.85_0.135_190_/_12%)]">
       <div
         className={
           accent
