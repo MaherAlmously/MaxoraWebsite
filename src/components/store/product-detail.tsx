@@ -115,29 +115,25 @@ export function ProductDetail({ product }: { product: Product }) {
                       Best Value
                     </Badge>
                   )}
-                  {discount !== null && (
-                    <Badge
-                      className={cn(
-                        'absolute -top-3',
-                        highlight ? 'right-4' : 'left-1/2 -translate-x-1/2',
-                      )}
-                      variant="destructive"
-                    >
-                      Limited Time · {discount}% OFF
-                    </Badge>
-                  )}
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <span className="font-heading text-lg font-semibold">{tier.name}</span>
-                    <span
-                      className={cn(
-                        'flex size-5 shrink-0 items-center justify-center rounded-full border-2',
-                        selected ? 'border-primary bg-primary' : 'border-muted-foreground/60',
+                    <div className="flex items-center gap-2">
+                      {discount !== null && (
+                        <Badge variant="destructive" className="px-1.5 py-0 text-[10px]">
+                          {discount}% OFF
+                        </Badge>
                       )}
-                    >
-                      {selected && (
-                        <Check className="size-3.5 text-primary-foreground" strokeWidth={3} />
-                      )}
-                    </span>
+                      <span
+                        className={cn(
+                          'flex size-5 shrink-0 items-center justify-center rounded-full border-2',
+                          selected ? 'border-primary bg-primary' : 'border-muted-foreground/60',
+                        )}
+                      >
+                        {selected && (
+                          <Check className="size-3.5 text-primary-foreground" strokeWidth={3} />
+                        )}
+                      </span>
+                    </div>
                   </div>
                   <div className="mt-4 flex items-baseline gap-2">
                     <span
