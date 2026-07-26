@@ -23,8 +23,8 @@ export function Footer() {
             <span className="font-heading text-lg font-semibold tracking-wide">Maxora</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            Software development, SaaS platforms, and mobile &amp; desktop apps for businesses
-            that want to stand out. Built fast, built right.
+            Software development, web, mobile, and desktop apps for businesses that want to
+            stand out. Built fast, built right.
           </p>
         </div>
 

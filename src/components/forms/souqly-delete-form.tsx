@@ -19,7 +19,7 @@ const REASON_OPTIONS = [
   'Other',
 ];
 
-type PendingFields = { email: string; reason: string };
+type PendingFields = { name: string; email: string; reason: string };
 
 export function SouqlyDeleteForm() {
   const [state, formAction, pending] = useActionState<SouqlyDeleteState, FormData>(
@@ -30,6 +30,7 @@ export function SouqlyDeleteForm() {
 
   function handleAction(formData: FormData) {
     pendingFieldsRef.current = {
+      name: String(formData.get('name') ?? ''),
       email: String(formData.get('email') ?? ''),
       reason: String(formData.get('reason') ?? ''),
     };
@@ -51,11 +52,12 @@ export function SouqlyDeleteForm() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         access_key: key,
-        subject: `Souqly account deletion request from ${fields.email}`,
+        subject: `Souqly account deletion request from ${fields.name}`,
         from_name: 'Souqly App',
+        name: fields.name,
         email: fields.email,
         reason: fields.reason || 'not provided',
-        message: `Souqly account deletion request\nEmail: ${fields.email}\nReason: ${fields.reason || 'not provided'}`,
+        message: `Souqly account deletion request\nName: ${fields.name}\nEmail: ${fields.email}\nReason: ${fields.reason || 'not provided'}`,
       }),
     }).catch((err) => console.error('[web3forms] notification error:', err));
   }, [state]);
@@ -75,9 +77,15 @@ export function SouqlyDeleteForm() {
 
   return (
     <form action={handleAction} className="space-y-5">
-      <div className="space-y-2">
-        <Label htmlFor="email">Email associated with your account</Label>
-        <Input id="email" name="email" type="email" required placeholder="you@example.com" />
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="name">Full name</Label>
+          <Input id="name" name="name" required placeholder="Jordan Smith" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="email">Email associated with your account</Label>
+          <Input id="email" name="email" type="email" required placeholder="you@example.com" />
+        </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="reason">Reason (optional)</Label>

@@ -268,11 +268,11 @@ export const products: Product[] = [
   },
   {
     slug: 'saas-development',
-    name: 'Custom SaaS Development',
-    tagline: 'Cloud-based software built for your business.',
+    name: 'Software Development',
+    tagline: 'Custom software built for your business, from web apps to full platforms.',
     shortTagline: 'Custom software',
     description:
-      'We design and develop custom software tailored to your business: a CRM, employee management system, scheduling platform, inventory tracker, customer portal, or a complete business management solution. Every build includes a custom web application with responsive design, secure login and authentication, database integration, an admin dashboard, user management, API integrations, and analytics and reporting, with ongoing support available. Every project is different, so tell us what you want to build and we will send you a quote.',
+      'We design and develop custom software tailored to your business: a web app, SaaS platform, CRM, employee management system, scheduling platform, inventory tracker, customer portal, or a complete business management solution. Every build includes a custom web application with responsive design, secure login and authentication, database integration, an admin dashboard, user management, API integrations, and analytics and reporting, with ongoing support available. Every project is different, so tell us what you want to build and we will send you a quote.',
     icon: 'Cloud',
     category: 'development',
     quoteOnly: true,
