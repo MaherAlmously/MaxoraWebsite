@@ -9,7 +9,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+
+const REASON_OPTIONS = [
+  'No longer using the app',
+  'Privacy concerns',
+  'Found a better alternative',
+  'Too many notifications',
+  'Creating a new account',
+  'Other',
+];
 
 type PendingFields = { name: string; email: string; accountId: string; reason: string };
 
@@ -77,7 +85,7 @@ export function SouqlyDeleteForm() {
           <Input id="name" name="name" required placeholder="Jordan Smith" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email">Account email</Label>
+          <Label htmlFor="email">Email associated with your account</Label>
           <Input id="email" name="email" type="email" required placeholder="you@example.com" />
         </div>
       </div>
@@ -87,12 +95,19 @@ export function SouqlyDeleteForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="reason">Reason (optional)</Label>
-        <Textarea
+        <select
           id="reason"
           name="reason"
-          rows={4}
-          placeholder="Let us know why you're leaving (optional)"
-        />
+          defaultValue=""
+          className="border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none [&>option]:bg-popover"
+        >
+          <option value="">Prefer not to say</option>
+          {REASON_OPTIONS.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
       </div>
 
       {state && !state.ok && (
@@ -108,7 +123,7 @@ export function SouqlyDeleteForm() {
 
       <Button type="submit" size="lg" variant="destructive" disabled={pending}>
         {pending ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
-        Delete my account
+        Request Deletion
       </Button>
     </form>
   );

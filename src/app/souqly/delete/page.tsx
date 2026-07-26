@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import { Suspense } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { SouqlyDeleteForm } from '@/components/forms/souqly-delete-form';
@@ -14,6 +15,13 @@ export default function SouqlyDeletePage() {
   return (
     <div className="mx-auto max-w-2xl px-4 pt-32 pb-24 sm:px-6">
       <Reveal>
+        <Image
+          src="/souqly-icon.png"
+          alt="Souqly"
+          width={64}
+          height={64}
+          className="mb-4 rounded-2xl"
+        />
         <p className="eyebrow mb-3">Souqly</p>
         <h1 className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
           Delete your <span className="text-gradient">account</span>
