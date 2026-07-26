@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Suspense } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { SouqlyDeleteForm } from '@/components/forms/souqly-delete-form';
@@ -38,6 +39,12 @@ export default function SouqlyDeletePage() {
             <SouqlyDeleteForm />
           </Suspense>
         </div>
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          Read our{' '}
+          <Link href="/souqly/privacy" className="text-primary hover:underline">
+            Privacy Policy
+          </Link>
+        </p>
       </Reveal>
     </div>
   );
