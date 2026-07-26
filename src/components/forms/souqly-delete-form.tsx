@@ -19,7 +19,7 @@ const REASON_OPTIONS = [
   'Other',
 ];
 
-type PendingFields = { name: string; email: string; accountId: string; reason: string };
+type PendingFields = { email: string; reason: string };
 
 export function SouqlyDeleteForm() {
   const [state, formAction, pending] = useActionState<SouqlyDeleteState, FormData>(
@@ -30,9 +30,7 @@ export function SouqlyDeleteForm() {
 
   function handleAction(formData: FormData) {
     pendingFieldsRef.current = {
-      name: String(formData.get('name') ?? ''),
       email: String(formData.get('email') ?? ''),
-      accountId: String(formData.get('accountId') ?? ''),
       reason: String(formData.get('reason') ?? ''),
     };
     return formAction(formData);
@@ -53,13 +51,11 @@ export function SouqlyDeleteForm() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         access_key: key,
-        subject: `Souqly account deletion request from ${fields.name}`,
+        subject: `Souqly account deletion request from ${fields.email}`,
         from_name: 'Souqly App',
-        name: fields.name,
         email: fields.email,
-        account_id: fields.accountId || 'not provided',
         reason: fields.reason || 'not provided',
-        message: `Souqly account deletion request\nAccount ID/username: ${fields.accountId || 'not provided'}\nReason: ${fields.reason || 'not provided'}`,
+        message: `Souqly account deletion request\nEmail: ${fields.email}\nReason: ${fields.reason || 'not provided'}`,
       }),
     }).catch((err) => console.error('[web3forms] notification error:', err));
   }, [state]);
@@ -79,19 +75,9 @@ export function SouqlyDeleteForm() {
 
   return (
     <form action={handleAction} className="space-y-5">
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="name">Full name</Label>
-          <Input id="name" name="name" required placeholder="Jordan Smith" />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email associated with your account</Label>
-          <Input id="email" name="email" type="email" required placeholder="you@example.com" />
-        </div>
-      </div>
       <div className="space-y-2">
-        <Label htmlFor="accountId">Souqly account ID or username (optional)</Label>
-        <Input id="accountId" name="accountId" placeholder="e.g. @jordan or account ID" />
+        <Label htmlFor="email">Email associated with your account</Label>
+        <Input id="email" name="email" type="email" required placeholder="you@example.com" />
       </div>
       <div className="space-y-2">
         <Label htmlFor="reason">Reason (optional)</Label>
@@ -115,11 +101,6 @@ export function SouqlyDeleteForm() {
           {state.error}
         </p>
       )}
-
-      <p className="text-sm text-muted-foreground">
-        Submitting this form permanently deletes your Souqly account and all associated data.
-        This cannot be undone.
-      </p>
 
       <Button type="submit" size="lg" variant="destructive" disabled={pending}>
         {pending ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}

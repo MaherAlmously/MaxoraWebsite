@@ -8,26 +8,20 @@ export async function submitSouqlyDeleteRequest(
   _prev: SouqlyDeleteState,
   formData: FormData,
 ): Promise<SouqlyDeleteState> {
-  const name = String(formData.get('name') ?? '').trim();
   const email = String(formData.get('email') ?? '').trim();
-  const accountId = String(formData.get('accountId') ?? '').trim();
   const reason = String(formData.get('reason') ?? '').trim();
 
-  if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { ok: false, error: 'Please enter your name and the email your Souqly account uses.' };
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { ok: false, error: 'Please enter the email your Souqly account uses.' };
   }
 
-  const message = [
-    'Souqly account deletion request',
-    accountId ? `Account ID / username: ${accountId}` : null,
-    reason ? `Reason: ${reason}` : null,
-  ]
+  const message = ['Souqly account deletion request', reason ? `Reason: ${reason}` : null]
     .filter(Boolean)
     .join('\n');
 
   const supabase = await createClient();
   const { error } = await supabase.from('contact_messages').insert({
-    name,
+    name: email.split('@')[0],
     email,
     service: 'souqly-account-deletion',
     message,

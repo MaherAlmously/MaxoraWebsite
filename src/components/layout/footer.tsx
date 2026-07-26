@@ -1,8 +1,19 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { products } from '@/lib/products';
+import { getProduct } from '@/lib/products';
+
+const footerServiceSlugs = [
+  'website-development',
+  'saas-development',
+  'app-development',
+  'website-care-plan',
+] as const;
 
 export function Footer() {
+  const footerServices = footerServiceSlugs
+    .map((slug) => getProduct(slug))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p));
+
   return (
     <footer className="border-t border-border bg-card/40">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
@@ -12,15 +23,15 @@ export function Footer() {
             <span className="font-heading text-lg font-semibold tracking-wide">Maxora</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            Websites, branding, and digital growth for businesses that want to stand out. Built
-            fast, built right.
+            Software development, SaaS platforms, and mobile &amp; desktop apps for businesses
+            that want to stand out. Built fast, built right.
           </p>
         </div>
 
         <div>
           <h3 className="eyebrow mb-4">Services</h3>
           <ul className="space-y-2.5 text-sm">
-            {products.slice(0, 5).map((p) => (
+            {footerServices.map((p) => (
               <li key={p.slug}>
                 <Link
                   href={`/services/${p.slug}`}
