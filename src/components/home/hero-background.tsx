@@ -3,17 +3,17 @@
 import { useEffect, useRef } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 
-// Fixed positions (not random per render) so the one-time entrance particles
-// don't shift between server/client hydration.
+// Fixed positions (not random per render) so the drifting particles don't
+// shift between server/client hydration.
 const PARTICLES = [
-  { x: 18, y: 24, delay: 0.1, size: 5 },
-  { x: 82, y: 20, delay: 0.25, size: 4 },
-  { x: 12, y: 62, delay: 0.4, size: 6 },
-  { x: 88, y: 58, delay: 0.15, size: 5 },
-  { x: 50, y: 12, delay: 0.35, size: 4 },
-  { x: 30, y: 78, delay: 0.5, size: 5 },
-  { x: 70, y: 74, delay: 0.3, size: 4 },
-  { x: 60, y: 30, delay: 0.55, size: 6 },
+  { x: 18, y: 24, delay: 0.1, duration: 4.2, size: 5 },
+  { x: 82, y: 20, delay: 0.6, duration: 4.8, size: 4 },
+  { x: 12, y: 62, delay: 1.1, duration: 4.4, size: 6 },
+  { x: 88, y: 58, delay: 0.3, duration: 5.2, size: 5 },
+  { x: 50, y: 12, delay: 1.4, duration: 4.6, size: 4 },
+  { x: 30, y: 78, delay: 0.85, duration: 5, size: 5 },
+  { x: 70, y: 74, delay: 0.45, duration: 4.5, size: 4 },
+  { x: 60, y: 30, delay: 1.25, duration: 4.9, size: 6 },
 ];
 
 /**
@@ -122,9 +122,9 @@ export function HeroBackground() {
 
   return (
     <div ref={ref} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {/* One-time welcome bloom: a bright flash that blooms outward and settles
-          into the ambient glow, plus a scatter of particles drifting up and
-          fading. Plays once on mount, never repeats. */}
+      {/* Welcome bloom: a bright flash that blooms outward once and settles
+          into the ambient glow, plus a scatter of particles that drift and
+          shimmer continuously — an ongoing loop, not a one-shot pulse. */}
       {!reduceForEntrance && (
         <>
           <motion.div
@@ -148,14 +148,14 @@ export function HeroBackground() {
                 height: p.size,
                 boxShadow: '0 0 10px 2px var(--grad-a)',
               }}
-              initial={{ opacity: 0, scale: 0.4, y: 14 }}
-              animate={{ opacity: [0, 0.9, 0], scale: [0.4, 1, 0.8], y: -22 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: [0, 0.85, 0.85, 0], y: [10, -6, -18, -30] }}
               transition={{
-                duration: 1.8,
+                duration: p.duration,
                 delay: p.delay,
-                ease: 'easeOut',
+                ease: 'easeInOut',
                 repeat: Infinity,
-                repeatDelay: 2.4 + p.delay,
+                repeatType: 'loop',
               }}
             />
           ))}
