@@ -6,14 +6,14 @@ import { motion, useReducedMotion } from 'motion/react';
 // Fixed positions (not random per render) so the drifting particles don't
 // shift between server/client hydration.
 const PARTICLES = [
-  { x: 18, y: 24, delay: 0.1, duration: 4.2, size: 5 },
-  { x: 82, y: 20, delay: 0.6, duration: 4.8, size: 4 },
-  { x: 12, y: 62, delay: 1.1, duration: 4.4, size: 6 },
-  { x: 88, y: 58, delay: 0.3, duration: 5.2, size: 5 },
-  { x: 50, y: 12, delay: 1.4, duration: 4.6, size: 4 },
-  { x: 30, y: 78, delay: 0.85, duration: 5, size: 5 },
-  { x: 70, y: 74, delay: 0.45, duration: 4.5, size: 4 },
-  { x: 60, y: 30, delay: 1.25, duration: 4.9, size: 6 },
+  { x: 18, y: 24, delay: 0.1, duration: 2.8, size: 5 },
+  { x: 82, y: 20, delay: 0.4, duration: 3.2, size: 4 },
+  { x: 12, y: 62, delay: 0.75, duration: 2.9, size: 6 },
+  { x: 88, y: 58, delay: 0.2, duration: 3.4, size: 5 },
+  { x: 50, y: 12, delay: 0.95, duration: 3, size: 4 },
+  { x: 30, y: 78, delay: 0.55, duration: 3.3, size: 5 },
+  { x: 70, y: 74, delay: 0.3, duration: 3, size: 4 },
+  { x: 60, y: 30, delay: 0.85, duration: 3.2, size: 6 },
 ];
 
 /**

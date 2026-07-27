@@ -15,13 +15,6 @@ const pricingTabs: { id: PricingFilter; label: string }[] = [
   { id: 'quote', label: 'Custom quote' },
 ];
 
-const gridVariants: Variants = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.07, delayChildren: 0.05 },
-  },
-};
-
 function cardVariants(i: number): Variants {
   const fromLeft = i % 2 === 0;
   return {
@@ -38,7 +31,7 @@ function cardVariants(i: number): Variants {
       y: 0,
       rotate: 0,
       scale: 1,
-      transition: { type: 'spring', stiffness: 140, damping: 17 },
+      transition: { type: 'spring', stiffness: 140, damping: 17, delay: (i % 3) * 0.08 },
     },
   };
 }
@@ -107,19 +100,22 @@ export function ServicesBrowser({ products }: { products: Product[] }) {
       </div>
 
       {filtered.length > 0 ? (
-        <motion.div
+        <div
           key={`${category}-${pricing}`}
           className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3"
-          variants={reduce ? undefined : gridVariants}
-          initial={reduce ? undefined : 'hidden'}
-          animate={reduce ? undefined : 'show'}
         >
           {filtered.map((product, i) => (
-            <motion.div key={product.slug} variants={reduce ? undefined : cardVariants(i)}>
+            <motion.div
+              key={product.slug}
+              variants={reduce ? undefined : cardVariants(i)}
+              initial={reduce ? undefined : 'hidden'}
+              whileInView={reduce ? undefined : 'show'}
+              viewport={{ once: true, amount: 0.3 }}
+            >
               <ProductCard product={product} />
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       ) : (
         <p className="mt-16 text-center text-muted-foreground">
           No services match these filters yet.
