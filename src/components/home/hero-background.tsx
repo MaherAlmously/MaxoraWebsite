@@ -150,7 +150,13 @@ export function HeroBackground() {
               }}
               initial={{ opacity: 0, scale: 0.4, y: 14 }}
               animate={{ opacity: [0, 0.9, 0], scale: [0.4, 1, 0.8], y: -22 }}
-              transition={{ duration: 1.8, delay: p.delay, ease: 'easeOut' }}
+              transition={{
+                duration: 1.8,
+                delay: p.delay,
+                ease: 'easeOut',
+                repeat: Infinity,
+                repeatDelay: 2.4 + p.delay,
+              }}
             />
           ))}
         </>

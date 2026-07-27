@@ -1,9 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { categoryLabels, type Product } from '@/lib/products';
 import { ProductCard } from '@/components/store/product-card';
-import { Reveal } from '@/components/reveal';
 import { cn } from '@/lib/utils';
 
 type CategoryFilter = 'all' | Product['category'];
@@ -15,9 +15,38 @@ const pricingTabs: { id: PricingFilter; label: string }[] = [
   { id: 'quote', label: 'Custom quote' },
 ];
 
+const gridVariants: Variants = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.07, delayChildren: 0.05 },
+  },
+};
+
+function cardVariants(i: number): Variants {
+  const fromLeft = i % 2 === 0;
+  return {
+    hidden: {
+      opacity: 0,
+      x: fromLeft ? -70 : 70,
+      y: 24,
+      rotate: fromLeft ? -5 : 5,
+      scale: 0.92,
+    },
+    show: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      rotate: 0,
+      scale: 1,
+      transition: { type: 'spring', stiffness: 140, damping: 17 },
+    },
+  };
+}
+
 export function ServicesBrowser({ products }: { products: Product[] }) {
   const [category, setCategory] = useState<CategoryFilter>('all');
   const [pricing, setPricing] = useState<PricingFilter>('all');
+  const reduce = useReducedMotion();
 
   const filtered = useMemo(
     () =>
@@ -78,13 +107,19 @@ export function ServicesBrowser({ products }: { products: Product[] }) {
       </div>
 
       {filtered.length > 0 ? (
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
+        <motion.div
+          key={`${category}-${pricing}`}
+          className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3"
+          variants={reduce ? undefined : gridVariants}
+          initial={reduce ? undefined : 'hidden'}
+          animate={reduce ? undefined : 'show'}
+        >
           {filtered.map((product, i) => (
-            <Reveal key={product.slug} delay={(i % 6) * 0.06}>
+            <motion.div key={product.slug} variants={reduce ? undefined : cardVariants(i)}>
               <ProductCard product={product} />
-            </Reveal>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       ) : (
         <p className="mt-16 text-center text-muted-foreground">
           No services match these filters yet.
