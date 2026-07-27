@@ -1,6 +1,20 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
+
+// Fixed positions (not random per render) so the one-time entrance particles
+// don't shift between server/client hydration.
+const PARTICLES = [
+  { x: 18, y: 24, delay: 0.1, size: 5 },
+  { x: 82, y: 20, delay: 0.25, size: 4 },
+  { x: 12, y: 62, delay: 0.4, size: 6 },
+  { x: 88, y: 58, delay: 0.15, size: 5 },
+  { x: 50, y: 12, delay: 0.35, size: 4 },
+  { x: 30, y: 78, delay: 0.5, size: 5 },
+  { x: 70, y: 74, delay: 0.3, size: 4 },
+  { x: 60, y: 30, delay: 0.55, size: 6 },
+];
 
 /**
  * Glow that follows the pointer across the hero.
@@ -16,6 +30,7 @@ import { useEffect, useRef } from 'react';
  */
 export function HeroBackground() {
   const ref = useRef<HTMLDivElement>(null);
+  const reduceForEntrance = useReducedMotion();
 
   useEffect(() => {
     const el = ref.current;
@@ -107,9 +122,72 @@ export function HeroBackground() {
 
   return (
     <div ref={ref} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      <div className="hero-glow-halo absolute inset-0" />
-      <div className="hero-glow-mid absolute inset-0" />
-      <div className="hero-glow-core absolute inset-0" />
+      {/* One-time welcome bloom: a bright flash that blooms outward and settles
+          into the ambient glow, plus a scatter of particles drifting up and
+          fading. Plays once on mount, never repeats. */}
+      {!reduceForEntrance && (
+        <>
+          <motion.div
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(48rem circle at 50% 38%, var(--grad-a) 0%, transparent 65%)',
+            }}
+            initial={{ opacity: 0.9, scale: 0.35 }}
+            animate={{ opacity: 0, scale: 1.6 }}
+            transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+          />
+          {PARTICLES.map((p, i) => (
+            <motion.span
+              key={i}
+              className="absolute rounded-full bg-[var(--grad-a)]"
+              style={{
+                left: `${p.x}%`,
+                top: `${p.y}%`,
+                width: p.size,
+                height: p.size,
+                boxShadow: '0 0 10px 2px var(--grad-a)',
+              }}
+              initial={{ opacity: 0, scale: 0.4, y: 14 }}
+              animate={{ opacity: [0, 0.9, 0], scale: [0.4, 1, 0.8], y: -22 }}
+              transition={{ duration: 1.8, delay: p.delay, ease: 'easeOut' }}
+            />
+          ))}
+        </>
+      )}
+      {/*
+        Each glow layer's own opacity is driven live by the CSS class
+        (via --glow-power, set every frame from pointer speed). Animating
+        opacity with motion directly on that element would leave a
+        permanent inline style that overrides the CSS rule after the
+        entrance finishes, freezing the pointer-reactive brightness. So the
+        entrance fade goes on a wrapper instead, multiplying with the
+        layer's own live opacity rather than replacing it.
+      */}
+      <motion.div
+        className="absolute inset-0"
+        initial={reduceForEntrance ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, delay: 0.2 }}
+      >
+        <div className="hero-glow-halo absolute inset-0" />
+      </motion.div>
+      <motion.div
+        className="absolute inset-0"
+        initial={reduceForEntrance ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, delay: 0.35 }}
+      >
+        <div className="hero-glow-mid absolute inset-0" />
+      </motion.div>
+      <motion.div
+        className="absolute inset-0"
+        initial={reduceForEntrance ? false : { opacity: 0, scale: 0.6 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="hero-glow-core absolute inset-0" />
+      </motion.div>
     </div>
   );
 }
