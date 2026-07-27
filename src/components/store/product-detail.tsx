@@ -68,16 +68,37 @@ export function ProductDetail({ product }: { product: Product }) {
       </Reveal>
 
       {product.quoteOnly ? (
-        <Reveal delay={0.1} className="mt-12 text-center">
-          <Button asChild size="lg" className="glow">
-            <Link href={`/contact?service=${product.slug}`}>
-              <MessageSquare className="size-4" />
-              Request a Free Quote
-            </Link>
-          </Button>
-          <p className="mt-3 text-sm text-muted-foreground">
-            No commitment. We reply within 24 hours.
-          </p>
+        <Reveal delay={0.1} className="mt-12">
+          {product.examples && product.examples.length > 0 && (
+            <div className="mx-auto max-w-2xl">
+              <p className="text-center text-sm font-medium text-muted-foreground">
+                A few examples of what we can build:
+              </p>
+              <ul className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                {product.examples.map((example) => (
+                  <li
+                    key={example}
+                    className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-4 py-3 text-sm"
+                  >
+                    <Check className="size-4 shrink-0 text-primary" />
+                    <span>{example}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="mt-10 text-center">
+            <Button asChild size="lg" className="glow">
+              <Link href={`/contact?service=${product.slug}`}>
+                <MessageSquare className="size-4" />
+                Request a Free Quote
+              </Link>
+            </Button>
+            <p className="mt-3 text-sm text-muted-foreground">
+              No commitment. We reply within 24 hours.
+            </p>
+          </div>
         </Reveal>
       ) : (
         <Reveal delay={0.1} className="mt-14">

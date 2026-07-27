@@ -3,7 +3,7 @@
 import { useRef, type PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
 import { motion, useSpring, useReducedMotion } from 'motion/react';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Clock } from 'lucide-react';
 import {
   productTagLabels,
   tierPriceLabel,
@@ -19,7 +19,6 @@ const tagVariant = {
   'best-seller': 'default',
   popular: 'secondary',
   new: 'outline',
-  'limited-time': 'destructive',
 } as const;
 
 export function ProductCard({ product }: { product: Product }) {
@@ -58,11 +57,21 @@ export function ProductCard({ product }: { product: Product }) {
     >
       {product.tags && product.tags.length > 0 && (
         <div className="absolute top-2 left-2 z-10 flex flex-wrap gap-1 sm:top-3 sm:left-3">
-          {product.tags.map((tag) => (
-            <Badge key={tag} variant={tagVariant[tag]}>
-              {productTagLabels[tag]}
-            </Badge>
-          ))}
+          {product.tags.map((tag) =>
+            tag === 'limited-time' ? (
+              <Badge
+                key={tag}
+                className="border-transparent bg-amber-500 text-white shadow-[0_0_12px_oklch(0.75_0.15_70_/_35%)]"
+              >
+                <Clock data-icon="inline-start" className="size-3" />
+                {productTagLabels[tag]}
+              </Badge>
+            ) : (
+              <Badge key={tag} variant={tagVariant[tag]}>
+                {productTagLabels[tag]}
+              </Badge>
+            ),
+          )}
         </div>
       )}
       <motion.div style={reduce ? undefined : { x: artX, y: artY }}>
