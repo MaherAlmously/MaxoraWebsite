@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { MessageSquare } from 'lucide-react';
 import { products } from '@/lib/products';
 import { ServicesBrowser } from '@/components/store/services-browser';
+import { ServicesIntro } from '@/components/store/services-intro';
 import { Reveal } from '@/components/reveal';
 import { Button } from '@/components/ui/button';
 
@@ -15,16 +16,7 @@ export const metadata: Metadata = {
 export default function ServicesPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 pt-32 pb-24 sm:px-6">
-      <Reveal>
-        <p className="eyebrow mb-3">Services</p>
-        <h1 className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
-          Pick a service. <span className="text-gradient">Order in minutes.</span>
-        </h1>
-        <p className="mt-4 max-w-2xl text-muted-foreground">
-          Every package has a listed price. Add it to your cart and check out like any store.
-          Bigger project in mind? The quote-based services are one message away.
-        </p>
-      </Reveal>
+      <ServicesIntro />
 
       <ServicesBrowser products={products} />
 
