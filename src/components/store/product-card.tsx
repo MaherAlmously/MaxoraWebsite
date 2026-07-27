@@ -1,9 +1,9 @@
 'use client';
 
-import { useRef, type PointerEvent as ReactPointerEvent } from 'react';
+import { useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import Link from 'next/link';
 import { motion, useSpring, useReducedMotion } from 'motion/react';
-import { ArrowUpRight, Clock } from 'lucide-react';
+import { ArrowUpRight, Clock, MessageSquare } from 'lucide-react';
 import {
   productTagLabels,
   tierPriceLabel,
@@ -13,6 +13,7 @@ import {
 } from '@/lib/products';
 import { ServiceArt } from '@/components/store/service-art';
 import { Badge } from '@/components/ui/badge';
+import { fireServiceCardConfetti } from '@/lib/confetti';
 import { cn } from '@/lib/utils';
 
 const tagVariant = {
@@ -42,12 +43,17 @@ export function ProductCard({ product }: { product: Product }) {
     artY.set(0);
   }
 
+  function handleClick(e: ReactMouseEvent<HTMLAnchorElement>) {
+    fireServiceCardConfetti(e.clientX, e.clientY);
+  }
+
   return (
     <Link
       ref={cardRef}
       href={`/services/${product.slug}`}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
+      onClick={handleClick}
       className={cn(
         'group relative block h-full overflow-hidden rounded-2xl border bg-card p-2.5 transition-[border-color,box-shadow] duration-300 [transition-timing-function:var(--ease-out-expo)] sm:p-4',
         featured
@@ -88,8 +94,9 @@ export function ProductCard({ product }: { product: Product }) {
         </p>
 
         {product.quoteOnly ? (
-          <p className="mt-3 text-xs font-medium text-primary sm:mt-4 sm:text-sm">
-            Free quote, priced per project
+          <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-primary sm:mt-4 sm:text-sm">
+            <MessageSquare className="size-3.5 shrink-0 sm:size-4" />
+            Free Quote — Contact Us
           </p>
         ) : (
           <ul className="mt-3 space-y-1.5 sm:mt-4">

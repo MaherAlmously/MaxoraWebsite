@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Check, MessageSquare, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
@@ -9,6 +9,7 @@ import { useCart } from '@/lib/cart-context';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Reveal } from '@/components/reveal';
+import { fireProductPageConfetti } from '@/lib/confetti';
 import { cn } from '@/lib/utils';
 
 export function ProductDetail({ product }: { product: Product }) {
@@ -17,6 +18,10 @@ export function ProductDetail({ product }: { product: Product }) {
     product.tiers.length > 0 ? product.tiers[0].id : '',
   );
   const selectedTier = product.tiers.find((t) => t.id === selectedTierId);
+
+  useEffect(() => {
+    fireProductPageConfetti();
+  }, [product.slug]);
 
   // Put the highlighted (best value) tier in the middle column on a 3-up grid,
   // matching the conventional pricing-table layout.
