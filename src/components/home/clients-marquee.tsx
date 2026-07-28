@@ -14,7 +14,7 @@ function LogoTile({ client }: { client: Client }) {
   return (
     <div
       className="group glass flex w-40 shrink-0 flex-col items-center gap-2.5 rounded-xl px-4 py-4 transition-all duration-300 hover:scale-105 hover:border-primary/50 hover:shadow-[0_0_28px_oklch(0.85_0.135_190_/_20%)] sm:w-48"
-      title={`${client.name} — ${client.service}`}
+      title={`${client.name}: ${client.service}`}
     >
       <div className="size-14 shrink-0 overflow-hidden rounded-full bg-white ring-1 ring-border transition-shadow duration-300 group-hover:ring-primary/50 sm:size-16">
         <Image

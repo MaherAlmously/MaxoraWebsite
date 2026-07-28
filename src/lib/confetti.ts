@@ -4,7 +4,7 @@ const GOLD = ['#f5c542', '#e0a92c', '#fff3c4', '#c98910', '#ffe89a', '#b8860b'];
 
 /**
  * Heavy, layered gold burst fired from the click point on a service card in
- * the services grid — meant to feel rich/celebratory, not a quick blip.
+ * the services grid, meant to feel rich/celebratory, not a quick blip.
  */
 export function fireServiceCardConfetti(clientX: number, clientY: number) {
   if (typeof window === 'undefined') return;
@@ -36,7 +36,7 @@ export function fireServiceCardConfetti(clientX: number, clientY: number) {
 }
 
 /**
- * Slower, more restrained shimmer for landing on a single service page —
+ * Slower, more restrained shimmer for landing on a single service page,
  * two side cannons from the top corners rather than a click-point burst,
  * so it reads as a distinct "you've arrived" moment, not a repeat of the
  * grid's click effect.

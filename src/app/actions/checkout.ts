@@ -136,7 +136,7 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
       // price_data, which allow inline product_data), so create one per line.
       const recurringItems = await Promise.all(
         recurringLines.map(async (l) => {
-          const product = await stripe.products.create({ name: `${l.product_name} — ${l.tier_name}` });
+          const product = await stripe.products.create({ name: `${l.product_name}: ${l.tier_name}` });
           return {
             price_data: {
               currency: 'usd',
@@ -161,7 +161,7 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
               add_invoice_items: await Promise.all(
                 oneTimeLines.map(async (l) => {
                   const product = await stripe.products.create({
-                    name: `${l.product_name} — ${l.tier_name}`,
+                    name: `${l.product_name}: ${l.tier_name}`,
                   });
                   return {
                     price_data: {

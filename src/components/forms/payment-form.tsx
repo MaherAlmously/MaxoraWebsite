@@ -130,7 +130,7 @@ export function PaymentForm() {
         {discountedCents !== null && (
           <p className="flex items-center gap-1.5 text-sm text-primary">
             <Tag className="size-3.5" />
-            Promo applied — new total {formatPrice(discountedCents)}
+            Promo applied, new total {formatPrice(discountedCents)}
           </p>
         )}
       </div>

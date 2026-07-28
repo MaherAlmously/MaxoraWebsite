@@ -124,7 +124,7 @@ export function HeroBackground() {
     <div ref={ref} className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
       {/* Welcome bloom: a bright flash that blooms outward once and settles
           into the ambient glow, plus a scatter of particles that drift and
-          shimmer continuously — an ongoing loop, not a one-shot pulse. */}
+          shimmer continuously, an ongoing loop, not a one-shot pulse. */}
       {!reduceForEntrance && (
         <>
           <motion.div

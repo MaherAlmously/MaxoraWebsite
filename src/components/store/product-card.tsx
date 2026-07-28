@@ -96,7 +96,7 @@ export function ProductCard({ product }: { product: Product }) {
         {product.quoteOnly ? (
           <p className="mt-3 flex items-center gap-1.5 text-xs font-medium text-primary sm:mt-4 sm:text-sm">
             <MessageSquare className="size-3.5 shrink-0 sm:size-4" />
-            Free Quote — Contact Us
+            Free Quote, Contact Us
           </p>
         ) : (
           <ul className="mt-3 space-y-1.5 sm:mt-4">

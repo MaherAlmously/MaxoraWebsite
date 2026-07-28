@@ -195,7 +195,7 @@ export default async function AdminOrdersPage({
 
                 <div className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-4 sm:grid-cols-4">
                   <DetailField label="Email" value={order.customer_email} />
-                  <DetailField label="Phone" value={order.customer_phone || '—'} />
+                  <DetailField label="Phone" value={order.customer_phone || 'N/A'} />
                   <DetailField
                     label="Placed"
                     value={new Date(order.created_at).toLocaleString(undefined, {

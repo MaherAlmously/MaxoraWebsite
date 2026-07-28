@@ -5,7 +5,7 @@ import { motion, useSpring, useReducedMotion } from 'motion/react';
 
 /**
  * Wraps a single interactive child (button/link) and pulls it a few px toward
- * the cursor while hovered, on a spring — restrained enough to feel like a
+ * the cursor while hovered, on a spring, restrained enough to feel like a
  * detail rather than a gimmick. Reserved for the single primary CTA on a page.
  */
 export function MagneticButton({ children, strength = 18 }: { children: ReactNode; strength?: number }) {
