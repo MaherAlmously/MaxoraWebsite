@@ -199,6 +199,9 @@ export function ProductDetail({ product }: { product: Product }) {
                     {tier.billing === 'monthly' && (
                       <span className="text-muted-foreground">/mo</span>
                     )}
+                    {tier.billing === 'daily' && (
+                      <span className="text-muted-foreground">/day</span>
+                    )}
                     {discount !== null && (
                       <span className="text-base text-muted-foreground/70 line-through tabular-nums">
                         {formatPrice(tier.originalPriceCents!)}

@@ -108,7 +108,10 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
     },
   };
 
-  const isSubscription = input.items.some((i) => getTier(i.productSlug, i.tierId)?.billing === 'monthly');
+  const isSubscription = input.items.some((i) => {
+    const billing = getTier(i.productSlug, i.tierId)?.billing;
+    return billing === 'monthly' || billing === 'daily';
+  });
   const promoCode = input.promoCode?.trim();
 
   let clientSecret: string | null | undefined;
@@ -127,8 +130,20 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
     }
 
     if (isSubscription) {
-      const recurringLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing === 'monthly');
-      const oneTimeLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing !== 'monthly');
+      const recurringLines = lines.filter((l) => {
+        const billing = getTier(l.product_slug, l.tier_id)!.billing;
+        return billing === 'monthly' || billing === 'daily';
+      });
+      const oneTimeLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing === 'one_time');
+      // Daily billing only exists on the internal "Subscription Test" product,
+      // which should charge today, charge once more tomorrow, then stop on
+      // its own rather than renewing forever like a real plan.
+      const hasDailyTestPlan = recurringLines.some(
+        (l) => getTier(l.product_slug, l.tier_id)!.billing === 'daily',
+      );
+      const cancelAt = hasDailyTestPlan
+        ? Math.floor(Date.now() / 1000) + 2 * 24 * 60 * 60
+        : undefined;
 
       const customer = await stripe.customers.create({ name, email, metadata: { order_id: orderId } });
 
@@ -137,11 +152,12 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
       const recurringItems = await Promise.all(
         recurringLines.map(async (l) => {
           const product = await stripe.products.create({ name: `${l.product_name}: ${l.tier_name}` });
+          const billing = getTier(l.product_slug, l.tier_id)!.billing;
           return {
             price_data: {
               currency: 'usd',
               unit_amount: l.unit_price_cents,
-              recurring: { interval: 'month' as const },
+              recurring: { interval: billing === 'daily' ? ('day' as const) : ('month' as const) },
               product: product.id,
             },
             quantity: l.quantity,
@@ -156,6 +172,7 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
         expand: ['latest_invoice.confirmation_secret'],
         metadata: { order_id: orderId },
         items: recurringItems,
+        ...(cancelAt ? { cancel_at: cancelAt } : {}),
         ...(oneTimeLines.length
           ? {
               add_invoice_items: await Promise.all(

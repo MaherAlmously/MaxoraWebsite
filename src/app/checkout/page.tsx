@@ -24,7 +24,10 @@ export default function CheckoutPage() {
   const [discountedCents, setDiscountedCents] = useState<number | null>(null);
 
   const totalCents = discountedCents ?? subtotalCents;
-  const isSubscription = items.some((i) => getTier(i.productSlug, i.tierId)?.billing === 'monthly');
+  const isSubscription = items.some((i) => {
+    const billing = getTier(i.productSlug, i.tierId)?.billing;
+    return billing === 'monthly' || billing === 'daily';
+  });
 
   async function handleApplyPromo() {
     if (!promoCode.trim()) return;
@@ -173,6 +176,7 @@ export default function CheckoutPage() {
                   <span className="whitespace-nowrap text-primary">
                     {formatPrice(item.unitPriceCents * item.quantity)}
                     {item.billing === 'monthly' && <span className="text-xs">/mo</span>}
+                    {item.billing === 'daily' && <span className="text-xs">/day</span>}
                   </span>
                 </div>
               ))}

@@ -1,4 +1,4 @@
-export type Billing = 'one_time' | 'monthly';
+export type Billing = 'one_time' | 'monthly' | 'daily';
 
 export type ProductTier = {
   id: string;
@@ -300,6 +300,29 @@ export const products: Product[] = [
     tiers: [],
   },
   {
+    slug: 'subscription-test',
+    name: 'Subscription Test',
+    tagline: 'Internal test product for checking the recurring payment flow.',
+    shortTagline: 'Test plan',
+    description:
+      'A $1/day test plan used to verify that recurring subscriptions actually charge on schedule. Not a real service, safe to ignore.',
+    icon: 'Wrench',
+    category: 'development',
+    quoteOnly: false,
+    tiers: [
+      {
+        id: 'daily-test',
+        name: 'Daily Test',
+        priceCents: 100,
+        billing: 'daily',
+        features: [
+          'Charges $1 today, then $1 again in 24 hours',
+          'Cancels itself automatically after that, no third charge',
+        ],
+      },
+    ],
+  },
+  {
     slug: 'video-production',
     name: 'Video Production',
     tagline: 'Commercial videos and whiteboard animations that make your brand memorable.',
@@ -338,17 +361,24 @@ export function formatPrice(cents: number): string {
   return Number.isInteger(dollars) ? `$${dollars}` : `$${dollars.toFixed(2)}`;
 }
 
+const billingSuffix: Record<Billing, string> = {
+  one_time: '',
+  monthly: '/mo',
+  daily: '/day',
+};
+
 /** "Starting at $180" / "$125/mo" style label for cards. */
 export function startingPriceLabel(product: Product): string {
   if (product.quoteOnly || product.tiers.length === 0) return 'Custom quote';
   const cheapest = [...product.tiers].sort((a, b) => a.priceCents - b.priceCents)[0];
   const base = formatPrice(cheapest.priceCents);
-  return cheapest.billing === 'monthly' ? `From ${base}/mo` : `From ${base}`;
+  const suffix = billingSuffix[cheapest.billing];
+  return suffix ? `From ${base}${suffix}` : `From ${base}`;
 }
 
 export function tierPriceLabel(tier: ProductTier): string {
   const base = formatPrice(tier.priceCents);
-  return tier.billing === 'monthly' ? `${base}/mo` : base;
+  return `${base}${billingSuffix[tier.billing]}`;
 }
 
 /** Whole-percent discount, e.g. 50 for "50% off". */

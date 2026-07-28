@@ -92,6 +92,7 @@ export function CartDrawer() {
                     <p className="text-sm font-semibold text-primary">
                       {formatPrice(item.unitPriceCents * item.quantity)}
                       {item.billing === 'monthly' && <span className="text-xs">/mo</span>}
+                      {item.billing === 'daily' && <span className="text-xs">/day</span>}
                     </p>
                   </div>
                 </div>
