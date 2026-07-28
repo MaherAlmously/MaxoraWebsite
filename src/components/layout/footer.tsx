@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getProduct } from '@/lib/products';
+import { SITE_DESCRIPTION } from '@/lib/site';
 
 const footerServiceSlugs = [
   'website-development',
@@ -22,10 +23,7 @@ export function Footer() {
             <Image src="/logo-mark.png" alt="Maxora" width={32} height={32} className="rounded-md" />
             <span className="font-heading text-lg font-semibold tracking-wide">Maxora</span>
           </Link>
-          <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            Software development, web, mobile, and desktop apps for businesses that want to
-            stand out. Built fast, built right.
-          </p>
+          <p className="mt-4 max-w-sm text-sm text-muted-foreground">{SITE_DESCRIPTION}</p>
         </div>
 
         <div>
