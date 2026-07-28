@@ -113,7 +113,7 @@ export function ProductDetail({ product }: { product: Product }) {
                   className="flex items-center gap-2.5 rounded-lg border border-dashed border-primary/40 bg-primary/5 px-4 py-3 text-sm text-primary sm:col-span-2"
                 >
                   <Sparkles className="size-4 shrink-0" />
-                  <span>Anything you want, just tell us what you have in mind</span>
+                  <span>Anything you want, just ask</span>
                 </motion.li>
               </motion.ul>
             </div>
