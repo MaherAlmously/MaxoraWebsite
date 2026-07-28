@@ -28,6 +28,9 @@ for the asChild→render shim pattern). No CMS - the product/pricing catalog is 
 Project ref `qcejbzcrpipgqiuelvqr`. Table definitions live only in the live DB (no
 `supabase/migrations` directory in this repo) - use the `mcp__maxora__*` tools
 (`list_tables`, `execute_sql`, `apply_migration`) to inspect/change schema, not local SQL files.
+`db/schema.sql` is a point-in-time snapshot of that live schema (tables, RLS policies,
+functions, triggers) kept in the repo as disaster recovery, not an applied migration -
+regenerate it from the live DB whenever the schema changes, don't hand-edit it out of sync.
 
 Three Supabase client variants, each for a different trust boundary:
 - `src/lib/supabase/client.ts` - browser client (anon key), for client components.
