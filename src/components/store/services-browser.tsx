@@ -70,7 +70,7 @@ export function ServicesBrowser({ products }: { products: Product[] }) {
             type="button"
             onClick={() => setCategory(tab.id)}
             className={cn(
-              'shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium whitespace-nowrap transition-colors duration-200',
+              'shrink-0 rounded-lg border px-4 py-1.5 text-sm font-medium whitespace-nowrap transition-colors duration-200',
               category === tab.id
                 ? 'border-primary bg-primary/10 text-primary'
                 : 'border-border text-muted-foreground hover:border-primary/40 hover:text-foreground',
@@ -88,7 +88,7 @@ export function ServicesBrowser({ products }: { products: Product[] }) {
             type="button"
             onClick={() => setPricing(tab.id)}
             className={cn(
-              'shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium whitespace-nowrap transition-colors duration-200 sm:text-sm',
+              'shrink-0 rounded-lg border px-4 py-1.5 text-xs font-medium whitespace-nowrap transition-colors duration-200 sm:text-sm',
               pricing === tab.id
                 ? 'border-primary/60 bg-primary/5 text-primary'
                 : 'border-border/70 text-muted-foreground hover:border-primary/40 hover:text-foreground',

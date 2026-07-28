@@ -9,7 +9,7 @@ import { Reveal } from '@/components/reveal';
 const stats = [
   { value: 50, suffix: '+', label: 'Projects delivered' },
   { value: 7, suffix: ' days', label: 'Average turnaround' },
-  { value: 92, suffix: '%', label: 'Client satisfaction' },
+  { value: 92, suffix: '%', label: 'On track' },
   { value: 24, suffix: '/7', label: 'Support access' },
 ];
 
@@ -61,7 +61,7 @@ function Counter({ value, suffix }: { value: number; suffix: string }) {
   }, [inView, value, reduce]);
 
   return (
-    <span ref={ref} className="font-heading text-4xl font-semibold text-gradient">
+    <span ref={ref} className="font-heading text-2xl font-semibold text-gradient sm:text-3xl">
       {display}
       {suffix}
     </span>
@@ -78,14 +78,21 @@ export function WhyUs() {
           description="Fixed packages, real deadlines, and work you can check at every step. You always know what you pay and what you get."
         />
 
-        <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <Reveal key={stat.label} className="text-center">
-              <Counter value={stat.value} suffix={stat.suffix} />
-              <p className="mt-2 text-sm text-muted-foreground">{stat.label}</p>
-            </Reveal>
-          ))}
-        </div>
+        <Reveal>
+          <div className="facet-cut flex flex-wrap items-center justify-center gap-x-8 gap-y-4 rounded-xl border border-border bg-card px-6 py-6 sm:gap-x-10">
+            {stats.map((stat, i) => (
+              <div key={stat.label} className="flex items-center gap-x-8 sm:gap-x-10">
+                <div className="flex items-baseline gap-2">
+                  <Counter value={stat.value} suffix={stat.suffix} />
+                  <span className="text-sm text-muted-foreground">{stat.label}</span>
+                </div>
+                {i < stats.length - 1 && (
+                  <span className="hidden h-6 w-px bg-border sm:block" aria-hidden="true" />
+                )}
+              </div>
+            ))}
+          </div>
+        </Reveal>
 
         <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           {features.map((feature, i) => (

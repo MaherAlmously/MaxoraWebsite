@@ -106,7 +106,7 @@ export function Navbar() {
           </Button>
 
           <Button asChild size="sm" className="hidden glow md:inline-flex">
-            <Link href="/services">Get Started</Link>
+            <Link href="/services">Learn More</Link>
           </Button>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -155,7 +155,7 @@ export function Navbar() {
                   className="glow mt-10 w-full max-w-xs self-center"
                   onClick={() => setMobileOpen(false)}
                 >
-                  <Link href="/services">Get Started</Link>
+                  <Link href="/services">Learn More</Link>
                 </Button>
               </div>
             </SheetContent>

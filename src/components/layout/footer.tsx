@@ -71,9 +71,17 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-border">
-        <p className="mx-auto max-w-6xl px-4 py-5 text-xs text-muted-foreground sm:px-6">
-          © {new Date().getFullYear()} Maxora. All rights reserved.
-        </p>
+        <div className="mx-auto flex max-w-6xl flex-col-reverse items-center gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:justify-between sm:px-6">
+          <p>© {new Date().getFullYear()} Maxora. All rights reserved.</p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="transition-colors hover:text-foreground">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-foreground">
+              Terms and Conditions
+            </Link>
+          </div>
+        </div>
       </div>
     </footer>
   );
