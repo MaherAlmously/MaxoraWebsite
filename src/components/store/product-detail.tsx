@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, MessageSquare, ShoppingCart } from 'lucide-react';
+import { motion, useReducedMotion, type Variants } from 'motion/react';
+import { ArrowLeft, Check, Sparkles, MessageSquare, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatPrice, tierPriceLabel, tierDiscountPercent, type Product } from '@/lib/products';
 import { useCart } from '@/lib/cart-context';
@@ -12,12 +13,23 @@ import { Reveal } from '@/components/reveal';
 import { fireProductPageConfetti } from '@/lib/confetti';
 import { cn } from '@/lib/utils';
 
+const exampleListVariants: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
+};
+
+const exampleItemVariants: Variants = {
+  hidden: { opacity: 0, y: 14, scale: 0.95 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+};
+
 export function ProductDetail({ product }: { product: Product }) {
   const { addItem } = useCart();
   const [selectedTierId, setSelectedTierId] = useState(
     product.tiers.length > 0 ? product.tiers[0].id : '',
   );
   const selectedTier = product.tiers.find((t) => t.id === selectedTierId);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     fireProductPageConfetti();
@@ -79,17 +91,31 @@ export function ProductDetail({ product }: { product: Product }) {
               <p className="text-center text-sm font-medium text-muted-foreground">
                 A few examples of what we can build:
               </p>
-              <ul className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              <motion.ul
+                className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2"
+                variants={reduce ? undefined : exampleListVariants}
+                initial={reduce ? undefined : 'hidden'}
+                whileInView={reduce ? undefined : 'show'}
+                viewport={{ once: true, amount: 0.4 }}
+              >
                 {product.examples.map((example) => (
-                  <li
+                  <motion.li
                     key={example}
+                    variants={reduce ? undefined : exampleItemVariants}
                     className="flex items-center gap-2.5 rounded-lg border border-border bg-card px-4 py-3 text-sm"
                   >
                     <Check className="size-4 shrink-0 text-primary" />
                     <span>{example}</span>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+                <motion.li
+                  variants={reduce ? undefined : exampleItemVariants}
+                  className="flex items-center gap-2.5 rounded-lg border border-dashed border-primary/40 bg-primary/5 px-4 py-3 text-sm text-primary sm:col-span-2"
+                >
+                  <Sparkles className="size-4 shrink-0" />
+                  <span>Anything you want — just tell us what you have in mind</span>
+                </motion.li>
+              </motion.ul>
             </div>
           )}
 

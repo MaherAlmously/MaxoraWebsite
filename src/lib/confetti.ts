@@ -47,9 +47,9 @@ export function fireProductPageConfetti() {
     colors: GOLD,
     disableForReducedMotion: true,
     shapes: ['star', 'circle'] as confetti.Shape[],
-    ticks: 260,
+    ticks: 130,
   };
 
-  confetti({ ...base, particleCount: 45, angle: 60, spread: 55, startVelocity: 42, gravity: 0.55, scalar: 1.2, origin: { x: 0, y: 0.25 } });
-  confetti({ ...base, particleCount: 45, angle: 120, spread: 55, startVelocity: 42, gravity: 0.55, scalar: 1.2, origin: { x: 1, y: 0.25 } });
+  confetti({ ...base, particleCount: 35, angle: 60, spread: 50, startVelocity: 34, gravity: 1, scalar: 1.1, origin: { x: 0, y: 0.25 } });
+  confetti({ ...base, particleCount: 35, angle: 120, spread: 50, startVelocity: 34, gravity: 1, scalar: 1.1, origin: { x: 1, y: 0.25 } });
 }

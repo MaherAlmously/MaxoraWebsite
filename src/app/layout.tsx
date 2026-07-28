@@ -28,15 +28,16 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
   title: {
-    default: 'Maxora | Websites, Branding & Digital Growth',
+    default: 'Maxora | Software, Web, Mobile & Desktop Development',
     template: '%s | Maxora',
   },
   description:
-    'Maxora is a tech and marketing agency building websites, logos, social media content, and apps that grow your business.',
+    'Software development, web, mobile, and desktop apps for businesses that want to stand out. Built fast, built right.',
   icons: { icon: '/logo-mark.png' },
   openGraph: {
     title: 'Maxora',
-    description: 'Websites, branding, and digital growth, built by Maxora.',
+    description:
+      'Software development, web, mobile, and desktop apps for businesses that want to stand out. Built fast, built right.',
     images: ['/maxora-logo.jpg'],
   },
 };
