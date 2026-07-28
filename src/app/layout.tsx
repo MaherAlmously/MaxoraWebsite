@@ -70,7 +70,7 @@ export default function RootLayout({
           </SmoothScrollProvider>
           <CartDrawer />
         </CartProvider>
-        <Toaster position="bottom-right" />
+        <Toaster position="top-center" />
         <MicrosoftClarity />
         {gaId && <GoogleAnalytics gaId={gaId} />}
       </body>
