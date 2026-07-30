@@ -2,23 +2,34 @@
 
 import { motion, useReducedMotion } from 'motion/react';
 
-// Fixed positions (not random per render) so the streaking stars don't shift
-// between server/client hydration. Each one travels along `angle` (degrees,
-// 0 = left-to-right) for `travel` px, leaving a fading tail behind it.
-const SHOOTING_STARS = [
-  { x: 6, y: 18, angle: -18, delay: 0, duration: 1.6, travel: 160, length: 90 },
-  { x: 92, y: 12, angle: 200, delay: 1.4, duration: 1.9, travel: 140, length: 80 },
-  { x: 16, y: 68, angle: -12, delay: 2.6, duration: 1.5, travel: 180, length: 100 },
-  { x: 84, y: 74, angle: 195, delay: 0.7, duration: 1.7, travel: 150, length: 85 },
-  { x: 48, y: 8, angle: -24, delay: 3.4, duration: 1.8, travel: 170, length: 95 },
-  { x: 30, y: 42, angle: -15, delay: 4.6, duration: 1.6, travel: 155, length: 88 },
-  { x: 70, y: 36, angle: 205, delay: 1.9, duration: 2, travel: 165, length: 92 },
-  { x: 10, y: 88, angle: -20, delay: 5.5, duration: 1.5, travel: 145, length: 80 },
-  { x: 60, y: 90, angle: -16, delay: 3.9, duration: 1.9, travel: 175, length: 98 },
-  { x: 90, y: 50, angle: 198, delay: 6.2, duration: 1.7, travel: 150, length: 85 },
-  { x: 38, y: 60, angle: -22, delay: 7, duration: 1.6, travel: 160, length: 90 },
-  { x: 20, y: 30, angle: -14, delay: 5, duration: 1.8, travel: 170, length: 95 },
-];
+// Deterministic pseudo-random generator (fixed seed) so the star field is
+// identical between server and client renders - real Math.random() here
+// would cause a hydration mismatch.
+function mulberry32(seed: number) {
+  let a = seed;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// Each star travels along `angle` (degrees, 0 = left-to-right) for `travel`
+// viewport-widths, so the streak always crosses the full screen edge to
+// edge regardless of device size, then fades and loops after `repeatDelay`.
+const rand = mulberry32(7);
+const SHOOTING_STARS = Array.from({ length: 22 }, () => ({
+  x: Math.round(rand() * 100),
+  y: Math.round(rand() * 100),
+  angle: (rand() < 0.5 ? -1 : 1) * (12 + rand() * 16) + (rand() < 0.5 ? 0 : 180),
+  delay: +(rand() * 10).toFixed(2),
+  duration: +(1.1 + rand() * 0.7).toFixed(2),
+  travel: +(130 + rand() * 40).toFixed(0),
+  length: Math.round(70 + rand() * 50),
+  repeatDelay: +(3 + rand() * 5).toFixed(2),
+}));
 
 // Small ambient dots (unrelated to the shooting stars) that gently drift and
 // shimmer in place, giving the field some depth behind the streaks.
@@ -62,21 +73,22 @@ export function HeroBackground() {
                 top: `${s.y}%`,
                 width: s.length,
                 height: 2,
-                transform: `rotate(${s.angle}deg)`,
+                rotate: s.angle,
                 transformOrigin: 'left center',
                 background: 'linear-gradient(90deg, transparent, var(--grad-a) 70%, #fff)',
+                willChange: 'transform, opacity',
               }}
-              initial={{ opacity: 0, x: 0 }}
+              initial={{ opacity: 0, x: '0vw' }}
               animate={{
                 opacity: [0, 1, 1, 0],
-                x: [0, s.travel * 0.5, s.travel],
+                x: ['0vw', `${s.travel * 0.55}vw`, `${s.travel}vw`],
               }}
               transition={{
                 duration: s.duration,
                 delay: s.delay,
-                ease: 'easeOut',
+                ease: [0.3, 0, 0.2, 1],
                 repeat: Infinity,
-                repeatDelay: 6 + s.delay * 0.4,
+                repeatDelay: s.repeatDelay,
               }}
             />
           ))}
