@@ -33,18 +33,19 @@ export async function submitSouqlyDeleteRequest(
     return { ok: false, error: 'Something went wrong sending your request. Please try again.' };
   }
 
-  void sendNotification(`Souqly account deletion request from ${name}`, {
-    name,
-    email,
-    reason: reason || 'not provided',
-  });
-
-  void sendConfirmation(email, {
-    subject: 'We received your account deletion request',
-    heading: `Hi ${name.split(' ')[0]}, we got your request`,
-    message:
-      "We've received your Souqly account deletion request and will process it shortly. You'll get a confirmation email at this address once it's complete.",
-  });
+  await Promise.all([
+    sendNotification(`Souqly account deletion request from ${name}`, {
+      name,
+      email,
+      reason: reason || 'not provided',
+    }),
+    sendConfirmation(email, {
+      subject: 'We received your account deletion request',
+      heading: `Hi ${name.split(' ')[0]}, we got your request`,
+      message:
+        "We've received your Souqly account deletion request and will process it shortly. You'll get a confirmation email at this address once it's complete.",
+    }),
+  ]);
 
   return { ok: true };
 }

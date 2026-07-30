@@ -5,12 +5,11 @@ const REPLY_FROM = 'Maxora <hello@maxora.tech>';
 const NOTIFY_TO = 'maxoradev@gmail.com';
 const LOGO_URL = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://maxora.tech'}/logo-mark.png`;
 
-const INK = '#0a0e13';
-const CARD = '#151d27';
-const LOGO_FRAME = '#0a0e13';
-const BORDER = '#2a3644';
+const INK = '#090d12';
+const CARD = '#1a2432';
+const BORDER = '#33455a';
 const TEXT = '#ffffff';
-const MUTED = '#a7b3bd';
+const MUTED = '#b7c2cc';
 const ACCENT = '#3ee0f5';
 
 let client: Resend | null = null;
@@ -29,68 +28,42 @@ function escapeHtml(value: string): string {
     .replace(/>/g, '&gt;');
 }
 
-function layout(opts: { preheader: string; bodyHtml: string }): string {
+function layout(opts: { preheader: string; eyebrow?: string; bodyHtml: string }): string {
   return `<!doctype html>
-<html style="background-color:${INK} !important;">
+<html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
     <meta name="supported-color-schemes" content="dark" />
-    <style>
-      body, table, td { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
-      body { background-color:${INK} !important; }
-      a { color:${ACCENT}; }
-      @media (prefers-color-scheme: light), (prefers-color-scheme: dark) {
-        body, .mx-bg { background-color:${INK} !important; }
-        .mx-card { background-color:${CARD} !important; }
-        .mx-frame { background-color:${LOGO_FRAME} !important; }
-        .mx-text { color:${TEXT} !important; }
-        .mx-muted { color:${MUTED} !important; }
-      }
-    </style>
   </head>
   <body bgcolor="${INK}" style="margin:0;padding:0;background-color:${INK} !important;font-family:Helvetica,Arial,sans-serif;">
     <span style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(opts.preheader)}</span>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${INK}" class="mx-bg" style="background-color:${INK} !important;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${INK}" style="background-color:${INK} !important;">
       <tr>
-        <td align="center" style="padding:40px 20px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+        <td align="center" style="padding:48px 20px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:540px;">
             <tr>
-              <td align="center" style="padding-bottom:28px;">
-                <table role="presentation" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td
-                      align="center"
-                      valign="middle"
-                      bgcolor="${LOGO_FRAME}"
-                      class="mx-frame"
-                      style="width:64px;height:64px;background-color:${LOGO_FRAME} !important;border:1px solid ${ACCENT};border-radius:16px;"
-                    >
-                      <img
-                        src="${LOGO_URL}"
-                        width="40"
-                        height="40"
-                        alt="Maxora"
-                        style="display:block;width:40px;height:40px;border-radius:10px;"
-                      />
-                    </td>
-                  </tr>
-                </table>
-                <div class="mx-text" style="margin-top:12px;font-size:16px;font-weight:700;letter-spacing:0.06em;color:${TEXT} !important;text-transform:uppercase;">
-                  Maxora
-                </div>
+              <td align="center" style="padding-bottom:24px;">
+                <img
+                  src="${LOGO_URL}"
+                  width="52"
+                  height="52"
+                  alt="Maxora"
+                  style="display:block;width:52px;height:52px;border-radius:12px;border:2px solid ${ACCENT};"
+                />
               </td>
             </tr>
             <tr>
-              <td bgcolor="${CARD}" class="mx-card" style="background-color:${CARD} !important;border:1px solid ${BORDER};border-radius:14px;padding:36px 32px;">
+              <td bgcolor="${CARD}" style="background-color:${CARD} !important;border:1px solid ${BORDER};border-radius:16px;padding:40px 36px;">
+                ${opts.eyebrow ? `<p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:0.08em;color:${ACCENT};text-transform:uppercase;">${escapeHtml(opts.eyebrow)}</p>` : ''}
                 ${opts.bodyHtml}
               </td>
             </tr>
             <tr>
-              <td align="center" style="padding-top:24px;">
-                <p class="mx-muted" style="margin:0;font-size:12px;color:${MUTED} !important;">
-                  <a href="https://maxora.tech" style="color:${ACCENT};text-decoration:underline;">maxora.tech</a>
+              <td align="center" style="padding-top:28px;">
+                <p style="margin:0;font-size:13px;color:${MUTED};">
+                  Maxora &middot; <a href="https://maxora.tech" style="color:${ACCENT};text-decoration:underline;">maxora.tech</a>
                 </p>
               </td>
             </tr>
@@ -107,9 +80,9 @@ function detailRows(fields: Record<string, string | number | undefined>): string
     .map(
       ([key, value]) => `
         <tr>
-          <td style="padding:0 0 14px;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;color:${MUTED};text-transform:uppercase;">${escapeHtml(key)}</div>
-            <div style="margin-top:3px;font-size:14px;line-height:1.55;color:${TEXT};white-space:pre-wrap;">${escapeHtml(String(value ?? ''))}</div>
+          <td style="padding:14px 0;border-bottom:1px solid ${BORDER};">
+            <div style="font-size:12px;font-weight:700;letter-spacing:0.05em;color:${MUTED};text-transform:uppercase;">${escapeHtml(key)}</div>
+            <div style="margin-top:4px;font-size:15px;line-height:1.6;color:${TEXT};white-space:pre-wrap;">${escapeHtml(String(value ?? ''))}</div>
           </td>
         </tr>`,
     )
@@ -119,7 +92,8 @@ function detailRows(fields: Record<string, string | number | undefined>): string
 /**
  * Sends an internal email notification to the Maxora team via Resend.
  * No-ops (with a warning) when RESEND_API_KEY is not set, so forms keep
- * working before the key is configured.
+ * working before the key is configured. Always awaited by callers so the
+ * send completes before the serverless function exits.
  */
 export async function sendNotification(
   subject: string,
@@ -131,8 +105,7 @@ export async function sendNotification(
     return;
   }
   const bodyHtml = `
-    <div style="font-size:11px;font-weight:700;letter-spacing:0.05em;color:${ACCENT};text-transform:uppercase;">New submission</div>
-    <h1 style="margin:8px 0 24px;font-size:19px;line-height:1.4;color:${TEXT};font-weight:700;">${escapeHtml(subject)}</h1>
+    <h1 style="margin:0 0 22px;font-size:22px;line-height:1.4;color:${TEXT};font-weight:700;">${escapeHtml(subject)}</h1>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${detailRows(fields)}</table>
   `;
   try {
@@ -140,7 +113,7 @@ export async function sendNotification(
       from: NOTIFY_FROM,
       to: NOTIFY_TO,
       subject,
-      html: layout({ preheader: subject, bodyHtml }),
+      html: layout({ preheader: subject, eyebrow: 'New submission', bodyHtml }),
     });
     if (error) console.error('[resend] notification failed:', error);
   } catch (err) {
@@ -151,7 +124,8 @@ export async function sendNotification(
 /**
  * Sends a branded "we received it and will reply" confirmation to the
  * person who submitted a form. Best-effort, same no-op behavior as
- * sendNotification when RESEND_API_KEY is not set.
+ * sendNotification when RESEND_API_KEY is not set. Always awaited by
+ * callers so the send completes before the serverless function exits.
  */
 export async function sendConfirmation(
   to: string,
@@ -163,15 +137,15 @@ export async function sendConfirmation(
     return;
   }
   const bodyHtml = `
-    <h1 style="margin:0 0 16px;font-size:19px;line-height:1.4;color:${TEXT};font-weight:700;">${escapeHtml(opts.heading)}</h1>
-    <p style="margin:0;font-size:15px;line-height:1.7;color:${TEXT};">${escapeHtml(opts.message)}</p>
+    <h1 style="margin:0 0 18px;font-size:22px;line-height:1.4;color:${TEXT};font-weight:700;">${escapeHtml(opts.heading)}</h1>
+    <p style="margin:0;font-size:16px;line-height:1.75;color:${MUTED};">${escapeHtml(opts.message)}</p>
   `;
   try {
     const { error } = await resend.emails.send({
       from: REPLY_FROM,
       to,
       subject: opts.subject,
-      html: layout({ preheader: opts.message, bodyHtml }),
+      html: layout({ preheader: opts.message, eyebrow: 'Received', bodyHtml }),
     });
     if (error) console.error('[resend] confirmation failed:', error);
   } catch (err) {
@@ -190,15 +164,15 @@ export async function sendReply(
   if (!resend) return { ok: false, error: 'Email is not configured (missing RESEND_API_KEY).' };
 
   const bodyHtml = `
-    <h1 style="margin:0 0 16px;font-size:19px;line-height:1.4;color:${TEXT};font-weight:700;">${escapeHtml(opts.subject)}</h1>
-    <p style="margin:0;font-size:15px;line-height:1.7;color:${TEXT};">${escapeHtml(opts.body).replace(/\n/g, '<br />')}</p>
+    <h1 style="margin:0 0 18px;font-size:22px;line-height:1.4;color:${TEXT};font-weight:700;">${escapeHtml(opts.subject)}</h1>
+    <p style="margin:0;font-size:16px;line-height:1.75;color:${MUTED};">${escapeHtml(opts.body).replace(/\n/g, '<br />')}</p>
   `;
   try {
     const { error } = await resend.emails.send({
       from: REPLY_FROM,
       to,
       subject: opts.subject,
-      html: layout({ preheader: opts.body, bodyHtml }),
+      html: layout({ preheader: opts.body, eyebrow: 'Maxora replied', bodyHtml }),
       replyTo: NOTIFY_TO,
     });
     if (error) return { ok: false, error: error.message };

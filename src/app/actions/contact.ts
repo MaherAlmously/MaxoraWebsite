@@ -33,19 +33,20 @@ export async function submitContact(
     return { ok: false, error: 'Something went wrong sending your message. Please try again.' };
   }
 
-  void sendNotification(`New contact message from ${name}`, {
-    name,
-    email,
-    service: service || 'not specified',
-    message,
-  });
-
-  void sendConfirmation(email, {
-    subject: 'We received your message',
-    heading: `Thanks for reaching out, ${name.split(' ')[0]}`,
-    message:
-      "We've received your message and a member of the Maxora team will get back to you within 24 hours. If it's urgent, feel free to reply directly to this email.",
-  });
+  await Promise.all([
+    sendNotification(`New contact message from ${name}`, {
+      name,
+      email,
+      service: service || 'not specified',
+      message,
+    }),
+    sendConfirmation(email, {
+      subject: 'We received your message',
+      heading: `Thanks for reaching out, ${name.split(' ')[0]}`,
+      message:
+        "We've received your message and a member of the Maxora team will get back to you within 24 hours. If it's urgent, feel free to reply directly to this email.",
+    }),
+  ]);
 
   return { ok: true };
 }

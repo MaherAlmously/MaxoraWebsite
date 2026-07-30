@@ -47,17 +47,18 @@ export async function submitPaymentRequest(input: PaymentRequestInput): Promise<
     return { ok: false, error: 'Something went wrong submitting your payment. Please try again.' };
   }
 
-  void sendNotification(`Payment request: ${formatPrice(amountCents)} from ${name}`, {
-    from: `${name} <${email}>`,
-    amount: formatPrice(amountCents),
-    note: note || 'none',
-  });
-
-  void sendConfirmation(email, {
-    subject: 'We received your payment request',
-    heading: `Thanks, ${name.split(' ')[0]}`,
-    message: `We've received your payment request for ${formatPrice(amountCents)} and the Maxora team will follow up shortly.`,
-  });
+  await Promise.all([
+    sendNotification(`Payment request: ${formatPrice(amountCents)} from ${name}`, {
+      from: `${name} <${email}>`,
+      amount: formatPrice(amountCents),
+      note: note || 'none',
+    }),
+    sendConfirmation(email, {
+      subject: 'We received your payment request',
+      heading: `Thanks, ${name.split(' ')[0]}`,
+      message: `We've received your payment request for ${formatPrice(amountCents)} and the Maxora team will follow up shortly.`,
+    }),
+  ]);
 
   const promoCode = input.promoCode?.trim() ?? '';
   let paymentIntent;
