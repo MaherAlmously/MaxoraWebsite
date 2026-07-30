@@ -3,7 +3,7 @@
 import { randomUUID } from 'crypto';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { sendNotification } from '@/lib/resend';
+import { sendNotification, sendConfirmation } from '@/lib/resend';
 import { getTier, formatPrice } from '@/lib/products';
 import { getStripeClient } from '@/lib/stripe';
 import { applyPromoToAmount, findPromotionCodeId } from '@/lib/stripe-discount';
@@ -97,6 +97,12 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
       .map((l) => `${l.product_name} (${l.tier_name}) x${l.quantity} at ${formatPrice(l.unit_price_cents)}`)
       .join('; '),
     notes: input.notes || 'none',
+  });
+
+  void sendConfirmation(email, {
+    subject: 'We received your order',
+    heading: `Thanks for your order, ${name.split(' ')[0]}`,
+    message: `We've received your order (#${orderId.slice(0, 8)}) for ${formatPrice(totalCents)} and the Maxora team will follow up shortly to kick things off.`,
   });
 
   const isSubscription = input.items.some((i) => {

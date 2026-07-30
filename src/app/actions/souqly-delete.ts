@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { sendNotification } from '@/lib/resend';
+import { sendNotification, sendConfirmation } from '@/lib/resend';
 
 export type SouqlyDeleteState = { ok: boolean; error?: string } | null;
 
@@ -37,6 +37,13 @@ export async function submitSouqlyDeleteRequest(
     name,
     email,
     reason: reason || 'not provided',
+  });
+
+  void sendConfirmation(email, {
+    subject: 'We received your account deletion request',
+    heading: `Hi ${name.split(' ')[0]}, we got your request`,
+    message:
+      "We've received your Souqly account deletion request and will process it shortly. You'll get a confirmation email at this address once it's complete.",
   });
 
   return { ok: true };

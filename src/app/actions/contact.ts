@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { sendNotification } from '@/lib/resend';
+import { sendNotification, sendConfirmation } from '@/lib/resend';
 
 export type ContactState = { ok: boolean; error?: string } | null;
 
@@ -38,6 +38,13 @@ export async function submitContact(
     email,
     service: service || 'not specified',
     message,
+  });
+
+  void sendConfirmation(email, {
+    subject: 'We received your message',
+    heading: `Thanks for reaching out, ${name.split(' ')[0]}`,
+    message:
+      "We've received your message and a member of the Maxora team will get back to you within 24 hours. If it's urgent, feel free to reply directly to this email.",
   });
 
   return { ok: true };

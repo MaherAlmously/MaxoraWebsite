@@ -3,7 +3,7 @@
 import { randomUUID } from 'crypto';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
-import { sendNotification } from '@/lib/resend';
+import { sendNotification, sendConfirmation } from '@/lib/resend';
 import { formatPrice } from '@/lib/products';
 import { getStripeClient } from '@/lib/stripe';
 import { applyPromoToAmount } from '@/lib/stripe-discount';
@@ -51,6 +51,12 @@ export async function submitPaymentRequest(input: PaymentRequestInput): Promise<
     from: `${name} <${email}>`,
     amount: formatPrice(amountCents),
     note: note || 'none',
+  });
+
+  void sendConfirmation(email, {
+    subject: 'We received your payment request',
+    heading: `Thanks, ${name.split(' ')[0]}`,
+    message: `We've received your payment request for ${formatPrice(amountCents)} and the Maxora team will follow up shortly.`,
   });
 
   const promoCode = input.promoCode?.trim() ?? '';
