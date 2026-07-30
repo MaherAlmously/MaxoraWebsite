@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
+import { useActionState } from 'react';
 import { CheckCircle2, Loader2, Trash2 } from 'lucide-react';
 import {
   submitSouqlyDeleteRequest,
@@ -19,48 +19,11 @@ const REASON_OPTIONS = [
   'Other',
 ];
 
-type PendingFields = { name: string; email: string; reason: string };
-
 export function SouqlyDeleteForm() {
   const [state, formAction, pending] = useActionState<SouqlyDeleteState, FormData>(
     submitSouqlyDeleteRequest,
     null,
   );
-  const pendingFieldsRef = useRef<PendingFields | null>(null);
-
-  function handleAction(formData: FormData) {
-    pendingFieldsRef.current = {
-      name: String(formData.get('name') ?? ''),
-      email: String(formData.get('email') ?? ''),
-      reason: String(formData.get('reason') ?? ''),
-    };
-    return formAction(formData);
-  }
-
-  useEffect(() => {
-    if (!state?.ok || !pendingFieldsRef.current) return;
-    const key = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
-    const fields = pendingFieldsRef.current;
-    pendingFieldsRef.current = null;
-    if (!key) {
-      console.warn('[web3forms] NEXT_PUBLIC_WEB3FORMS_KEY not set, skipping email notification');
-      return;
-    }
-    // Web3Forms free plan only accepts client-side (browser) submissions, not server calls.
-    fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        access_key: key,
-        subject: `Souqly account deletion request from ${fields.name}`,
-        from_name: 'Souqly App',
-        name: fields.name,
-        email: fields.email,
-        reason: fields.reason || 'not provided',
-        message: `Souqly account deletion request\nName: ${fields.name}\nEmail: ${fields.email}\nReason: ${fields.reason || 'not provided'}`,
-      }),
-    }).catch((err) => console.error('[web3forms] notification error:', err));
-  }, [state]);
 
   if (state?.ok) {
     return (
@@ -76,7 +39,7 @@ export function SouqlyDeleteForm() {
   }
 
   return (
-    <form action={handleAction} className="space-y-5">
+    <form action={formAction} className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">Full name</Label>

@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { sendNotification } from '@/lib/resend';
 
 export type SouqlyDeleteState = { ok: boolean; error?: string } | null;
 
@@ -31,6 +32,12 @@ export async function submitSouqlyDeleteRequest(
     console.error('[souqly-delete] insert failed:', error);
     return { ok: false, error: 'Something went wrong sending your request. Please try again.' };
   }
+
+  void sendNotification(`Souqly account deletion request from ${name}`, {
+    name,
+    email,
+    reason: reason || 'not provided',
+  });
 
   return { ok: true };
 }

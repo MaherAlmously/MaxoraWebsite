@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
+import { useActionState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CheckCircle2, Loader2, Send } from 'lucide-react';
 import { submitContact, type ContactState } from '@/app/actions/contact';
@@ -10,48 +10,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
-type PendingFields = { name: string; email: string; service: string; message: string };
-
 export function ContactForm() {
   const searchParams = useSearchParams();
   const preselected = searchParams.get('service') ?? '';
   const [state, formAction, pending] = useActionState<ContactState, FormData>(submitContact, null);
-  const pendingFieldsRef = useRef<PendingFields | null>(null);
-
-  function handleAction(formData: FormData) {
-    pendingFieldsRef.current = {
-      name: String(formData.get('name') ?? ''),
-      email: String(formData.get('email') ?? ''),
-      service: String(formData.get('service') ?? ''),
-      message: String(formData.get('message') ?? ''),
-    };
-    return formAction(formData);
-  }
-
-  useEffect(() => {
-    if (!state?.ok || !pendingFieldsRef.current) return;
-    const key = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
-    const fields = pendingFieldsRef.current;
-    pendingFieldsRef.current = null;
-    if (!key) {
-      console.warn('[web3forms] NEXT_PUBLIC_WEB3FORMS_KEY not set, skipping email notification');
-      return;
-    }
-    // Web3Forms free plan only accepts client-side (browser) submissions, not server calls.
-    fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        access_key: key,
-        subject: `New contact message from ${fields.name}`,
-        from_name: 'Maxora Website',
-        name: fields.name,
-        email: fields.email,
-        service: fields.service || 'not specified',
-        message: fields.message,
-      }),
-    }).catch((err) => console.error('[web3forms] notification error:', err));
-  }, [state]);
 
   if (state?.ok) {
     return (
@@ -66,7 +28,7 @@ export function ContactForm() {
   }
 
   return (
-    <form action={handleAction} className="space-y-5">
+    <form action={formAction} className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">Full name</Label>

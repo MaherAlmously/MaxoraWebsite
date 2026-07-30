@@ -39,7 +39,7 @@ value currently in `.env.local`:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `NEXT_PUBLIC_WEB3FORMS_KEY`
+- `RESEND_API_KEY`
 
 These are separate from `.env.local` — Vercel doesn't read that file at all, everything
 has to be re-entered in its dashboard.

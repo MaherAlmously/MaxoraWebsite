@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { sendNotification } from '@/lib/resend';
 
 export type ContactState = { ok: boolean; error?: string } | null;
 
@@ -31,6 +32,13 @@ export async function submitContact(
     console.error('[contact] insert failed:', error);
     return { ok: false, error: 'Something went wrong sending your message. Please try again.' };
   }
+
+  void sendNotification(`New contact message from ${name}`, {
+    name,
+    email,
+    service: service || 'not specified',
+    message,
+  });
 
   return { ok: true };
 }

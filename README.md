@@ -28,7 +28,7 @@ plan, all without creating an account.
 - Tailwind CSS v4, shadcn/ui built on Base UI
 - Supabase for auth and data
 - Stripe for payments
-- Web3Forms for contact and order email notifications
+- Resend for contact and order email notifications
 - Hosted on Vercel
 
 ## Running it locally
@@ -67,7 +67,7 @@ runs without the Supabase and Stripe values.
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase project, Settings, API |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase project, Settings, API |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase project, Settings, API. Secret, server only |
-| `NEXT_PUBLIC_WEB3FORMS_KEY` | [web3forms.com](https://web3forms.com), free |
+| `RESEND_API_KEY` | [resend.com](https://resend.com) Dashboard, API Keys. Secret, server only |
 | `NEXT_PUBLIC_GA_ID` | Google Analytics 4 property. Optional |
 | `NEXT_PUBLIC_CLARITY_ID` | Microsoft Clarity project. Optional |
 
@@ -125,7 +125,7 @@ If the laptop dies, this repo plus the following accounts is everything:
 - **Supabase**, the database and auth (project ref `qcejbzcrpipgqiuelvqr`)
 - **Stripe**, payments and the webhook endpoint
 - **The domain registrar** for maxora.tech
-- **Web3Forms**, the contact form key
+- **Resend**, the email API key and verified sending domain (maxora.tech)
 
 Real secret values are not in this repo by design. They live in Vercel's
 environment variable settings and in the local `.env.local`, which is
