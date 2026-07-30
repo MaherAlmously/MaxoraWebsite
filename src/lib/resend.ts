@@ -31,15 +31,28 @@ function escapeHtml(value: string): string {
 
 function layout(opts: { preheader: string; bodyHtml: string }): string {
   return `<!doctype html>
-<html>
+<html style="background-color:${INK} !important;">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark light" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="supported-color-schemes" content="dark" />
+    <style>
+      body, table, td { -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+      body { background-color:${INK} !important; }
+      a { color:${ACCENT}; }
+      @media (prefers-color-scheme: light), (prefers-color-scheme: dark) {
+        body, .mx-bg { background-color:${INK} !important; }
+        .mx-card { background-color:${CARD} !important; }
+        .mx-frame { background-color:${LOGO_FRAME} !important; }
+        .mx-text { color:${TEXT} !important; }
+        .mx-muted { color:${MUTED} !important; }
+      }
+    </style>
   </head>
-  <body style="margin:0;padding:0;background-color:${INK};font-family:Helvetica,Arial,sans-serif;">
+  <body bgcolor="${INK}" style="margin:0;padding:0;background-color:${INK} !important;font-family:Helvetica,Arial,sans-serif;">
     <span style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(opts.preheader)}</span>
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:${INK};">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${INK}" class="mx-bg" style="background-color:${INK} !important;">
       <tr>
         <td align="center" style="padding:40px 20px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
@@ -50,7 +63,9 @@ function layout(opts: { preheader: string; bodyHtml: string }): string {
                     <td
                       align="center"
                       valign="middle"
-                      style="width:64px;height:64px;background-color:${LOGO_FRAME};border:1px solid ${ACCENT};border-radius:16px;"
+                      bgcolor="${LOGO_FRAME}"
+                      class="mx-frame"
+                      style="width:64px;height:64px;background-color:${LOGO_FRAME} !important;border:1px solid ${ACCENT};border-radius:16px;"
                     >
                       <img
                         src="${LOGO_URL}"
@@ -62,19 +77,19 @@ function layout(opts: { preheader: string; bodyHtml: string }): string {
                     </td>
                   </tr>
                 </table>
-                <div style="margin-top:12px;font-size:16px;font-weight:700;letter-spacing:0.06em;color:${TEXT};text-transform:uppercase;">
+                <div class="mx-text" style="margin-top:12px;font-size:16px;font-weight:700;letter-spacing:0.06em;color:${TEXT} !important;text-transform:uppercase;">
                   Maxora
                 </div>
               </td>
             </tr>
             <tr>
-              <td style="background-color:${CARD};border:1px solid ${BORDER};border-radius:14px;padding:36px 32px;">
+              <td bgcolor="${CARD}" class="mx-card" style="background-color:${CARD} !important;border:1px solid ${BORDER};border-radius:14px;padding:36px 32px;">
                 ${opts.bodyHtml}
               </td>
             </tr>
             <tr>
               <td align="center" style="padding-top:24px;">
-                <p style="margin:0;font-size:12px;color:${MUTED};">
+                <p class="mx-muted" style="margin:0;font-size:12px;color:${MUTED} !important;">
                   <a href="https://maxora.tech" style="color:${ACCENT};text-decoration:underline;">maxora.tech</a>
                 </p>
               </td>
