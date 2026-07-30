@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { InitialsAvatar } from '../_components/initials-avatar';
 import { StatCard } from '../_components/stat-card';
 import { DetailField } from '../_components/detail-field';
+import { ReplyForm } from '../_components/reply-form';
 
 type Message = {
   id: string;
@@ -128,6 +129,10 @@ export default async function AdminMessagesPage({
 
                 <div className="mt-4 border-t border-border pt-4">
                   <DetailField label="Message" value={<span className="whitespace-pre-wrap">{m.message}</span>} />
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-start gap-3 border-t border-border pt-4">
+                  <ReplyForm to={m.email} defaultSubject={`Re: your message to Maxora`} />
                 </div>
               </div>
             ))}

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { StatCard } from './_components/stat-card';
 import { InitialsAvatar } from './_components/initials-avatar';
 import { DetailField } from './_components/detail-field';
+import { ReplyForm } from './_components/reply-form';
 
 type OrderItem = {
   product_name: string;
@@ -223,6 +224,13 @@ export default async function AdminOrdersPage({
                     </li>
                   ))}
                 </ul>
+
+                <div className="mt-4 flex flex-wrap items-start gap-3 border-t border-border pt-4">
+                  <ReplyForm
+                    to={order.customer_email}
+                    defaultSubject={`Re: your order #${order.id.slice(0, 8)}`}
+                  />
+                </div>
               </div>
             ))}
           </div>

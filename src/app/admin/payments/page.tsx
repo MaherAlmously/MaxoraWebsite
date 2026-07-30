@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { InitialsAvatar } from '../_components/initials-avatar';
 import { StatCard } from '../_components/stat-card';
 import { DetailField } from '../_components/detail-field';
+import { ReplyForm } from '../_components/reply-form';
 
 type PaymentRequest = {
   id: string;
@@ -159,6 +160,10 @@ export default async function AdminPaymentsPage({
                     <DetailField label="Note" value={r.note} />
                   </div>
                 )}
+
+                <div className="mt-4 flex flex-wrap items-start gap-3 border-t border-border pt-4">
+                  <ReplyForm to={r.email} defaultSubject={`Re: your payment request #${r.id.slice(0, 8)}`} />
+                </div>
               </div>
             ))}
           </div>
