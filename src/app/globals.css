@@ -109,19 +109,19 @@
 }
 
 .dark {
-  --background: oklch(0.2 0.006 250);
+  --background: oklch(0.27 0.008 250);
   --foreground: oklch(0.965 0.004 240);
-  --card: oklch(0.24 0.007 250);
+  --card: oklch(0.31 0.008 250);
   --card-foreground: oklch(0.965 0.004 240);
-  --popover: oklch(0.235 0.007 250);
+  --popover: oklch(0.305 0.008 250);
   --popover-foreground: oklch(0.965 0.004 240);
   --primary: oklch(0.85 0.135 190);
   --primary-foreground: oklch(0.2 0.01 250);
-  --secondary: oklch(0.285 0.008 250);
+  --secondary: oklch(0.35 0.009 250);
   --secondary-foreground: oklch(0.95 0.004 240);
-  --muted: oklch(0.275 0.007 250);
-  --muted-foreground: oklch(0.71 0.008 240);
-  --accent: oklch(0.3 0.01 245);
+  --muted: oklch(0.34 0.008 250);
+  --muted-foreground: oklch(0.74 0.008 240);
+  --accent: oklch(0.37 0.011 245);
   --accent-foreground: oklch(0.96 0.004 240);
   --destructive: oklch(0.65 0.2 25);
   --border: oklch(1 0 0 / 10%);
@@ -245,35 +245,6 @@
   letter-spacing: -0.02em;
 }
 
-/* Cursor/touch-following glow behind the hero text */
-/* Pointer-following glow. Fallbacks live in var() so the values JS sets on
-   the parent always win, and --glow-power lets speed drive size/brightness. */
-.hero-glow-core {
-  background: radial-gradient(
-    calc(9rem + var(--glow-power, 0) * 5rem) circle at var(--gx1, 50%) var(--gy1, 38%),
-    var(--grad-a) 0%,
-    transparent 64%
-  );
-  opacity: calc(0.3 + var(--glow-power, 0) * 0.35);
-}
-
-.hero-glow-mid {
-  background: radial-gradient(
-    calc(20rem + var(--glow-power, 0) * 6rem) circle at var(--gx2, 50%) var(--gy2, 38%),
-    var(--grad-a) 0%,
-    transparent 66%
-  );
-  opacity: calc(0.26 + var(--glow-power, 0) * 0.16);
-}
-
-.hero-glow-halo {
-  background: radial-gradient(
-    36rem circle at var(--gx3, 50%) var(--gy3, 38%),
-    var(--grad-b) 0%,
-    transparent 70%
-  );
-  opacity: 0.28;
-}
 
 /* Client logo marquee: each row's content is doubled, so translating by
    exactly -50% loops seamlessly. animationDirection (set inline per row)
