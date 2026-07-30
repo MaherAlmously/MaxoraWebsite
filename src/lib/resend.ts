@@ -5,12 +5,13 @@ const REPLY_FROM = 'Maxora <hello@maxora.tech>';
 const NOTIFY_TO = 'maxoradev@gmail.com';
 const LOGO_URL = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://maxora.tech'}/logo-mark.png`;
 
-const INK = '#0e1520';
-const CARD = '#141d29';
-const BORDER = '#26313f';
-const TEXT = '#eef2f5';
-const MUTED = '#8b98a5';
-const ACCENT = '#22d3ee';
+const INK = '#0a0e13';
+const CARD = '#151d27';
+const LOGO_FRAME = '#0a0e13';
+const BORDER = '#2a3644';
+const TEXT = '#ffffff';
+const MUTED = '#a7b3bd';
+const ACCENT = '#3ee0f5';
 
 let client: Resend | null = null;
 
@@ -43,15 +44,25 @@ function layout(opts: { preheader: string; bodyHtml: string }): string {
         <td align="center" style="padding:40px 20px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
             <tr>
-              <td align="center" style="padding-bottom:24px;">
-                <img
-                  src="${LOGO_URL}"
-                  width="48"
-                  height="48"
-                  alt="Maxora"
-                  style="display:block;width:48px;height:48px;border-radius:12px;"
-                />
-                <div style="margin-top:10px;font-size:15px;font-weight:700;letter-spacing:0.04em;color:${TEXT};text-transform:uppercase;">
+              <td align="center" style="padding-bottom:28px;">
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td
+                      align="center"
+                      valign="middle"
+                      style="width:64px;height:64px;background-color:${LOGO_FRAME};border:1px solid ${ACCENT};border-radius:16px;"
+                    >
+                      <img
+                        src="${LOGO_URL}"
+                        width="40"
+                        height="40"
+                        alt="Maxora"
+                        style="display:block;width:40px;height:40px;border-radius:10px;"
+                      />
+                    </td>
+                  </tr>
+                </table>
+                <div style="margin-top:12px;font-size:16px;font-weight:700;letter-spacing:0.06em;color:${TEXT};text-transform:uppercase;">
                   Maxora
                 </div>
               </td>
@@ -64,7 +75,7 @@ function layout(opts: { preheader: string; bodyHtml: string }): string {
             <tr>
               <td align="center" style="padding-top:24px;">
                 <p style="margin:0;font-size:12px;color:${MUTED};">
-                  <a href="https://maxora.tech" style="color:${MUTED};text-decoration:underline;">maxora.tech</a>
+                  <a href="https://maxora.tech" style="color:${ACCENT};text-decoration:underline;">maxora.tech</a>
                 </p>
               </td>
             </tr>
@@ -138,7 +149,7 @@ export async function sendConfirmation(
   }
   const bodyHtml = `
     <h1 style="margin:0 0 16px;font-size:19px;line-height:1.4;color:${TEXT};font-weight:700;">${escapeHtml(opts.heading)}</h1>
-    <p style="margin:0;font-size:14px;line-height:1.7;color:${MUTED};">${escapeHtml(opts.message)}</p>
+    <p style="margin:0;font-size:15px;line-height:1.7;color:${TEXT};">${escapeHtml(opts.message)}</p>
   `;
   try {
     const { error } = await resend.emails.send({
@@ -165,7 +176,7 @@ export async function sendReply(
 
   const bodyHtml = `
     <h1 style="margin:0 0 16px;font-size:19px;line-height:1.4;color:${TEXT};font-weight:700;">${escapeHtml(opts.subject)}</h1>
-    <p style="margin:0;font-size:14px;line-height:1.7;color:${MUTED};">${escapeHtml(opts.body).replace(/\n/g, '<br />')}</p>
+    <p style="margin:0;font-size:15px;line-height:1.7;color:${TEXT};">${escapeHtml(opts.body).replace(/\n/g, '<br />')}</p>
   `;
   try {
     const { error } = await resend.emails.send({
