@@ -23,11 +23,12 @@ const item: Variants = {
 };
 
 // Chase light: each tile's ring glows in sequence, one after another, then
-// immediately loops back to the first with no pause — a continuous idle
+// immediately loops back to the first with no pause - a continuous idle
 // loop rather than a one-shot entrance, and it runs on a plain timer so
 // it's identical on touch devices that never fire a hover.
-const GLOW_DURATION = 0.5;
-const GLOW_STAGGER = 0.12;
+const GLOW_COLOR = '#34d399';
+const GLOW_DURATION = 0.4;
+const GLOW_STAGGER = 0.09;
 function glowTransition(index: number, count: number) {
   const period = count * GLOW_STAGGER;
   return {
@@ -41,7 +42,7 @@ function glowTransition(index: number, count: number) {
 
 /**
  * A static (non-scrolling) animated grid of client logos, tailored for the
- * portfolio landing page — a "trust wall" that pops in on scroll rather
+ * portfolio landing page: a "trust wall" that pops in on scroll rather
  * than the homepage's auto-scrolling marquee, since this page is read
  * top-to-bottom by a single warm lead rather than skimmed.
  */
@@ -89,7 +90,7 @@ export function TrustedBy() {
                 <motion.span
                   aria-hidden
                   className="pointer-events-none absolute -inset-1.5 rounded-full"
-                  style={{ boxShadow: '0 0 18px 5px var(--grad-a)' }}
+                  style={{ boxShadow: `0 0 18px 5px ${GLOW_COLOR}` }}
                   animate={reduce ? undefined : { opacity: [0, 1, 0] }}
                   transition={reduce ? undefined : glowTransition(i, clients.length)}
                 />

@@ -38,7 +38,7 @@ export function BrowserMockup({
           </span>
         </div>
 
-        {/* Screenshot — a slow continuous breathing motion so the preview
+        {/* Screenshot: a slow continuous breathing motion so the preview
             feels alive on touch devices too, since :hover never fires there. */}
         <div className="relative aspect-[16/10] w-full overflow-hidden">
           <motion.div
