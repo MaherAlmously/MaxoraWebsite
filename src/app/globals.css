@@ -245,6 +245,33 @@
   letter-spacing: -0.02em;
 }
 
+/* Shooting star streak: a tapered, blurred tail with a bright glowing head
+   at its leading edge. Positioned/rotated by the JS-computed wrapper; this
+   element only ever translates along its own local x-axis. */
+.shooting-star {
+  position: absolute;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent 0%, var(--grad-a) 55%, #fff 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 40%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 40%, #000 100%);
+  filter: drop-shadow(0 0 3px var(--grad-a));
+}
+
+.shooting-star::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 6px 2px #fff,
+    0 0 18px 6px var(--grad-a);
+}
 
 /* Client logo marquee: each row's content is doubled, so translating by
    exactly -50% loops seamlessly. animationDirection (set inline per row)

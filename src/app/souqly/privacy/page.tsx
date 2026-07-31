@@ -186,6 +186,14 @@ export default function SouqlyPrivacyPage() {
               .
             </p>
           </section>
+
+          <p>
+            See also our{' '}
+            <Link href="/souqly/terms" className="text-primary hover:underline">
+              Terms &amp; Conditions
+            </Link>
+            .
+          </p>
         </div>
       </Reveal>
     </div>

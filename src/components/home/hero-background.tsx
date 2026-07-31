@@ -65,32 +65,44 @@ export function HeroBackground() {
       {!reduceForEntrance && (
         <>
           {SHOOTING_STARS.map((s, i) => (
-            <motion.span
+            // Outer element only positions and rotates (never animated), so
+            // the inner span's x-translation always runs along the rotated
+            // ray - this is what makes the streak travel straight along its
+            // own tail instead of drifting sideways off its angle.
+            <div
               key={i}
-              className="absolute rounded-full"
+              className="absolute"
               style={{
                 left: `${s.x}%`,
                 top: `${s.y}%`,
-                width: s.length,
-                height: 2,
-                rotate: s.angle,
-                transformOrigin: 'left center',
-                background: 'linear-gradient(90deg, transparent, var(--grad-a) 70%, #fff)',
-                willChange: 'transform, opacity',
+                transform: `rotate(${s.angle}deg)`,
+                transformOrigin: '0 0',
               }}
-              initial={{ opacity: 0, x: '0vw' }}
-              animate={{
-                opacity: [0, 1, 1, 0],
-                x: ['0vw', `${s.travel * 0.55}vw`, `${s.travel}vw`],
-              }}
-              transition={{
-                duration: s.duration,
-                delay: s.delay,
-                ease: [0.3, 0, 0.2, 1],
-                repeat: Infinity,
-                repeatDelay: s.repeatDelay,
-              }}
-            />
+            >
+              <motion.span
+                className="shooting-star"
+                style={{ width: s.length, willChange: 'transform, opacity' }}
+                initial={{ opacity: 0, x: '0vw', scaleX: 0.4 }}
+                animate={{
+                  opacity: [0, 1, 1, 0],
+                  scaleX: [0.4, 1, 1, 0.7],
+                  x: [
+                    '0vw',
+                    `${s.travel * 0.5}vw`,
+                    `${s.travel * 0.85}vw`,
+                    `${s.travel}vw`,
+                  ],
+                }}
+                transition={{
+                  duration: s.duration,
+                  delay: s.delay,
+                  times: [0, 0.5, 0.85, 1],
+                  ease: [0.22, 0.61, 0.36, 1],
+                  repeat: Infinity,
+                  repeatDelay: s.repeatDelay,
+                }}
+              />
+            </div>
           ))}
           {PARTICLES.map((p, i) => (
             <motion.span
