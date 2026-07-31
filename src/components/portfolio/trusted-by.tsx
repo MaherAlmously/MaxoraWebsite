@@ -22,21 +22,20 @@ const item: Variants = {
   },
 };
 
-// Domino wave: each tile dips down in sequence, one after another, then the
-// whole row pauses and does it again — a continuous idle loop rather than a
-// one-shot entrance, and it runs on a plain timer so it works the same on
-// touch devices that never fire a hover.
-const BOUNCE_DURATION = 0.5;
-const BOUNCE_STAGGER = 0.09;
-const BOUNCE_PAUSE = 1.2;
-function bounceTransition(index: number, count: number) {
-  const period = count * BOUNCE_STAGGER + BOUNCE_DURATION + BOUNCE_PAUSE;
+// Chase light: each tile's ring glows in sequence, one after another, then
+// immediately loops back to the first with no pause — a continuous idle
+// loop rather than a one-shot entrance, and it runs on a plain timer so
+// it's identical on touch devices that never fire a hover.
+const GLOW_DURATION = 0.5;
+const GLOW_STAGGER = 0.12;
+function glowTransition(index: number, count: number) {
+  const period = count * GLOW_STAGGER;
   return {
-    duration: BOUNCE_DURATION,
-    delay: index * BOUNCE_STAGGER,
+    duration: GLOW_DURATION,
+    delay: index * GLOW_STAGGER,
     repeat: Infinity,
-    repeatDelay: period - BOUNCE_DURATION,
-    ease: 'easeOut' as const,
+    repeatDelay: Math.max(period - GLOW_DURATION, 0),
+    ease: 'easeInOut' as const,
   };
 }
 
@@ -64,7 +63,7 @@ export function TrustedBy() {
         </Reveal>
 
         <motion.div
-          className="grid grid-cols-3 gap-3 sm:grid-cols-4 sm:gap-4 md:grid-cols-6"
+          className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4 md:grid-cols-6"
           variants={reduce ? undefined : container}
           initial={reduce ? undefined : 'hidden'}
           whileInView={reduce ? undefined : 'show'}
@@ -83,15 +82,18 @@ export function TrustedBy() {
                       transition: { type: 'spring', stiffness: 300, damping: 18 },
                     }
               }
-              className="group glass hover:border-primary/50 flex flex-col items-center gap-2.5 rounded-xl px-3 py-5 transition-all duration-300 hover:shadow-[0_0_28px_oklch(0.85_0.135_190_/_20%)]"
+              className="group glass flex min-w-0 flex-col items-center gap-2.5 rounded-xl px-2 py-5 sm:px-3"
               title={`${client.name}: ${client.service}`}
             >
-              <motion.div
-                className="flex flex-col items-center gap-2.5"
-                animate={reduce ? undefined : { y: [0, -10, 0] }}
-                transition={reduce ? undefined : bounceTransition(i, clients.length)}
-              >
-                <div className="ring-border group-hover:ring-primary/50 size-12 shrink-0 overflow-hidden rounded-full bg-white ring-1 transition-shadow duration-300 sm:size-14">
+              <div className="relative size-12 shrink-0 sm:size-14">
+                <motion.span
+                  aria-hidden
+                  className="pointer-events-none absolute -inset-1.5 rounded-full"
+                  style={{ boxShadow: '0 0 18px 5px var(--grad-a)' }}
+                  animate={reduce ? undefined : { opacity: [0, 1, 0] }}
+                  transition={reduce ? undefined : glowTransition(i, clients.length)}
+                />
+                <div className="ring-border group-hover:ring-primary/50 relative size-full overflow-hidden rounded-full bg-white ring-1 transition-shadow duration-300">
                   <Image
                     src={client.logo}
                     alt={client.name}
@@ -100,10 +102,10 @@ export function TrustedBy() {
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <p className="text-muted-foreground group-hover:text-foreground w-full truncate text-center text-xs font-medium transition-colors duration-300">
-                  {client.name}
-                </p>
-              </motion.div>
+              </div>
+              <p className="text-muted-foreground group-hover:text-foreground w-full truncate text-center text-xs font-medium transition-colors duration-300">
+                {client.name}
+              </p>
             </motion.div>
           ))}
         </motion.div>

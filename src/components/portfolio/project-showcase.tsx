@@ -27,7 +27,12 @@ export function ProjectShowcase() {
             </Reveal>
 
             <Reveal delay={0.1} className={reversed ? 'lg:order-1' : undefined}>
-              <p className="eyebrow mb-3">{project.domain}</p>
+              <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <p className="eyebrow">{project.domain}</p>
+                <span className="border-primary/30 bg-primary/10 text-primary rounded-full border px-2.5 py-0.5 text-[11px] font-semibold tracking-wide">
+                  {project.category}
+                </span>
+              </div>
               <h3 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
                 {project.name}
               </h3>

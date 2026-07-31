@@ -3,6 +3,7 @@ export type PortfolioProject = {
   name: string;
   domain: string;
   url: string;
+  category: string;
   tagline: string;
   description: string;
   features: string[];
@@ -15,6 +16,7 @@ export const portfolioProjects: PortfolioProject[] = [
     name: "Smokin' Grill",
     domain: 'smokingrillplano.com',
     url: 'https://smokingrillplano.com',
+    category: 'Informational site',
     tagline: 'A halal smokehouse site built to sell the menu, not just show it.',
     description:
       "Smokin' Grill is a 100% Zabiha Halal smokehouse in Plano, Texas. The site leads with bold food photography and a clear halal-certified promise, then gets guests to a decision fast: view the menu, call for catering, or find the location.",
@@ -31,6 +33,7 @@ export const portfolioProjects: PortfolioProject[] = [
     name: 'Masuly',
     domain: 'masuly.com',
     url: 'https://masuly.com',
+    category: 'E-commerce · subscriptions & payments',
     tagline: 'A clean-label supplement brand with a storefront to match.',
     description:
       'Masuly sells a deliberately short catalog of clean, responsibly sourced supplements. The site mirrors that restraint: minimalist layout, botanical photography, and transparent sourcing details that build trust before a single product is added to cart.',
@@ -47,6 +50,7 @@ export const portfolioProjects: PortfolioProject[] = [
     name: 'Maher Almously — Realtor',
     domain: 'maherealtor.com',
     url: 'https://maherealtor.com',
+    category: 'Informational site',
     tagline: 'A data-driven real estate site for a fast-moving market.',
     description:
       'A DFW-area real estate practice site built around a simple promise: compare homes with real numbers. Buyers and sellers are routed to the right next step immediately, backed by a clear five-step process and coverage across 20+ North Texas cities.',
