@@ -21,7 +21,7 @@ export function BrowserMockup({
   return (
     <TiltCard>
       <motion.div
-        className="glow group border-border bg-card relative overflow-hidden rounded-2xl border shadow-2xl"
+        className="group border-border bg-card relative overflow-hidden rounded-2xl border shadow-xl shadow-black/20 transition-shadow duration-300 hover:shadow-[0_0_32px_-8px_var(--grad-a)]"
         whileHover={reduce ? undefined : { scale: 1.015, y: -4 }}
         transition={{ type: 'spring', stiffness: 260, damping: 20 }}
       >

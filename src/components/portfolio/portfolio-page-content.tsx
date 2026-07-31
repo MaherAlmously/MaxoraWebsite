@@ -6,8 +6,8 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/reveal';
 import { HeroBackground } from '@/components/home/hero-background';
-import { ClientsShowcase } from '@/components/home/clients-showcase';
 import { ProjectShowcase } from '@/components/portfolio/project-showcase';
+import { TrustedBy } from '@/components/portfolio/trusted-by';
 
 export function PortfolioPageContent() {
   const reduce = useReducedMotion();
@@ -23,19 +23,21 @@ export function PortfolioPageContent() {
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
             <p className="eyebrow mb-3">Selected work</p>
-            <h1 className="font-heading text-4xl font-semibold tracking-tight sm:text-6xl">
+            <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-6xl">
               A closer look at what <span className="text-gradient-flow">we build</span>
             </h1>
-            <p className="text-muted-foreground mt-5 text-lg">Your website could look this good.</p>
+            <p className="text-muted-foreground mt-5 text-base sm:text-lg">
+              Your website could look this good.
+            </p>
           </motion.div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
+      <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 sm:pb-24">
         <ProjectShowcase />
       </section>
 
-      <ClientsShowcase />
+      <TrustedBy />
 
       <section className="py-14">
         <Reveal className="mx-auto max-w-2xl px-4 text-center sm:px-6">
@@ -45,7 +47,7 @@ export function PortfolioPageContent() {
           <p className="text-muted-foreground mt-3">
             Reach out whenever you&apos;re ready to move forward.
           </p>
-          <Button asChild size="lg" className="glow mt-7">
+          <Button asChild size="lg" className="glow mt-7 w-full sm:w-auto">
             <Link href="/contact">
               Get in touch
               <ArrowRight className="size-4" />

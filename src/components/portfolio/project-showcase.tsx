@@ -9,11 +9,14 @@ import { portfolioProjects } from '@/lib/portfolio';
 
 export function ProjectShowcase() {
   return (
-    <div className="space-y-24 sm:space-y-32">
+    <div className="space-y-16 sm:space-y-24 lg:space-y-32">
       {portfolioProjects.map((project, i) => {
         const reversed = i % 2 === 1;
         return (
-          <div key={project.slug} className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <div
+            key={project.slug}
+            className="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16"
+          >
             <Reveal className={reversed ? 'lg:order-2' : undefined}>
               <BrowserMockup
                 image={project.image}
@@ -42,7 +45,7 @@ export function ProjectShowcase() {
                 ))}
               </ul>
 
-              <Button asChild size="lg" className="glow mt-8">
+              <Button asChild size="lg" className="glow mt-8 w-full sm:w-auto">
                 <Link href={project.url} target="_blank" rel="noopener noreferrer">
                   View live site
                   <ExternalLink className="size-4" />
