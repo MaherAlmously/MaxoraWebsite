@@ -22,6 +22,24 @@ const item: Variants = {
   },
 };
 
+// Domino wave: each tile dips down in sequence, one after another, then the
+// whole row pauses and does it again — a continuous idle loop rather than a
+// one-shot entrance, and it runs on a plain timer so it works the same on
+// touch devices that never fire a hover.
+const BOUNCE_DURATION = 0.5;
+const BOUNCE_STAGGER = 0.09;
+const BOUNCE_PAUSE = 1.2;
+function bounceTransition(index: number, count: number) {
+  const period = count * BOUNCE_STAGGER + BOUNCE_DURATION + BOUNCE_PAUSE;
+  return {
+    duration: BOUNCE_DURATION,
+    delay: index * BOUNCE_STAGGER,
+    repeat: Infinity,
+    repeatDelay: period - BOUNCE_DURATION,
+    ease: 'easeOut' as const,
+  };
+}
+
 /**
  * A static (non-scrolling) animated grid of client logos, tailored for the
  * portfolio landing page — a "trust wall" that pops in on scroll rather
@@ -52,7 +70,7 @@ export function TrustedBy() {
           whileInView={reduce ? undefined : 'show'}
           viewport={{ once: true, amount: 0.2 }}
         >
-          {clients.map((client) => (
+          {clients.map((client, i) => (
             <motion.div
               key={client.name}
               variants={reduce ? undefined : item}
@@ -68,18 +86,24 @@ export function TrustedBy() {
               className="group glass hover:border-primary/50 flex flex-col items-center gap-2.5 rounded-xl px-3 py-5 transition-all duration-300 hover:shadow-[0_0_28px_oklch(0.85_0.135_190_/_20%)]"
               title={`${client.name}: ${client.service}`}
             >
-              <div className="ring-border group-hover:ring-primary/50 size-12 shrink-0 overflow-hidden rounded-full bg-white ring-1 transition-shadow duration-300 sm:size-14">
-                <Image
-                  src={client.logo}
-                  alt={client.name}
-                  width={56}
-                  height={56}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <p className="text-muted-foreground group-hover:text-foreground w-full truncate text-center text-xs font-medium transition-colors duration-300">
-                {client.name}
-              </p>
+              <motion.div
+                className="flex flex-col items-center gap-2.5"
+                animate={reduce ? undefined : { y: [0, -10, 0] }}
+                transition={reduce ? undefined : bounceTransition(i, clients.length)}
+              >
+                <div className="ring-border group-hover:ring-primary/50 size-12 shrink-0 overflow-hidden rounded-full bg-white ring-1 transition-shadow duration-300 sm:size-14">
+                  <Image
+                    src={client.logo}
+                    alt={client.name}
+                    width={56}
+                    height={56}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <p className="text-muted-foreground group-hover:text-foreground w-full truncate text-center text-xs font-medium transition-colors duration-300">
+                  {client.name}
+                </p>
+              </motion.div>
             </motion.div>
           ))}
         </motion.div>

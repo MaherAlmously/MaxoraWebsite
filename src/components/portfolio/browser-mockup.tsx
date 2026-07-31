@@ -38,16 +38,23 @@ export function BrowserMockup({
           </span>
         </div>
 
-        {/* Screenshot */}
+        {/* Screenshot — a slow continuous breathing motion so the preview
+            feels alive on touch devices too, since :hover never fires there. */}
         <div className="relative aspect-[16/10] w-full overflow-hidden">
-          <Image
-            src={image}
-            alt={`${name} website preview`}
-            fill
-            sizes="(min-width: 1024px) 640px, 100vw"
-            className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-            priority={priority}
-          />
+          <motion.div
+            className="absolute inset-0"
+            animate={reduce ? undefined : { scale: [1, 1.035, 1] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <Image
+              src={image}
+              alt={`${name} website preview`}
+              fill
+              sizes="(min-width: 1024px) 640px, 100vw"
+              className="object-cover object-top"
+              priority={priority}
+            />
+          </motion.div>
         </div>
       </motion.div>
     </TiltCard>
