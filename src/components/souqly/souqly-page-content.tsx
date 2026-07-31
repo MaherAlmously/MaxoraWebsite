@@ -2,10 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
-import type { PointerEvent } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { FileText, ShieldCheck, Sparkles, Trash2 } from 'lucide-react';
 import { HeroBackground } from '@/components/home/hero-background';
+import { TiltCard } from '@/components/tilt-card';
 
 const LINKS = [
   {
@@ -44,42 +44,6 @@ const SPARKLES = [
 // Play Store listing isn't live yet — swap this for the real URL once
 // Souqly is published under a public link.
 const PLAY_STORE_URL = '#';
-
-/** Wraps a store badge in a subtle 3D tilt that follows the pointer. */
-function TiltCard({ children, disableTilt }: { children: React.ReactNode; disableTilt?: boolean }) {
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rotateX = useSpring(useTransform(my, [0, 1], [10, -10]), {
-    stiffness: 250,
-    damping: 20,
-  });
-  const rotateY = useSpring(useTransform(mx, [0, 1], [-10, 10]), {
-    stiffness: 250,
-    damping: 20,
-  });
-
-  function onPointerMove(e: PointerEvent<HTMLDivElement>) {
-    if (disableTilt) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    mx.set((e.clientX - rect.left) / rect.width);
-    my.set((e.clientY - rect.top) / rect.height);
-  }
-
-  function onPointerLeave() {
-    mx.set(0.5);
-    my.set(0.5);
-  }
-
-  return (
-    <motion.div
-      onPointerMove={onPointerMove}
-      onPointerLeave={onPointerLeave}
-      style={{ rotateX, rotateY, transformPerspective: 600 }}
-    >
-      {children}
-    </motion.div>
-  );
-}
 
 export function SouqlyPageContent() {
   const reduce = useReducedMotion();

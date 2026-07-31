@@ -1,0 +1,61 @@
+export type PortfolioProject = {
+  slug: string;
+  name: string;
+  domain: string;
+  url: string;
+  tagline: string;
+  description: string;
+  features: string[];
+  image: string;
+};
+
+export const portfolioProjects: PortfolioProject[] = [
+  {
+    slug: 'smokin-grill',
+    name: "Smokin' Grill",
+    domain: 'smokingrillplano.com',
+    url: 'https://smokingrillplano.com',
+    tagline: 'A halal smokehouse site built to sell the menu, not just show it.',
+    description:
+      "Smokin' Grill is a 100% Zabiha Halal smokehouse in Plano, Texas. The site leads with bold food photography and a clear halal-certified promise, then gets guests to a decision fast: view the menu, call for catering, or find the location.",
+    features: [
+      'Full menu with signature-dish callouts and category tags',
+      'Catering inquiries for groups and events',
+      'One-tap "Call Now" from every section',
+      'Location, hours, and directions built in',
+    ],
+    image: '/portfolio/smokin-grill.png',
+  },
+  {
+    slug: 'masuly',
+    name: 'Masuly',
+    domain: 'masuly.com',
+    url: 'https://masuly.com',
+    tagline: 'A clean-label supplement brand with a storefront to match.',
+    description:
+      'Masuly sells a deliberately short catalog of clean, responsibly sourced supplements. The site mirrors that restraint: minimalist layout, botanical photography, and transparent sourcing details that build trust before a single product is added to cart.',
+    features: [
+      'Integrated storefront with a focused, two-product catalog',
+      'Sourcing transparency (origin, ingredients, no fillers)',
+      'Embedded production video and educational blog',
+      'Light, airy design that keeps the product the focus',
+    ],
+    image: '/portfolio/masuly.png',
+  },
+  {
+    slug: 'maherealtor',
+    name: 'Maher Almously — Realtor',
+    domain: 'maherealtor.com',
+    url: 'https://maherealtor.com',
+    tagline: 'A data-driven real estate site for a fast-moving market.',
+    description:
+      'A DFW-area real estate practice site built around a simple promise: compare homes with real numbers. Buyers and sellers are routed to the right next step immediately, backed by a clear five-step process and coverage across 20+ North Texas cities.',
+    features: [
+      'Four clear entry points: buy, sell, rent, and lease',
+      'Five-step buyer framework laid out visually',
+      'Live listings section with SMS, call, and form contact',
+      'City-by-city market coverage across North Texas',
+    ],
+    image: '/portfolio/maherealtor.png',
+  },
+];
