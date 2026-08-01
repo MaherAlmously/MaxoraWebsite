@@ -27,8 +27,8 @@ const item: Variants = {
 // loop rather than a one-shot entrance, and it runs on a plain timer so
 // it's identical on touch devices that never fire a hover.
 const GLOW_COLOR = '#34d399';
-const GLOW_DURATION = 0.4;
-const GLOW_STAGGER = 0.09;
+const GLOW_DURATION = 0.6;
+const GLOW_STAGGER = 0.13;
 function glowTransition(index: number, count: number) {
   const period = count * GLOW_STAGGER;
   return {
@@ -90,7 +90,7 @@ export function TrustedBy() {
                 <motion.span
                   aria-hidden
                   className="pointer-events-none absolute -inset-1.5 rounded-full"
-                  style={{ boxShadow: `0 0 18px 5px ${GLOW_COLOR}` }}
+                  style={{ boxShadow: `0 0 0 2px ${GLOW_COLOR}, 0 0 16px 4px ${GLOW_COLOR}` }}
                   animate={reduce ? undefined : { opacity: [0, 1, 0] }}
                   transition={reduce ? undefined : glowTransition(i, clients.length)}
                 />

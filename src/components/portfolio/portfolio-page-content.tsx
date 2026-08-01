@@ -24,7 +24,8 @@ export function PortfolioPageContent() {
           >
             <p className="eyebrow mb-3">Selected work</p>
             <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-6xl">
-              A closer look at what <span className="text-gradient-flow">we build</span>
+              A closer look at what{' '}
+              <span className="text-gradient-flow whitespace-nowrap">we build</span>
             </h1>
             <p className="text-muted-foreground mt-5 text-base sm:text-lg">
               Your website could look this good.
