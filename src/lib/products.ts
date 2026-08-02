@@ -57,13 +57,12 @@ export const products: Product[] = [
     category: 'development',
     quoteOnly: false,
     featured: true,
-    tags: ['best-seller', 'limited-time'],
+    tags: ['best-seller'],
     tiers: [
       {
         id: 'informative',
         name: 'Informative',
-        priceCents: 9900,
-        originalPriceCents: 19900,
+        priceCents: 19900,
         billing: 'one_time',
         features: [
           'Professional site that presents your business',
@@ -76,8 +75,7 @@ export const products: Product[] = [
       {
         id: 'ecommerce',
         name: 'Ecommerce',
-        priceCents: 19900,
-        originalPriceCents: 24900,
+        priceCents: 29900,
         billing: 'one_time',
         features: [
           'Online store with product listings and cart',
