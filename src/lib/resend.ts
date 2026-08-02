@@ -126,6 +126,11 @@ export async function sendNotification(
  * person who submitted a form. Best-effort, same no-op behavior as
  * sendNotification when RESEND_API_KEY is not set. Always awaited by
  * callers so the send completes before the serverless function exits.
+ *
+ * `from` stays on the verified maxora.tech domain because Resend can only
+ * send from a domain you prove ownership of via DNS, and Gmail's DMARC
+ * policy rejects mail spoofing @gmail.com. Replies route to the Gmail
+ * inbox via replyTo instead, so hitting Reply still lands in maxoradev@.
  */
 export async function sendConfirmation(
   to: string,
@@ -146,6 +151,7 @@ export async function sendConfirmation(
       to,
       subject: opts.subject,
       html: layout({ preheader: opts.message, eyebrow: 'Received', bodyHtml }),
+      replyTo: NOTIFY_TO,
     });
     if (error) console.error('[resend] confirmation failed:', error);
   } catch (err) {
