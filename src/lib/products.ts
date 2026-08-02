@@ -298,29 +298,6 @@ export const products: Product[] = [
     tiers: [],
   },
   {
-    slug: 'subscription-test',
-    name: 'Subscription Test',
-    tagline: 'Internal test product for checking the recurring payment flow.',
-    shortTagline: 'Test plan',
-    description:
-      'A $1/day test plan used to verify that recurring subscriptions actually charge on schedule. Not a real service, safe to ignore.',
-    icon: 'Wrench',
-    category: 'development',
-    quoteOnly: false,
-    tiers: [
-      {
-        id: 'daily-test',
-        name: 'Daily Test',
-        priceCents: 100,
-        billing: 'daily',
-        features: [
-          'Charges $1 today, then $1 again in 24 hours',
-          'Cancels itself automatically after that, no third charge',
-        ],
-      },
-    ],
-  },
-  {
     slug: 'video-production',
     name: 'Video Production',
     tagline: 'Commercial videos and whiteboard animations that make your brand memorable.',

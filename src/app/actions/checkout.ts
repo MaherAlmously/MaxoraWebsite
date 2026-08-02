@@ -133,9 +133,9 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
         return billing === 'monthly' || billing === 'daily';
       });
       const oneTimeLines = lines.filter((l) => getTier(l.product_slug, l.tier_id)!.billing === 'one_time');
-      // Daily billing only exists on the internal "Subscription Test" product,
-      // which should charge today, charge once more tomorrow, then stop on
-      // its own rather than renewing forever like a real plan.
+      // Daily billing is a test-only interval with no product currently using
+      // it. If one is ever added back, it charges today, charges once more
+      // tomorrow, then stops on its own rather than renewing forever.
       const hasDailyTestPlan = recurringLines.some(
         (l) => getTier(l.product_slug, l.tier_id)!.billing === 'daily',
       );
