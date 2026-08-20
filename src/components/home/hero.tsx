@@ -7,10 +7,14 @@ import { Button } from '@/components/ui/button';
 import { HeroBackground } from '@/components/home/hero-background';
 
 const words: { text: string; gradient?: boolean; break?: boolean }[] = [
-  { text: 'Build' },
-  { text: 'bigger.' },
-  { text: 'Sell', break: true, gradient: true },
-  { text: 'more.', gradient: true },
+  { text: 'Custom' },
+  { text: 'Software' },
+  { text: 'That', break: true },
+  { text: 'Makes' },
+  { text: 'Your' },
+  { text: 'Business', break: true, gradient: true },
+  { text: 'Run', gradient: true },
+  { text: 'Better', gradient: true },
 ];
 
 export function Hero() {
@@ -32,8 +36,8 @@ export function Hero() {
         </motion.p>
 
         <h1
-          aria-label="Build bigger. Sell more."
-          className="flex flex-wrap items-baseline justify-center gap-x-[0.28em] font-heading text-5xl leading-[1.08] font-semibold tracking-tight sm:text-7xl"
+          aria-label="Custom Software That Makes Your Business Run Better"
+          className="flex flex-wrap items-baseline justify-center gap-x-[0.28em] font-heading text-2xl leading-[1.15] font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
         >
           {words.map((word, w) => {
             if (word.gradient) {
