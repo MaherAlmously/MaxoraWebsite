@@ -100,8 +100,8 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.15 }}
         >
-          Websites, branding, and content for startups, creators, and growing businesses. Done
-          fast and right.
+          Web apps, mobile apps, AI automation, dashboards, and internal systems built around
+          your workflow, and much more.
         </motion.p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
