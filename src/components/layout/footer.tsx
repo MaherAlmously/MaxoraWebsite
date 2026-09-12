@@ -1,20 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getProduct } from '@/lib/products';
+import { services } from '@/lib/services';
 import { SITE_DESCRIPTION } from '@/lib/site';
 
-const footerServiceSlugs = [
-  'website-development',
-  'saas-development',
-  'app-development',
-  'website-care-plan',
-] as const;
-
 export function Footer() {
-  const footerServices = footerServiceSlugs
-    .map((slug) => getProduct(slug))
-    .filter((p): p is NonNullable<typeof p> => Boolean(p));
-
   return (
     <footer className="border-border bg-card/40 border-t">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
@@ -35,13 +24,13 @@ export function Footer() {
         <div>
           <h3 className="eyebrow mb-4">Services</h3>
           <ul className="space-y-2.5 text-sm">
-            {footerServices.map((p) => (
-              <li key={p.slug}>
+            {services.map((service) => (
+              <li key={service.slug}>
                 <Link
-                  href={`/services/${p.slug}`}
+                  href={`/services/${service.slug}`}
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {p.name}
+                  {service.shortName}
                 </Link>
               </li>
             ))}
@@ -53,18 +42,18 @@ export function Footer() {
           <ul className="space-y-2.5 text-sm">
             <li>
               <Link
-                href="/services"
+                href="/portfolio"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
-                All Services
+                Work
               </Link>
             </li>
             <li>
               <Link
-                href="/pay"
+                href="/about"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
-                Custom Payment
+                About
               </Link>
             </li>
             <li>
@@ -73,14 +62,6 @@ export function Footer() {
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Contact Us
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/account"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                My Account
               </Link>
             </li>
           </ul>

@@ -7,7 +7,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Tell us about your project and get a free quote from Maxora within 24 hours.',
+  description:
+    'Tell us what is slowing your business down or what you want to build. Maxora will figure out the software needed to solve it.',
 };
 
 export default function ContactPage() {
@@ -17,15 +18,17 @@ export default function ContactPage() {
         <Reveal>
           <p className="eyebrow mb-3">Contact</p>
           <h1 className="font-heading text-4xl font-semibold tracking-tight sm:text-5xl">
-            Tell us about <span className="text-gradient">your project</span>
+            Tell us what&apos;s <span className="text-gradient">slowing you down</span>
           </h1>
           <p className="mt-4 max-w-md text-muted-foreground">
-            Tell us what you need: a website, a logo, an app, or a project of your own.
+            You don&apos;t need a technical spec. Describe the problem or the idea, even if
+            you&apos;re not sure what to call it, and we&apos;ll figure out the right software for
+            it.
           </p>
           <ul className="mt-8 space-y-4 text-sm">
             <li className="flex items-center gap-3">
               <MessageSquare className="size-5 text-primary" />
-              <span className="text-muted-foreground">Free quotes, no commitment</span>
+              <span className="text-muted-foreground">&quot;Not sure&quot; is a fine answer</span>
             </li>
             <li className="flex items-center gap-3">
               <Clock className="size-5 text-primary" />

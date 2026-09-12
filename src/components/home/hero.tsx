@@ -7,14 +7,11 @@ import { Button } from '@/components/ui/button';
 import { HeroBackground } from '@/components/home/hero-background';
 
 const words: { text: string; gradient?: boolean; break?: boolean }[] = [
-  { text: 'Custom' },
   { text: 'Software' },
-  { text: 'That', break: true },
-  { text: 'Makes' },
-  { text: 'Your' },
-  { text: 'Business', break: true, gradient: true },
-  { text: 'Run', gradient: true },
-  { text: 'Better', gradient: true },
+  { text: 'Built' },
+  { text: 'Around', break: true },
+  { text: 'Your', gradient: true },
+  { text: 'Business.', gradient: true },
 ];
 
 export function Hero() {
@@ -32,11 +29,11 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          Tech · Design · Growth
+          Software · Automation · Apps
         </motion.p>
 
         <h1
-          aria-label="Custom Software That Makes Your Business Run Better"
+          aria-label="Software Built Around Your Business."
           className="flex flex-wrap items-baseline justify-center gap-x-[0.28em] font-heading text-2xl leading-[1.15] font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
         >
           {words.map((word, w) => {
@@ -100,8 +97,8 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.15 }}
         >
-          Web apps, mobile apps, AI automation, dashboards, and internal systems built around
-          your workflow, and much more.
+          Maxora builds custom software, AI automation, and web and mobile applications that help
+          businesses work faster and eliminate inefficient processes.
         </motion.p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
@@ -113,9 +110,9 @@ export function Hero() {
             whileTap={reduce ? undefined : { scale: 0.97 }}
           >
             <Button asChild size="lg" className="glow">
-              <Link href="/services">
-                See Services and Prices
-                <ArrowRight className="size-4" />
+              <Link href="/contact">
+                <MessageSquare className="size-4" />
+                Tell Us What You Need
               </Link>
             </Button>
           </motion.div>
@@ -127,9 +124,9 @@ export function Hero() {
             whileTap={reduce ? undefined : { scale: 0.97 }}
           >
             <Button asChild size="lg" variant="outline">
-              <Link href="/contact">
-                <MessageSquare className="size-4" />
-                Get a Free Quote
+              <Link href="/portfolio">
+                <ArrowRight className="size-4" />
+                View Our Work
               </Link>
             </Button>
           </motion.div>

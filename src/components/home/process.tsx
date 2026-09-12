@@ -12,20 +12,24 @@ import { SectionHeading } from '@/components/section-heading';
 
 const steps = [
   {
-    title: 'Pick your package',
-    text: 'Browse services with real prices and choose the package that fits, or request a custom quote.',
+    title: 'Understand your business',
+    text: 'We start by learning how your business actually runs, and what is slowing it down.',
   },
   {
-    title: 'Tell us about your brand',
-    text: 'Check out and share your goals, content, and preferences. We confirm scope within 24 hours.',
+    title: 'Plan the solution',
+    text: 'We figure out the right approach, custom software, automation, or an app, and scope it clearly.',
   },
   {
-    title: 'We design and build',
-    text: 'You get previews as we work and revision rounds to make it exactly right.',
+    title: 'Design and build',
+    text: 'You see progress as we go, with regular check-ins so nothing is a surprise.',
   },
   {
-    title: 'Launch and grow',
-    text: 'We deliver your files or put your site live, and stay available for support after.',
+    title: 'Launch',
+    text: 'We put the finished software into your team’s hands and make sure it works.',
+  },
+  {
+    title: 'Support and improve',
+    text: 'We stay available to fix issues and improve the software as your business grows.',
   },
 ];
 
@@ -77,16 +81,16 @@ export function Process() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
-      <SectionHeading eyebrow="How it works" title="From order to launch in four steps" />
+      <SectionHeading eyebrow="How it works" title="From problem to launch in five steps" />
 
       <ol
         ref={containerRef}
-        className="relative mt-10 grid grid-cols-1 gap-8 sm:gap-10 lg:grid-cols-4 lg:gap-5"
+        className="relative mt-10 grid grid-cols-1 gap-8 sm:gap-10 lg:grid-cols-5 lg:gap-4"
       >
         {/* Static track */}
         <div
           aria-hidden
-          className="absolute top-5 bottom-5 left-5 w-px -translate-x-1/2 bg-border lg:inset-x-[12.5%] lg:top-5 lg:bottom-auto lg:left-auto lg:h-px lg:w-auto lg:translate-x-0"
+          className="absolute top-5 bottom-5 left-5 w-px -translate-x-1/2 bg-border lg:inset-x-[10%] lg:top-5 lg:bottom-auto lg:left-auto lg:h-px lg:w-auto lg:translate-x-0"
         />
         {/* Animated fill, grows as you scroll through the section */}
         <motion.div
@@ -96,7 +100,7 @@ export function Process() {
               ? { scaleY: 1, scaleX: 1 }
               : { scaleY: scrollYProgress, scaleX: scrollYProgress }
           }
-          className="glow absolute top-5 bottom-5 left-5 w-px origin-top -translate-x-1/2 bg-primary lg:inset-x-[12.5%] lg:top-5 lg:bottom-auto lg:left-auto lg:h-px lg:w-auto lg:origin-left lg:translate-x-0"
+          className="glow absolute top-5 bottom-5 left-5 w-px origin-top -translate-x-1/2 bg-primary lg:inset-x-[10%] lg:top-5 lg:bottom-auto lg:left-auto lg:h-px lg:w-auto lg:origin-left lg:translate-x-0"
         />
 
         {steps.map((step, i) => (

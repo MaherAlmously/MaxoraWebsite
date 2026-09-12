@@ -2,17 +2,26 @@
 
 **Live site: [maxora.tech](https://maxora.tech)**
 
-Website and online store for Maxora, a tech and marketing agency. Clients
-can browse services, buy them directly, and pay either once or on a monthly
-plan, all without creating an account.
+Website for Maxora, a software company that builds custom software, AI
+automation, and web and mobile apps for businesses. Visitors describe a
+problem or an idea through the contact form, and Maxora figures out the
+right software for it.
+
+The site also carries an older shop from before the rebrand (website
+packages, logo design, social media, flyers, and so on) at `/store`. It is
+kept fully working for existing customers and direct links, but it is not
+part of the main navigation anymore.
 
 ## What it does
 
-- **Service catalog** with detail pages for web development, app
-  development, branding, social media management, flyer design, video
-  production, and content editing.
-- **Guest checkout.** Customers can buy without signing up. Orders are
-  saved either way.
+- **Three core services**, `/services`: custom software, AI and automation,
+  and web and mobile apps, each with its own page and a contact form tied
+  to it.
+- **Work page**, `/portfolio`: real projects shown as problem, what was
+  built, and result.
+- **Legacy store**, `/store`: the old service catalog with guest checkout,
+  one-time and recurring Stripe payments, and promo codes. Not linked from
+  the main site, still fully functional.
 - **One-time and recurring payments** through Stripe, including monthly
   retainer plans and promo codes.
 - **Quick payment page** at `/pay` for sending a client a custom amount to
@@ -93,11 +102,11 @@ prints a separate secret meant only for local use.
 
 ## Where the data lives
 
-The service catalog is a plain TypeScript file, `src/lib/products.ts`.
-There is no CMS, so editing prices or adding a service means editing that
-file and redeploying.
+The three core services live in `src/lib/services.ts`. The legacy store
+catalog is a separate plain TypeScript file, `src/lib/products.ts`. There
+is no CMS, so editing either means editing the file and redeploying.
 
-Everything else is in Supabase (project ref `qcejbzcrpipgqiuelvqr`):
+Everything else is in Supabase (project ref `oqygkcauoxxkrergfotc`):
 orders, order items, contact messages, payment requests, and user profiles.
 Profiles carry a role of either `client` or `admin`, and new signups default
 to `client`. To make someone an admin, change their `profiles.role` to
@@ -107,7 +116,7 @@ The schema is not managed by migration files. `db/schema.sql` is a snapshot
 of the live database, kept here so the database could be rebuilt from
 scratch if the Supabase project were ever lost. It is a recovery copy, not
 something that gets applied on deploy, so regenerate it whenever the real
-schema changes.
+schema changes. See `docs/schema.md` for an entity diagram.
 
 ## Deployment
 
@@ -122,7 +131,7 @@ See `docs/vercel-deployment.md` for the full deploy steps.
 If the laptop dies, this repo plus the following accounts is everything:
 
 - **Vercel**, hosting and production environment variables
-- **Supabase**, the database and auth (project ref `qcejbzcrpipgqiuelvqr`)
+- **Supabase**, the database and auth (project ref `oqygkcauoxxkrergfotc`)
 - **Stripe**, payments and the webhook endpoint
 - **The domain registrar** for maxora.tech
 - **Resend**, the email API key and verified sending domain (maxora.tech)

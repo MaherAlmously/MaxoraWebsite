@@ -34,7 +34,7 @@ export function CartDrawer() {
               Browse our services and add one to get started.
             </p>
             <Button asChild onClick={closeDrawer}>
-              <Link href="/services">Explore Services</Link>
+              <Link href="/store">Explore Packages</Link>
             </Button>
           </div>
         ) : (

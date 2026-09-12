@@ -1,4 +1,5 @@
 import { Hero } from '@/components/home/hero';
+import { ProblemFit } from '@/components/home/problem-fit';
 import { ServicesShowcase } from '@/components/home/services-showcase';
 import { ClientsShowcase } from '@/components/home/clients-showcase';
 import { WhyUs } from '@/components/home/why-us';
@@ -9,10 +10,11 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <ProblemFit />
       <ServicesShowcase />
-      <ClientsShowcase />
       <WhyUs />
       <Process />
+      <ClientsShowcase />
       <CtaBanner />
     </>
   );

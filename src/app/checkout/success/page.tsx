@@ -29,7 +29,7 @@ export default async function CheckoutSuccessPage({
       )}
       <div className="mt-8 flex gap-4">
         <Button asChild>
-          <Link href="/services">Keep Browsing</Link>
+          <Link href="/store">Keep Browsing</Link>
         </Button>
         <Button asChild variant="outline">
           <Link href="/account">View My Orders</Link>

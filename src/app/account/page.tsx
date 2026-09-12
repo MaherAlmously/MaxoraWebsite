@@ -85,7 +85,7 @@ export default async function AccountPage() {
             No orders yet. Orders you place while logged in will show up here.
           </p>
           <Button asChild className="mt-6">
-            <Link href="/services">Browse Services</Link>
+            <Link href="/store">Browse Packages</Link>
           </Button>
         </div>
       ) : (

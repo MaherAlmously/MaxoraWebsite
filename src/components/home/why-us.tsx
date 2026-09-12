@@ -1,27 +1,27 @@
-import { Rocket, ShieldCheck, Timer, Wallet } from 'lucide-react';
+import { Puzzle, ShieldCheck, Users, Wrench } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal } from '@/components/reveal';
 
 const features = [
   {
-    icon: Wallet,
-    title: 'Clear, upfront pricing',
-    text: 'Every package has a listed price. No surprise invoices, no hidden fees.',
+    icon: Users,
+    title: 'We start by understanding your business',
+    text: 'No jumping straight to code. We learn how your business actually runs before we design anything.',
   },
   {
-    icon: Timer,
-    title: 'Fast turnaround',
-    text: 'Most projects ship within days, not months, without cutting corners.',
-  },
-  {
-    icon: Rocket,
-    title: 'Built to convert',
-    text: 'Design decisions driven by what makes visitors become customers.',
+    icon: Puzzle,
+    title: 'Built around your workflow',
+    text: 'Software designed to fit how your team already works, not the other way around.',
   },
   {
     icon: ShieldCheck,
-    title: 'You own everything',
-    text: 'Full ownership of your files, your site, and your brand assets.',
+    title: 'You own what we build',
+    text: 'Full ownership of the software, the code, and your data. No lock-in.',
+  },
+  {
+    icon: Wrench,
+    title: 'Support after launch',
+    text: 'We stay available to fix issues, make changes, and improve things as your business grows.',
   },
 ];
 
@@ -31,8 +31,8 @@ export function WhyUs() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <SectionHeading
           eyebrow="Why Maxora"
-          title="Real deadlines, real deliverables"
-          description="Fixed packages, real deadlines, and work you can check at every step. You always know what you pay and what you get."
+          title="Software that actually fits how you work"
+          description="We build around your business, not a template. Here's what that means in practice."
         />
 
         <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">

@@ -1,11 +1,12 @@
 -- Maxora database schema snapshot (Supabase / Postgres, schema "public")
 --
 -- This project has no tracked migrations directory. The live database in
--- Supabase (project ref qcejbzcrpipgqiuelvqr) is the source of truth, and
--- this file is a point-in-time snapshot of that design so the schema can be
--- reconstructed from the repo alone if the live database is ever lost.
--- Regenerate this file whenever the schema changes; it is not applied
--- automatically.
+-- Supabase (project ref oqygkcauoxxkrergfotc, "MaxoraTech" — the old
+-- qcejbzcrpipgqiuelvqr project was paused and replaced) is the source of
+-- truth, and this file is a point-in-time snapshot of that design so the
+-- schema can be reconstructed from the repo alone if the live database is
+-- ever lost. Regenerate this file whenever the schema changes; it is not
+-- applied automatically.
 
 -- ============================================================
 -- Tables
@@ -50,6 +51,9 @@ create table if not exists public.contact_messages (
   subject text,
   service text,
   message text not null,
+  company text,
+  budget_range text,
+  timeline text,
   created_at timestamptz not null default now()
 );
 

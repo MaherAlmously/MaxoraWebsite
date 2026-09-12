@@ -2,24 +2,24 @@
 
 import Link from 'next/link';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
-import { Check, ExternalLink } from 'lucide-react';
+import { ExternalLink, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BrowserMockup } from '@/components/portfolio/browser-mockup';
 import { portfolioProjects } from '@/lib/portfolio';
 
-const featureList: Variants = {
+const blockList: Variants = {
   hidden: {},
   show: {
-    transition: { staggerChildren: 0.06 },
+    transition: { staggerChildren: 0.08 },
   },
 };
 
-const featureItem: Variants = {
+const blockItem: Variants = {
   hidden: { opacity: 0, x: -12 },
   show: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.25, ease: 'easeOut' },
+    transition: { duration: 0.3, ease: 'easeOut' },
   },
 };
 
@@ -74,26 +74,41 @@ export function ProjectShowcase() {
               <p className="text-gradient-flow mt-2 text-base font-medium sm:text-lg">
                 {project.tagline}
               </p>
-              <p className="text-muted-foreground mt-4">{project.description}</p>
 
-              <motion.ul
-                className="border-border mt-6 space-y-2.5 border-t pt-5"
-                variants={reduce ? undefined : featureList}
+              <motion.div
+                className="border-border mt-6 space-y-5 border-t pt-5"
+                variants={reduce ? undefined : blockList}
                 initial={reduce ? undefined : 'hidden'}
                 whileInView={reduce ? undefined : 'show'}
                 viewport={{ once: true, amount: 0.4 }}
               >
-                {project.features.map((feature) => (
-                  <motion.li
-                    key={feature}
-                    variants={reduce ? undefined : featureItem}
-                    className="flex items-start gap-2.5 text-sm"
+                <motion.div variants={reduce ? undefined : blockItem}>
+                  <p className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                    Problem
+                  </p>
+                  <p className="text-muted-foreground mt-1.5 text-sm">{project.problem}</p>
+                </motion.div>
+                <motion.div variants={reduce ? undefined : blockItem}>
+                  <p className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                    What Maxora built
+                  </p>
+                  <p className="text-muted-foreground mt-1.5 text-sm">{project.whatWeBuilt}</p>
+                </motion.div>
+                {project.result && (
+                  <motion.div
+                    variants={reduce ? undefined : blockItem}
+                    className="flex items-start gap-2.5 rounded-lg border border-primary/25 bg-primary/5 px-4 py-3"
                   >
-                    <Check className="text-primary mt-0.5 size-4 shrink-0" />
-                    <span className="text-muted-foreground">{feature}</span>
-                  </motion.li>
-                ))}
-              </motion.ul>
+                    <TrendingUp className="text-primary mt-0.5 size-4 shrink-0" />
+                    <div>
+                      <p className="text-primary text-[11px] font-semibold tracking-wide uppercase">
+                        Result
+                      </p>
+                      <p className="mt-1 text-sm">{project.result}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </motion.div>
 
               <Button asChild size="lg" className="glow mt-8 w-full sm:w-auto">
                 <Link href={project.url} target="_blank" rel="noopener noreferrer">

@@ -72,7 +72,7 @@ export default function CheckoutPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 pt-32 pb-24 sm:px-6">
       <Link
-        href="/services"
+        href="/store"
         className="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
@@ -85,7 +85,7 @@ export default function CheckoutPage() {
         <div className="mt-12 rounded-xl border border-border bg-card p-10 text-center">
           <p className="text-muted-foreground">Your cart is empty.</p>
           <Button asChild className="mt-6">
-            <Link href="/services">Browse Services</Link>
+            <Link href="/store">Browse Packages</Link>
           </Button>
         </div>
       ) : (

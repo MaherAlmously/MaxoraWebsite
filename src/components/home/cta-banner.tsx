@@ -8,7 +8,11 @@ import { Button } from '@/components/ui/button';
 import { AmbientGlow } from '@/components/ambient-glow';
 import { MagneticButton } from '@/components/magnetic-button';
 
-const points = ['Fixed, upfront pricing', 'Most projects ship in days', '24/7 support access'];
+const points = [
+  'You tell us the problem, we figure out the software',
+  'Clear scope before we start building',
+  'Support after launch',
+];
 
 export function CtaBanner() {
   const reduce = useReducedMotion();
@@ -32,20 +36,20 @@ export function CtaBanner() {
               Start your project today
             </h2>
             <p className="mt-5 max-w-md text-muted-foreground text-balance">
-              Order a package online in minutes, or send us your idea and get a free quote within
-              24 hours.
+              Tell us what&apos;s slowing your business down or what you want to build. We&apos;ll
+              reply within 24 hours.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <MagneticButton>
                 <Button asChild size="lg" className="glow">
-                  <Link href="/services">
-                    Browse Services
+                  <Link href="/contact">
+                    Tell Us What You Need
                     <ArrowRight className="size-4" />
                   </Link>
                 </Button>
               </MagneticButton>
               <Button asChild size="lg" variant="outline">
-                <Link href="/contact">Get a Free Quote</Link>
+                <Link href="/services">See Our Services</Link>
               </Button>
             </div>
           </div>

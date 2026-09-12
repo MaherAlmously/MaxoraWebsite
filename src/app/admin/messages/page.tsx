@@ -14,6 +14,9 @@ type Message = {
   email: string;
   subject: string | null;
   service: string | null;
+  company: string | null;
+  budget_range: string | null;
+  timeline: string | null;
   message: string;
   created_at: string;
 };
@@ -28,7 +31,7 @@ export default async function AdminMessagesPage({
 
   let query = supabase
     .from('contact_messages')
-    .select('id, name, email, subject, service, message, created_at')
+    .select('id, name, email, subject, service, company, budget_range, timeline, message, created_at')
     .order('created_at', { ascending: false });
 
   if (from) query = query.gte('created_at', new Date(from).toISOString());
@@ -117,6 +120,7 @@ export default async function AdminMessagesPage({
 
                 <div className="mt-5 grid grid-cols-2 gap-4 border-t border-border pt-4 sm:grid-cols-3">
                   <DetailField label="Email" value={m.email} />
+                  <DetailField label="Company" value={m.company || '—'} />
                   <DetailField
                     label="Received"
                     value={new Date(m.created_at).toLocaleString(undefined, {
@@ -124,6 +128,8 @@ export default async function AdminMessagesPage({
                       timeStyle: 'short',
                     })}
                   />
+                  <DetailField label="Budget range" value={m.budget_range || '—'} />
+                  <DetailField label="Timeline" value={m.timeline || '—'} />
                   <DetailField label="Message ID" value={`#${m.id.slice(0, 8)}`} />
                 </div>
 

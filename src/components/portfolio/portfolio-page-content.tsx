@@ -22,13 +22,13 @@ export function PortfolioPageContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p className="eyebrow mb-3">Selected work</p>
+            <p className="eyebrow mb-3">Our work</p>
             <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-6xl">
-              A closer look at what{' '}
-              <span className="text-gradient-flow whitespace-nowrap">we build</span>
+              The problems we&apos;ve solved,{' '}
+              <span className="text-gradient-flow whitespace-nowrap">and what we built</span>
             </h1>
             <p className="text-muted-foreground mt-5 text-base sm:text-lg">
-              Your website could look this good.
+              Real projects, real businesses. No invented numbers, just what we shipped.
             </p>
           </motion.div>
         </div>
@@ -50,7 +50,7 @@ export function PortfolioPageContent() {
           </p>
           <Button asChild size="lg" className="glow mt-7 w-full sm:w-auto">
             <Link href="/contact">
-              Get in touch
+              Tell Us What You Need
               <ArrowRight className="size-4" />
             </Link>
           </Button>

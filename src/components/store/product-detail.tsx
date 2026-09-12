@@ -66,11 +66,11 @@ export function ProductDetail({ product }: { product: Product }) {
   return (
     <div className="mx-auto max-w-4xl px-4 pt-32 pb-24 sm:px-6">
       <Link
-        href="/services"
+        href="/store"
         className="mb-10 inline-flex items-center gap-2 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-5" />
-        All services
+        All packages
       </Link>
 
       <Reveal className="text-center">

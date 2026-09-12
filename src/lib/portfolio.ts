@@ -5,8 +5,10 @@ export type PortfolioProject = {
   url: string;
   category: string;
   tagline: string;
-  description: string;
-  features: string[];
+  problem: string;
+  whatWeBuilt: string;
+  /** Only set when there is a real, verifiable result. Omit rather than invent one. */
+  result?: string;
   image: string;
 };
 
@@ -18,14 +20,10 @@ export const portfolioProjects: PortfolioProject[] = [
     url: 'https://smokingrillplano.com',
     category: 'Informational site',
     tagline: 'A halal smokehouse site built to sell the menu, not just show it.',
-    description:
-      "Smokin' Grill is a 100% Zabiha Halal smokehouse in Plano, Texas. Bold food photography and a clear halal promise get guests to a decision fast.",
-    features: [
-      'Full menu with signature-dish callouts and category tags',
-      'Catering inquiries for groups and events',
-      'One-tap "Call Now" from every section',
-      'Location, hours, and directions built in',
-    ],
+    problem:
+      "Smokin' Grill, a 100% Zabiha Halal smokehouse in Plano, Texas, needed a site that could get guests to a decision fast, not just describe the restaurant.",
+    whatWeBuilt:
+      'A full menu with signature-dish callouts and category tags, catering inquiries for groups and events, a one-tap "Call Now" from every section, and location, hours, and directions built right in.',
     image: '/portfolio/smokin-grill.png',
   },
   {
@@ -35,14 +33,10 @@ export const portfolioProjects: PortfolioProject[] = [
     url: 'https://masuly.com',
     category: 'E-commerce · subscriptions & payments',
     tagline: 'A clean-label supplement brand with a storefront to match.',
-    description:
-      'Masuly sells a deliberately short catalog of clean, responsibly sourced supplements. Minimalist layout and transparent sourcing build trust before a single product is added to cart.',
-    features: [
-      'Integrated storefront with a focused, two-product catalog',
-      'Sourcing transparency (origin, ingredients, no fillers)',
-      'Embedded production video and educational blog',
-      'Light, airy design that keeps the product the focus',
-    ],
+    problem:
+      'Masuly needed an online storefront that matched the trust and simplicity of a clean-label supplement brand, built around a deliberately short, focused catalog.',
+    whatWeBuilt:
+      'An integrated storefront for a two-product catalog, sourcing transparency (origin, ingredients, no fillers), an embedded production video and educational blog, and a light, airy design that keeps the product the focus.',
     image: '/portfolio/masuly.png',
   },
   {
@@ -52,14 +46,10 @@ export const portfolioProjects: PortfolioProject[] = [
     url: 'https://maherealtor.com',
     category: 'Informational site',
     tagline: 'A data-driven real estate site for a fast-moving market.',
-    description:
-      'A DFW-area real estate site built around a simple promise: compare homes with real numbers. Buyers and sellers get routed to the right next step, backed by a clear five-step process.',
-    features: [
-      'Four clear entry points: buy, sell, rent, and lease',
-      'Five-step buyer framework laid out visually',
-      'Live listings section with SMS, call, and form contact',
-      'City-by-city market coverage across North Texas',
-    ],
+    problem:
+      'A DFW-area real estate business needed a site that could route buyers and sellers to the right next step fast, backed by real numbers instead of generic listings copy.',
+    whatWeBuilt:
+      'Four clear entry points (buy, sell, rent, lease), a five-step buyer framework laid out visually, a live listings section with SMS, call, and form contact, and city-by-city market coverage across North Texas.',
     image: '/portfolio/maherealtor.png',
   },
 ];

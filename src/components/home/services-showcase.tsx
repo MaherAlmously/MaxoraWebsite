@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { products } from '@/lib/products';
-import { ProductCard } from '@/components/store/product-card';
+import { services } from '@/lib/services';
+import { ServiceCard } from '@/components/services/service-card';
 import { SectionHeading } from '@/components/section-heading';
 import { Reveal } from '@/components/reveal';
 import { Button } from '@/components/ui/button';
@@ -11,13 +11,13 @@ export function ServicesShowcase() {
     <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
       <SectionHeading
         eyebrow="What we do"
-        title="Everything your brand needs to grow"
-        description="Pick a service, choose a package, and check out in minutes. Custom projects get a free quote."
+        title="Three ways we help your business run better"
+        description="Tell us the problem. We'll figure out whether it's custom software, automation, or an app, and build it."
       />
-      <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
-        {products.map((product, i) => (
-          <Reveal key={product.slug} delay={(i % 3) * 0.1}>
-            <ProductCard product={product} />
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {services.map((service, i) => (
+          <Reveal key={service.slug} delay={i * 0.1}>
+            <ServiceCard service={service} />
           </Reveal>
         ))}
       </div>

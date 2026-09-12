@@ -4,10 +4,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, ShoppingCart, User } from 'lucide-react';
+import { Menu, User } from 'lucide-react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
-import { useCart } from '@/lib/cart-context';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -16,13 +15,13 @@ import { cn } from '@/lib/utils';
 const links = [
   { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
-  { href: '/pay', label: 'Custom Payment' },
+  { href: '/portfolio', label: 'Work' },
+  { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
-  const { count, ready, openDrawer } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -84,20 +83,6 @@ export function Navbar() {
 
         <div className="flex items-center gap-1.5">
           <ThemeToggle />
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Open cart"
-            className="relative"
-            onClick={openDrawer}
-          >
-            <ShoppingCart className="size-5" />
-            {ready && count > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 flex size-4.5 items-center justify-center rounded-full bg-primary text-[0.65rem] font-semibold text-primary-foreground">
-                {count}
-              </span>
-            )}
-          </Button>
 
           <Button variant="ghost" size="icon" asChild aria-label="Account">
             <Link href={user ? '/account' : '/login'}>
@@ -106,7 +91,7 @@ export function Navbar() {
           </Button>
 
           <Button asChild size="sm" className="hidden glow md:inline-flex">
-            <Link href="/services">Learn More</Link>
+            <Link href="/contact">Tell Us What You Need</Link>
           </Button>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -155,7 +140,7 @@ export function Navbar() {
                   className="glow mt-10 w-full max-w-xs self-center"
                   onClick={() => setMobileOpen(false)}
                 >
-                  <Link href="/services">Learn More</Link>
+                  <Link href="/contact">Tell Us What You Need</Link>
                 </Button>
               </div>
             </SheetContent>

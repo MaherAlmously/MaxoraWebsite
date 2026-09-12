@@ -5,4 +5,4 @@ export const SITE_NAME = 'Maxora';
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
 export const SITE_DESCRIPTION =
-  'Maxora builds custom software, websites, mobile apps, and desktop apps for businesses that want to stand out. Built fast, built right.';
+  'Software built around your business. Maxora builds custom software, AI automation, and web and mobile applications that help businesses work faster and eliminate inefficient processes.';
