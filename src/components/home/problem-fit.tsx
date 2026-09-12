@@ -17,7 +17,7 @@ export function ProblemFit() {
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {problems.map((problem, i) => (
           <Reveal key={problem} delay={(i % 3) * 0.08}>
-            <div className="h-full rounded-xl border border-border bg-card px-5 py-5">
+            <div className="flex h-full items-center justify-center rounded-xl border border-border bg-card px-5 py-6 text-center">
               <p className="font-heading text-base font-medium text-balance">
                 &ldquo;{problem}&rdquo;
               </p>

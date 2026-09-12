@@ -6,7 +6,7 @@ const features = [
   {
     icon: Users,
     title: 'We start by understanding your business',
-    text: 'No jumping straight to code. We learn how your business actually runs before we design anything.',
+    text: 'No jumping straight to building. We learn how your business actually runs before we design anything.',
   },
   {
     icon: Puzzle,
@@ -16,7 +16,7 @@ const features = [
   {
     icon: ShieldCheck,
     title: 'You own what we build',
-    text: 'Full ownership of the software, the code, and your data. No lock-in.',
+    text: 'Full ownership of the software and your data. No lock-in.',
   },
   {
     icon: Wrench,

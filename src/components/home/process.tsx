@@ -50,8 +50,8 @@ function ProcessStep({
   const scale = useTransform(fill, [0, 1], [0.7, 1]);
 
   return (
-    <li className="relative flex gap-4 lg:block lg:text-center">
-      <div className="relative z-10 shrink-0 lg:mx-auto lg:mb-4">
+    <li className="relative flex gap-4 lg:flex-col lg:items-center lg:text-center">
+      <div className="relative z-10 shrink-0 lg:mb-4">
         <div className="flex size-10 items-center justify-center rounded-full border-2 border-border bg-background font-heading text-sm font-semibold text-muted-foreground">
           {index + 1}
         </div>
@@ -63,7 +63,7 @@ function ProcessStep({
           {index + 1}
         </motion.div>
       </div>
-      <div className="flex-1 rounded-xl border border-border bg-card p-5">
+      <div className="flex-1 w-full rounded-xl border border-border bg-card p-5 lg:flex lg:flex-col lg:justify-center">
         <h3 className="font-heading font-semibold">{step.title}</h3>
         <p className="mt-2 text-sm text-muted-foreground">{step.text}</p>
       </div>
