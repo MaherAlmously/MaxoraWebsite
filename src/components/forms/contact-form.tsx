@@ -13,6 +13,7 @@ const helpOptions = [
   { value: 'custom-software', label: 'Custom Software' },
   { value: 'ai-automation', label: 'AI & Automation' },
   { value: 'web-mobile-apps', label: 'Web or Mobile App' },
+  { value: 'dental-pilot', label: 'Dental Practice Pilot' },
   { value: 'not-sure', label: 'Not Sure' },
 ];
 
