@@ -42,7 +42,7 @@ export function ProjectShowcase() {
             className="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16"
           >
             <motion.div
-              className={reversed ? 'lg:order-2' : undefined}
+              className={`flex justify-center ${reversed ? 'lg:order-2' : ''}`}
               initial={reduce ? false : { opacity: 0, x: imageFromX }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.3 }}
@@ -117,7 +117,7 @@ export function ProjectShowcase() {
 
               <Button asChild size="lg" className="glow mt-8 w-full sm:w-auto">
                 {project.kind === 'app' ? (
-                  <Link href={project.url}>
+                  <Link href={project.url} target="_blank" rel="noopener noreferrer">
                     Get it on Google Play
                     <Smartphone className="size-4" />
                   </Link>

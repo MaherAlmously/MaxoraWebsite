@@ -41,9 +41,7 @@ const SPARKLES = [
   { x: 80, y: 88, delay: 2.1, size: 4 },
 ];
 
-// Play Store listing isn't live yet — swap this for the real URL once
-// Souqly is published under a public link.
-const PLAY_STORE_URL = '#';
+const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.souqly.grocery';
 
 export function SouqlyPageContent() {
   const reduce = useReducedMotion();
