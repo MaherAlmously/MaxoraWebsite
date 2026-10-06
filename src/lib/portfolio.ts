@@ -21,7 +21,7 @@ export const portfolioProjects: PortfolioProject[] = [
     name: "Smokin' Grill",
     domain: 'smokingrillplano.com',
     url: 'https://smokingrillplano.com',
-    category: 'Informational site',
+    category: 'Informational web app',
     tagline: 'A halal smokehouse site built to sell the menu, not just show it.',
     problem:
       "Smokin' Grill, a 100% Zabiha Halal smokehouse in Plano, Texas, needed a site that could get guests to a decision fast, not just describe the restaurant.",
@@ -37,7 +37,7 @@ export const portfolioProjects: PortfolioProject[] = [
     category: 'Web app · e-commerce, affiliates & admin',
     tagline: 'A clean-label supplement brand with a full platform behind it.',
     problem:
-      'Masuly needed more than a storefront — a real platform to run the business: sell a focused catalog, recruit affiliates, manage orders, and stay on top of customer communication.',
+      'Masuly needed more than a storefront. It needed a real platform to run the business: sell a focused catalog, recruit affiliates, manage orders, and stay on top of customer communication.',
     whatWeBuilt:
       'An integrated storefront for a two-product catalog, an affiliate sign-up and referral system, an admin dashboard for managing orders and content, transactional and marketing email through Resend, sourcing transparency (origin, ingredients, no fillers), and an embedded production video and educational blog.',
     image: '/portfolio/masuly.png',
