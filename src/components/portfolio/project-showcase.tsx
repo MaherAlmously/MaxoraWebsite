@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
-import { ExternalLink, TrendingUp } from 'lucide-react';
+import { ExternalLink, Smartphone, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BrowserMockup } from '@/components/portfolio/browser-mockup';
+import { PhoneMockup } from '@/components/portfolio/phone-mockup';
 import { portfolioProjects } from '@/lib/portfolio';
 
 const blockList: Variants = {
@@ -47,12 +48,16 @@ export function ProjectShowcase() {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             >
-              <BrowserMockup
-                image={project.image}
-                domain={project.domain}
-                name={project.name}
-                priority={i === 0}
-              />
+              {project.kind === 'app' ? (
+                <PhoneMockup image={project.image} name={project.name} priority={i === 0} />
+              ) : (
+                <BrowserMockup
+                  image={project.image}
+                  domain={project.domain}
+                  name={project.name}
+                  priority={i === 0}
+                />
+              )}
             </motion.div>
 
             <motion.div
@@ -111,10 +116,17 @@ export function ProjectShowcase() {
               </motion.div>
 
               <Button asChild size="lg" className="glow mt-8 w-full sm:w-auto">
-                <Link href={project.url} target="_blank" rel="noopener noreferrer">
-                  View live site
-                  <ExternalLink className="size-4" />
-                </Link>
+                {project.kind === 'app' ? (
+                  <Link href={project.url}>
+                    Get it on Google Play
+                    <Smartphone className="size-4" />
+                  </Link>
+                ) : (
+                  <Link href={project.url} target="_blank" rel="noopener noreferrer">
+                    View live site
+                    <ExternalLink className="size-4" />
+                  </Link>
+                )}
               </Button>
             </motion.div>
           </div>

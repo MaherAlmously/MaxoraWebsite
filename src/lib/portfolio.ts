@@ -1,8 +1,11 @@
 export type PortfolioProject = {
   slug: string;
   name: string;
+  /** For 'app' projects, the store/platform label shown in place of a domain. */
   domain: string;
   url: string;
+  /** Defaults to 'web'. 'app' renders a phone mockup and a store CTA instead of a browser mockup. */
+  kind?: 'web' | 'app';
   category: string;
   tagline: string;
   problem: string;
@@ -18,12 +21,12 @@ export const portfolioProjects: PortfolioProject[] = [
     name: "Smokin' Grill",
     domain: 'smokingrillplano.com',
     url: 'https://smokingrillplano.com',
-    category: 'Informational site',
-    tagline: 'A halal smokehouse site built to sell the menu, not just show it.',
+    category: 'Web app · online ordering & catering',
+    tagline: 'A halal smokehouse platform built to sell the menu, not just show it.',
     problem:
-      "Smokin' Grill, a 100% Zabiha Halal smokehouse in Plano, Texas, needed a site that could get guests to a decision fast, not just describe the restaurant.",
+      "Smokin' Grill, a 100% Zabiha Halal smokehouse in Plano, Texas, needed more than a brochure site — a platform that could get guests to a decision fast and handle catering requests without a phone call.",
     whatWeBuilt:
-      'A full menu with signature-dish callouts and category tags, catering inquiries for groups and events, a one-tap "Call Now" from every section, and location, hours, and directions built right in.',
+      'A full menu with signature-dish callouts and category tags, an online catering request flow for groups and events, a one-tap "Call Now" from every section, and location, hours, and directions built right in.',
     image: '/portfolio/smokin-grill.png',
   },
   {
@@ -31,25 +34,26 @@ export const portfolioProjects: PortfolioProject[] = [
     name: 'Masuly',
     domain: 'masuly.com',
     url: 'https://masuly.com',
-    category: 'E-commerce · subscriptions & payments',
-    tagline: 'A clean-label supplement brand with a storefront to match.',
+    category: 'Web app · e-commerce, affiliates & admin',
+    tagline: 'A clean-label supplement brand with a full platform behind it.',
     problem:
-      'Masuly needed an online storefront that matched the trust and simplicity of a clean-label supplement brand, built around a deliberately short, focused catalog.',
+      'Masuly needed more than a storefront — a real platform to run the business: sell a focused catalog, recruit affiliates, manage orders, and stay on top of customer communication.',
     whatWeBuilt:
-      'An integrated storefront for a two-product catalog, sourcing transparency (origin, ingredients, no fillers), an embedded production video and educational blog, and a light, airy design that keeps the product the focus.',
+      'An integrated storefront for a two-product catalog, an affiliate sign-up and referral system, an admin dashboard for managing orders and content, transactional and marketing email through Resend, sourcing transparency (origin, ingredients, no fillers), and an embedded production video and educational blog.',
     image: '/portfolio/masuly.png',
   },
   {
-    slug: 'maherealtor',
-    name: 'Maher Almously, Realtor',
-    domain: 'maherealtor.com',
-    url: 'https://maherealtor.com',
-    category: 'Informational site',
-    tagline: 'A data-driven real estate site for a fast-moving market.',
+    slug: 'souqly',
+    name: 'Souqly',
+    domain: 'Google Play',
+    url: '#',
+    kind: 'app',
+    category: 'Mobile app · Android (iOS coming soon)',
+    tagline: 'A marketplace app built mobile-first, from listing to sale.',
     problem:
-      'A DFW-area real estate business needed a site that could route buyers and sellers to the right next step fast, backed by real numbers instead of generic listings copy.',
+      'Souqly needed a native mobile marketplace experience, not a website squeezed onto a phone screen, with the account and compliance plumbing a real app store listing requires.',
     whatWeBuilt:
-      'Four clear entry points (buy, sell, rent, lease), a five-step buyer framework laid out visually, a live listings section with SMS, call, and form contact, and city-by-city market coverage across North Texas.',
-    image: '/portfolio/maherealtor.png',
+      'A native Android marketplace app for buying and selling, with account management, in-app account deletion, and the privacy and terms pages required for store compliance. iOS is in progress.',
+    image: '/souqly-icon.png',
   },
 ];

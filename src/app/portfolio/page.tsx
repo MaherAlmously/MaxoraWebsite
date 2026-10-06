@@ -4,7 +4,7 @@ import { PortfolioPageContent } from '@/components/portfolio/portfolio-page-cont
 export const metadata: Metadata = {
   title: 'Our Work',
   description:
-    'Real software Maxora has built for real businesses, including smokingrillplano.com, masuly.com, and maherealtor.com. The problem, what we built, and the result.',
+    'Real software Maxora has built for real businesses, including smokingrillplano.com, masuly.com, and the Souqly mobile app. The problem, what we built, and the result.',
 };
 
 export default function PortfolioPage() {
