@@ -54,6 +54,6 @@ export const portfolioProjects: PortfolioProject[] = [
       'Grocery shopping gets messy once more than one person is involved. Families and roommates needed a way to build and shop a list together without duplicate trips, forgotten items, or a group text falling apart.',
     whatWeBuilt:
       'A native Android app where you create a household and invite others with a code, or just use it solo. Lists are organized by the stores people actually shop at, and every add, check-off, or edit syncs instantly across everyone’s phone. It also tracks buying habits over time, so patterns are easy to spot, plus a quick setup tutorial for new users. iOS is in progress.',
-    image: '/souqly-icon.png',
+    image: '/portfolio/souqly.png',
   },
 ];

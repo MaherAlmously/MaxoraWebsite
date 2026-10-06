@@ -42,7 +42,7 @@ export function ProjectShowcase() {
             className="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16"
           >
             <motion.div
-              className={`flex justify-center ${reversed ? 'lg:order-2' : ''}`}
+              className={reversed ? 'lg:order-2' : undefined}
               initial={reduce ? false : { opacity: 0, x: imageFromX }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, amount: 0.3 }}
