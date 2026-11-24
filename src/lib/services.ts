@@ -2,7 +2,15 @@
 // Kept separate from `products.ts`, which remains the legacy commerce catalog
 // (still live at /store and every /services/[slug] product URL, just no
 // longer part of the primary services structure).
-export type ServiceContactType = 'custom-software' | 'ai-automation' | 'web-mobile-apps';
+export type ServiceContactType = 'web-development' | 'app-development' | 'maintenance-packages';
+
+/** Only the maintenance service lists packages; the other two are scoped per project. */
+export type ServicePackage = {
+  name: string;
+  price: string;
+  summary: string;
+  features: string[];
+};
 
 export type MaxoraService = {
   slug: ServiceContactType;
@@ -11,6 +19,7 @@ export type MaxoraService = {
   tagline: string;
   description: string;
   examples: string[];
+  packages?: ServicePackage[];
   icon: string; // resolved in components/services/service-icon.tsx
   /** Matches the "What can we help with?" option on the contact form. */
   contactType: ServiceContactType;
@@ -18,64 +27,101 @@ export type MaxoraService = {
 
 export const services: MaxoraService[] = [
   {
-    slug: 'custom-software',
-    name: 'Custom Software',
-    shortName: 'Custom Software',
-    tagline: 'We build software specifically around how your business works.',
+    slug: 'web-development',
+    name: 'Web Development',
+    shortName: 'Web Development',
+    tagline:
+      'Custom-built websites and web apps, designed around how your business actually sells.',
     description:
-      "If you're running your business through spreadsheets, sticky notes, or five tools that don't talk to each other, we build the one system that actually fits how your team works. You tell us the problem, we design and build the software around it.",
+      "Every site we build is designed and coded for your business, not adapted from a template. We start with what you need the site to do, whether that's bringing in leads, taking orders, or giving your customers somewhere to log in, and build toward that. It ships fast, works on every screen, and is built so you can add to it later without starting over.",
     examples: [
-      'Internal business systems',
-      'Employee management',
-      'Customer or client portals',
-      'Scheduling and booking',
-      'Inventory tracking',
-      'Custom CRM systems',
-      'Dashboards and reporting',
-      'Replacing spreadsheets and manual processes',
+      'Business and marketing websites',
+      'Ecommerce stores and checkout',
+      'Customer and client portals',
+      'Booking and scheduling systems',
+      'Internal tools and dashboards',
+      'Landing pages for campaigns',
+      'Rebuilds of slow or dated sites',
+      'Integrations with the tools you already use',
     ],
-    icon: 'LayoutGrid',
-    contactType: 'custom-software',
+    icon: 'Globe',
+    contactType: 'web-development',
   },
   {
-    slug: 'ai-automation',
-    name: 'AI & Automation',
-    shortName: 'AI & Automation',
-    tagline: 'We automate repetitive work and use AI where it can actually save your business time.',
+    slug: 'app-development',
+    name: 'App Development',
+    shortName: 'App Development',
+    tagline:
+      'Mobile, desktop, and cross-platform apps built from the idea through to the app store.',
     description:
-      "A lot of the work your team does every day doesn't need a person doing it. We find the repetitive, time-consuming parts of your business and automate them, using AI only where it genuinely saves time, not because it's trendy.",
+      'We design and build applications end to end: the interface your users see, the backend and database behind it, accounts, payments, and the release itself. Cross-platform where one codebase makes sense for iOS and Android, native or desktop where the product needs it. We handle App Store and Google Play submission, and we stay on to ship updates after launch.',
     examples: [
-      'Business process automation',
-      'Document processing',
-      'Automated data entry',
-      'AI assistants',
-      'Customer support automation',
-      'Automated reports',
-      'Workflow automation',
-      'Connecting your existing tools together',
-    ],
-    icon: 'Workflow',
-    contactType: 'ai-automation',
-  },
-  {
-    slug: 'web-mobile-apps',
-    name: 'Web & Mobile Apps',
-    shortName: 'Web & Mobile Apps',
-    tagline: 'We design and build complete applications for businesses and startups.',
-    description:
-      "Whether it's an app idea you've been sitting on or a platform your business needs to run, we design and build it end to end, on the web and on iOS and Android.",
-    examples: [
-      'Customer applications',
-      'Employee applications',
-      'SaaS platforms',
-      'Booking platforms',
-      'Client portals',
-      'Business dashboards',
-      'Marketplaces',
       'iOS and Android apps',
+      'Cross-platform builds from one codebase',
+      'Desktop applications for Windows and macOS',
+      'SaaS platforms and customer portals',
+      'Marketplaces and booking platforms',
+      'Internal apps for your team',
+      'Backend, API, and database work',
+      'App Store and Google Play submission',
     ],
     icon: 'Smartphone',
-    contactType: 'web-mobile-apps',
+    contactType: 'app-development',
+  },
+  {
+    slug: 'maintenance-packages',
+    name: 'Website & Application Maintenance',
+    shortName: 'Maintenance Packages',
+    tagline: 'Monthly plans that keep what you launched updated, backed up, and online.',
+    description:
+      "Software doesn't stay finished. Dependencies go out of date, platforms change their rules, and small things break quietly. A maintenance plan covers the ongoing work so you don't have to think about it: updates, backups, security monitoring, uptime checks, and the small fixes and edits that otherwise sit on a list for months. Plans are monthly and you can cancel them.",
+    examples: [
+      'Software and dependency updates',
+      'Scheduled backups',
+      'Security monitoring',
+      'Uptime checks',
+      'Bug fixes and small changes',
+      'Content and page edits',
+      'Performance reports',
+      'App store and OS compatibility updates',
+    ],
+    packages: [
+      {
+        name: 'Basic Care',
+        price: '$25/mo',
+        summary: 'Keeps a website current and backed up.',
+        features: [
+          'Monthly software updates',
+          'Weekly backups',
+          'Security monitoring',
+          'Uptime checks',
+        ],
+      },
+      {
+        name: 'Pro Care',
+        price: '$40/mo',
+        summary: 'Adds hands-on edits and reporting.',
+        features: [
+          'Everything in Basic Care',
+          '2 content edits per month',
+          'Priority support',
+          'Monthly performance report',
+        ],
+      },
+      {
+        name: 'Application Care',
+        price: 'Custom quote',
+        summary: 'For mobile, desktop, and custom applications.',
+        features: [
+          'App store and OS compatibility updates',
+          'SDK and dependency upgrades',
+          'Crash and error monitoring',
+          'Backend and database maintenance',
+        ],
+      },
+    ],
+    icon: 'Wrench',
+    contactType: 'maintenance-packages',
   },
 ];
 

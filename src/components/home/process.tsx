@@ -17,7 +17,7 @@ const steps = [
   },
   {
     title: 'Plan the solution',
-    text: 'We figure out the right approach, custom software, automation, or an app, and scope it clearly.',
+    text: 'We figure out the right build, a website, a web app, or a mobile or desktop app, and scope it clearly.',
   },
   {
     title: 'Design and build',
@@ -29,7 +29,7 @@ const steps = [
   },
   {
     title: 'Support and improve',
-    text: 'We stay available to fix issues and improve the software as your business grows.',
+    text: 'We stay available to fix issues and improve the software as your business grows, on a maintenance plan or as needed.',
   },
 ];
 

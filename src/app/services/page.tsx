@@ -6,11 +6,12 @@ import { ServiceCard } from '@/components/services/service-card';
 import { Process } from '@/components/home/process';
 import { Reveal } from '@/components/reveal';
 import { Button } from '@/components/ui/button';
+import { BlackFridayBanner } from '@/components/promo/black-friday-banner';
 
 export const metadata: Metadata = {
   title: 'Services',
   description:
-    'Custom software, AI automation, and web and mobile app development. Tell us what is slowing your business down, and we will figure out the software needed to solve it.',
+    'Web development, app development for mobile, desktop, and cross-platform, and monthly maintenance packages. Tell us what you need built and we will scope it.',
 };
 
 export default function ServicesPage() {
@@ -22,10 +23,12 @@ export default function ServicesPage() {
           Software built <span className="text-gradient">around your business.</span>
         </h1>
         <p className="mt-4 text-muted-foreground">
-          You don&apos;t need to know what to call it. Tell us what&apos;s slowing your business
-          down or what you want to build, and we&apos;ll figure out the right software for it.
+          Three things, done properly: we build your website, we build your app, and we keep both
+          running afterwards. Tell us what you need and we&apos;ll scope it before any work starts.
         </p>
       </div>
+
+      <BlackFridayBanner className="max-w-none px-0 pb-0 sm:px-0" />
 
       <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {services.map((service) => (

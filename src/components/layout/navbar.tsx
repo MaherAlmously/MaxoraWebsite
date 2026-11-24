@@ -17,6 +17,7 @@ const links = [
   { href: '/services', label: 'Services' },
   { href: '/portfolio', label: 'Work' },
   { href: '/about', label: 'About' },
+  { href: '/pay', label: 'Make Payment' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -64,13 +65,13 @@ export function Navbar() {
           <span className="font-heading text-lg font-semibold tracking-wide">Maxora</span>
         </Link>
 
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-1 lg:flex">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                'rounded-md px-3 py-2 text-sm transition-colors',
+                'rounded-md px-2.5 py-2 text-sm whitespace-nowrap transition-colors',
                 pathname === link.href
                   ? 'text-primary'
                   : 'text-muted-foreground hover:text-foreground',
@@ -90,14 +91,14 @@ export function Navbar() {
             </Link>
           </Button>
 
-          <Button asChild size="sm" className="hidden glow md:inline-flex">
+          <Button asChild size="sm" className="hidden glow lg:inline-flex">
             <Link href="/contact">Tell Us What You Need</Link>
           </Button>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
               render={
-                <Button variant="ghost" size="icon" className="md:hidden" aria-label="Open menu" />
+                <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu" />
               }
             >
               <Menu className="size-5" />

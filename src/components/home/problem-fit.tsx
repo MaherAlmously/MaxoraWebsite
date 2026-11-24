@@ -2,12 +2,12 @@ import { SectionHeading } from '@/components/section-heading';
 import { Reveal } from '@/components/reveal';
 
 const problems = [
-  'We’re doing too much manually.',
-  'We’ve outgrown spreadsheets.',
-  'Our systems don’t work together.',
+  'Our website looks dated and doesn’t bring in work.',
+  'We’ve outgrown the template we started on.',
+  'We need a site that actually takes orders.',
   'We need software built specifically for our business.',
-  'We have an app idea.',
-  'We want to use AI but don’t know where it makes sense.',
+  'We have an app idea and no one to build it.',
+  'Our site launched years ago and nobody maintains it.',
 ];
 
 export function ProblemFit() {

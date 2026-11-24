@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft, Check, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Check, CreditCard, MessageSquare } from 'lucide-react';
 import type { MaxoraService } from '@/lib/services';
 import { ServiceIcon } from '@/components/services/service-icon';
 import { Button } from '@/components/ui/button';
@@ -48,14 +48,57 @@ export function ServiceDetail({ service }: { service: MaxoraService }) {
           </ul>
         </div>
 
-        <div className="mt-10 text-center">
-          <Button asChild size="lg" className="glow">
-            <Link href={`/contact?type=${service.contactType}`}>
-              <MessageSquare className="size-4" />
-              Tell Us What You Need
-            </Link>
-          </Button>
-          <p className="mt-3 text-sm text-muted-foreground">
+        {service.packages && (
+          <div className="mx-auto mt-14 max-w-4xl">
+            <p className="text-center text-sm font-medium text-muted-foreground">
+              Monthly plans. Cancel any time.
+            </p>
+            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {service.packages.map((plan) => (
+                <div
+                  key={plan.name}
+                  className="flex h-full flex-col rounded-xl border border-border bg-card p-6"
+                >
+                  <h3 className="font-heading font-semibold">{plan.name}</h3>
+                  <p className="mt-1 font-heading text-2xl font-semibold text-primary">
+                    {plan.price}
+                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground text-pretty">{plan.summary}</p>
+                  <ul className="mt-5 space-y-2 border-t border-border pt-5">
+                    {plan.features.map((feature) => (
+                      <li
+                        key={feature}
+                        className="flex items-start gap-2 text-sm text-muted-foreground"
+                      >
+                        <Check className="mt-0.5 size-3.5 shrink-0 text-primary" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-10 flex flex-col items-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Button asChild size="lg" className="glow">
+              <Link href={`/contact?type=${service.contactType}`}>
+                <MessageSquare className="size-4" />
+                Tell Us What You Need
+              </Link>
+            </Button>
+            {service.packages && (
+              <Button asChild size="lg" variant="outline">
+                <Link href="/pay">
+                  <CreditCard className="size-4" />
+                  Make a Payment
+                </Link>
+              </Button>
+            )}
+          </div>
+          <p className="text-sm text-muted-foreground">
             No commitment. We reply within 24 hours.
           </p>
         </div>

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { services } from '@/lib/services';
 import { SITE_DESCRIPTION } from '@/lib/site';
+import { PromoFooterLink } from '@/components/promo/promo-footer-link';
 
 export function Footer() {
   return (
@@ -58,11 +59,22 @@ export function Footer() {
             </li>
             <li>
               <Link
+                href="/pay"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Make Payment
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/contact"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Contact Us
               </Link>
+            </li>
+            <li>
+              <PromoFooterLink />
             </li>
           </ul>
         </div>

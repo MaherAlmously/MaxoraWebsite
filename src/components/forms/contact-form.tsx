@@ -10,9 +10,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
 const helpOptions = [
-  { value: 'custom-software', label: 'Custom Software' },
-  { value: 'ai-automation', label: 'AI & Automation' },
-  { value: 'web-mobile-apps', label: 'Web or Mobile App' },
+  { value: 'web-development', label: 'Web Development' },
+  { value: 'app-development', label: 'App Development' },
+  { value: 'maintenance-packages', label: 'Website or App Maintenance' },
+  { value: 'black-friday', label: 'Black Friday 50% Off' },
   { value: 'dental-pilot', label: 'Dental Practice Pilot' },
   { value: 'not-sure', label: 'Not Sure' },
 ];

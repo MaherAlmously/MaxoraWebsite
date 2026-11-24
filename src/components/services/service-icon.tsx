@@ -1,9 +1,9 @@
-import { LayoutGrid, Smartphone, Sparkles, Workflow, type LucideIcon } from 'lucide-react';
+import { Globe, Smartphone, Sparkles, Wrench, type LucideIcon } from 'lucide-react';
 
 const icons: Record<string, LucideIcon> = {
-  LayoutGrid,
-  Workflow,
+  Globe,
   Smartphone,
+  Wrench,
 };
 
 export function ServiceIcon({ name, className }: { name: string; className?: string }) {

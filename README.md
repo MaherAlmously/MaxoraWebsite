@@ -2,10 +2,10 @@
 
 **Live site: [maxora.tech](https://maxora.tech)**
 
-Website for Maxora, a software company that builds custom software, AI
-automation, and web and mobile apps for businesses. Visitors describe a
-problem or an idea through the contact form, and Maxora figures out the
-right software for it.
+Website for Maxora, a software company that builds custom websites, web
+apps, and mobile and desktop applications for businesses, and maintains
+them after launch. Visitors describe a problem or an idea through the
+contact form, and Maxora scopes the build for it.
 
 The site also carries an older shop from before the rebrand (website
 packages, logo design, social media, flyers, and so on) at `/store`. It is
@@ -14,9 +14,13 @@ part of the main navigation anymore.
 
 ## What it does
 
-- **Three core services**, `/services`: custom software, AI and automation,
-  and web and mobile apps, each with its own page and a contact form tied
+- **Three core services**, `/services`: web development, app development
+  (mobile, desktop, and cross-platform), and website/application
+  maintenance packages, each with its own page and a contact form tied
   to it.
+- **Time-boxed promotions**, driven by `src/lib/promo.ts`: an in-flow
+  banner, a dismissible popup, and a landing page (`/black-friday`) that
+  all hide themselves once the campaign window closes.
 - **Work page**, `/portfolio`: real projects shown as problem, what was
   built, and result.
 - **Legacy store**, `/store`: the old service catalog with guest checkout,

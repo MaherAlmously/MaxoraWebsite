@@ -8,6 +8,7 @@ import { CartProvider } from '@/lib/cart-context';
 import { Navbar } from '@/components/layout/navbar';
 import { Footer } from '@/components/layout/footer';
 import { CartDrawer } from '@/components/cart/cart-drawer';
+import { BlackFridayPopup } from '@/components/promo/black-friday-popup';
 import { Toaster } from '@/components/ui/sonner';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site';
 
@@ -29,7 +30,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Maxora | Custom Software Development & Business Automation',
+    default: 'Maxora | Custom Web & App Development',
     template: '%s | Maxora',
   },
   description: SITE_DESCRIPTION,
@@ -38,16 +39,16 @@ export const metadata: Metadata = {
   creator: SITE_NAME,
   publisher: SITE_NAME,
   keywords: [
-    'custom software development',
-    'business software',
-    'AI automation',
-    'business process automation',
+    'web development',
+    'custom website development',
     'web app development',
     'mobile app development',
-    'SaaS development',
-    'internal business tools',
+    'cross-platform app development',
+    'desktop app development',
+    'website maintenance packages',
+    'application maintenance',
     'small business software',
-    'Dallas software development',
+    'Dallas web development',
   ],
   category: 'technology',
   alternates: { canonical: '/' },
@@ -57,13 +58,13 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: 'en_US',
     url: SITE_URL,
-    title: 'Maxora | Custom Software Development & Business Automation',
+    title: 'Maxora | Custom Web & App Development',
     description: SITE_DESCRIPTION,
     images: [{ url: '/maxora-logo.jpg', alt: 'Maxora' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Maxora | Custom Software Development & Business Automation',
+    title: 'Maxora | Custom Web & App Development',
     description: SITE_DESCRIPTION,
     images: ['/maxora-logo.jpg'],
   },
@@ -92,12 +93,12 @@ const organizationJsonLd = {
   description: SITE_DESCRIPTION,
   areaServed: 'US',
   serviceType: [
-    'Custom software development',
-    'Business process automation',
-    'AI automation',
-    'Web app development',
+    'Web development',
+    'Web application development',
     'Mobile app development',
-    'SaaS development',
+    'Cross-platform app development',
+    'Desktop app development',
+    'Website and application maintenance',
   ],
 };
 
@@ -132,6 +133,7 @@ export default function RootLayout({
             <Footer />
           </SmoothScrollProvider>
           <CartDrawer />
+          <BlackFridayPopup />
         </CartProvider>
         <Toaster position="top-center" />
         <MicrosoftClarity />

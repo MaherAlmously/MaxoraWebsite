@@ -11,8 +11,8 @@ export function ServicesShowcase() {
     <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
       <SectionHeading
         eyebrow="What we do"
-        title="Three ways we help your business run better"
-        description="Tell us the problem. We'll figure out whether it's custom software, automation, or an app, and build it."
+        title="Web development, app development, and the maintenance after"
+        description="We build it custom, ship it, and keep it running. Tell us the problem and we'll scope the work."
       />
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {services.map((service, i) => (

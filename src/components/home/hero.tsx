@@ -29,7 +29,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          Software · Automation · Apps
+          Web · Apps · Maintenance
         </motion.p>
 
         <h1
@@ -97,8 +97,8 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.15 }}
         >
-          Maxora builds custom software, AI automation, and web and mobile applications that help
-          businesses work faster and eliminate inefficient processes.
+          Maxora builds custom websites, web apps, and mobile and desktop applications, then keeps
+          them running with monthly maintenance plans.
         </motion.p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">

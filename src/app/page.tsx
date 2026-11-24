@@ -5,11 +5,13 @@ import { ClientsShowcase } from '@/components/home/clients-showcase';
 import { WhyUs } from '@/components/home/why-us';
 import { Process } from '@/components/home/process';
 import { CtaBanner } from '@/components/home/cta-banner';
+import { BlackFridayBanner } from '@/components/promo/black-friday-banner';
 
 export default function Home() {
   return (
     <>
       <Hero />
+      <BlackFridayBanner />
       <ProblemFit />
       <ServicesShowcase />
       <WhyUs />

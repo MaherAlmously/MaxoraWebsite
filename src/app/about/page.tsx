@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MessageSquare } from 'lucide-react';
+import { ArrowRight, MessageSquare } from 'lucide-react';
 import { Reveal } from '@/components/reveal';
 import { SectionHeading } from '@/components/section-heading';
 import { Button } from '@/components/ui/button';
@@ -8,25 +8,27 @@ import { Button } from '@/components/ui/button';
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'Maxora is a software company that helps businesses replace spreadsheets, manual work, and disconnected tools with software built around how they actually operate.',
+    'Maxora is a software company that builds custom websites and applications for growing businesses, and keeps them running after launch.',
 };
 
-const points = [
+const points: { title: string; text: string; href?: string; linkLabel?: string }[] = [
   {
-    title: 'You know the problem. We figure out the software.',
-    text: 'You don’t need to come to us with a technical spec. Tell us what’s slowing your business down or what you want to build, and we work out the right way to solve it.',
+    title: 'Scoped against a number you already track',
+    text: 'Before we build, we agree on what the work is supposed to move: hours spent on a task, orders taken online, leads coming through the site. It keeps the scope honest and gives you something to judge the result by.',
   },
   {
-    title: 'Built around your business, not a template',
-    text: 'Every business runs a little differently. We design software around how your team actually works, instead of forcing your workflow into an off-the-shelf tool.',
+    title: 'Custom-built, not a template',
+    text: 'Every business runs a little differently. We design and code around how your team actually works, instead of bending your workflow to fit an off-the-shelf tool.',
   },
   {
-    title: 'Involved through the whole build',
-    text: 'You see progress as we build, not just a finished product at the end. Scope stays clear, and you always know what’s happening next.',
+    title: 'Built to grow with you',
+    text: 'We build on a stack that holds up as traffic, catalogue size, and headcount grow, and we structure the code so the next feature is an addition rather than a rebuild. You own the code and the data.',
   },
   {
-    title: 'Support after launch',
-    text: 'Software needs to keep working after it ships. We stay available to fix issues, make changes, and improve things as your business grows.',
+    title: 'Maintained after launch',
+    text: 'Launch day is not the end of the work. Monthly maintenance plans cover updates, backups, monitoring, and the small fixes that otherwise pile up.',
+    href: '/services/maintenance-packages',
+    linkLabel: 'See maintenance packages',
   },
 ];
 
@@ -39,10 +41,19 @@ export default function AboutPage() {
           A software company built around <span className="text-gradient">how you work.</span>
         </h1>
         <p className="mt-4 text-muted-foreground text-pretty">
-          Maxora helps businesses replace spreadsheets, manual processes, and disconnected tools
-          with software designed around how they actually operate. You tell us what&apos;s slowing
-          you down or what you want to build, and we figure out the technology needed to solve it,
-          custom software, automation, or a web or mobile app.
+          Maxora builds custom websites and applications for businesses that have outgrown what
+          they started on. Every build is written for your business rather than adapted from a
+          template, scoped against a result you can measure, and structured so it can keep growing
+          after launch instead of needing to be replaced.
+        </p>
+        <p className="mt-4 text-muted-foreground text-pretty">
+          We do three things: web development, app development for mobile, desktop, and
+          cross-platform, and the monthly maintenance that keeps both running. Work we have shipped
+          is on the{' '}
+          <Link href="/portfolio" className="text-primary underline-offset-4 hover:underline">
+            work page
+          </Link>
+          .
         </p>
       </Reveal>
 
@@ -55,9 +66,18 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {points.map((point, i) => (
             <Reveal key={point.title} delay={i * 0.06}>
-              <div className="h-full rounded-xl border border-border bg-card p-6">
+              <div className="flex h-full flex-col rounded-xl border border-border bg-card p-6">
                 <h3 className="font-heading font-semibold">{point.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground text-pretty">{point.text}</p>
+                {point.href && (
+                  <Link
+                    href={point.href}
+                    className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-foreground"
+                  >
+                    {point.linkLabel}
+                    <ArrowRight className="size-3.5" />
+                  </Link>
+                )}
               </div>
             </Reveal>
           ))}
