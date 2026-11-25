@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { loadStripe, type Appearance } from '@stripe/stripe-js';
 import {
   Elements,
@@ -10,6 +10,7 @@ import {
 } from '@stripe/react-stripe-js';
 import { Loader2, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useIsDarkTheme } from '@/lib/use-is-dark-theme';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
 
@@ -38,22 +39,6 @@ const darkAppearance: Appearance = {
     fontFamily: 'ui-sans-serif, system-ui, sans-serif',
   },
 };
-
-function useIsDarkTheme() {
-  const [isDark, setIsDark] = useState(() =>
-    typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : true,
-  );
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
-  }, []);
-
-  return isDark;
-}
 
 export type ConfirmDetailsResult =
   | { ok: true; clientSecret: string; returnUrl?: string }

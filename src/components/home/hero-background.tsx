@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, useReducedMotion } from 'motion/react';
+import { HeroVideo } from '@/components/home/hero-video';
 
 // Deterministic pseudo-random generator (fixed seed) so the star field is
 // identical between server and client renders - real Math.random() here
@@ -55,6 +56,33 @@ export function HeroBackground() {
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      {/* Footage sits at the very back, dimmed to roughly a third. Any more and
+          it competes with the headline; any less and it may as well not be
+          there. */}
+      <div className="absolute inset-0 opacity-30">
+        <HeroVideo />
+      </div>
+
+      {/* Scrim. Two passes: a vertical wash that ties the footage into the page
+          background at the top and bottom seams, and an ellipse that clears a
+          darker pocket behind the headline so the type keeps its contrast
+          wherever the mesh happens to be bright. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(to bottom, var(--background) 0%, transparent 28%, transparent 62%, var(--background) 100%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(60% 55% at 50% 45%, var(--background) 0%, transparent 100%)',
+          opacity: 0.8,
+        }}
+      />
+
       <div
         className="absolute inset-0"
         style={{
