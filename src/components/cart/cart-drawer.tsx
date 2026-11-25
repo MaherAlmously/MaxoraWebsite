@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react';
-import { useCart } from '@/lib/cart-context';
-import { formatPrice } from '@/lib/products';
+import { useCart, type CartItem } from '@/lib/cart-context';
+import { formatPrice, getTier } from '@/lib/products';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -14,8 +14,21 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 
+/** What this line would cost at list price, for the strikethrough. */
+function listTotal(item: CartItem): number {
+  const tier = getTier(item.productSlug, item.tierId);
+  return (tier?.listPriceCents ?? item.unitPriceCents) * item.quantity;
+}
+
+/** Zero unless a campaign price is actually in effect for this line. */
+function savedCents(item: CartItem): number {
+  return listTotal(item) - item.unitPriceCents * item.quantity;
+}
+
 export function CartDrawer() {
   const { items, subtotalCents, isDrawerOpen, closeDrawer, setQuantity, removeItem } = useCart();
+  const totalSaved = items.reduce((n, item) => n + savedCents(item), 0);
+  const hasRecurring = items.some((i) => i.billing === 'monthly' || i.billing === 'daily');
 
   return (
     <Sheet open={isDrawerOpen} onOpenChange={(open) => !open && closeDrawer()}>
@@ -34,7 +47,7 @@ export function CartDrawer() {
               Browse our services and add one to get started.
             </p>
             <Button asChild onClick={closeDrawer}>
-              <Link href="/store">Explore Packages</Link>
+              <Link href="/services">Explore Packages</Link>
             </Button>
           </div>
         ) : (
@@ -89,8 +102,15 @@ export function CartDrawer() {
                         <Plus className="size-3.5" />
                       </Button>
                     </div>
-                    <p className="text-sm font-semibold text-primary">
-                      {formatPrice(item.unitPriceCents * item.quantity)}
+                    <p className="flex items-baseline gap-1.5 text-sm font-semibold text-primary">
+                      {savedCents(item) > 0 && (
+                        <span className="text-xs font-normal text-muted-foreground/70 line-through tabular-nums">
+                          {formatPrice(listTotal(item))}
+                        </span>
+                      )}
+                      <span className="tabular-nums">
+                        {formatPrice(item.unitPriceCents * item.quantity)}
+                      </span>
                       {item.billing === 'monthly' && <span className="text-xs">/mo</span>}
                       {item.billing === 'daily' && <span className="text-xs">/day</span>}
                     </p>
@@ -100,15 +120,25 @@ export function CartDrawer() {
             </div>
 
             <div className="border-t border-border px-4 py-4">
+              {totalSaved > 0 && (
+                <div className="mb-2 flex items-center justify-between text-sm">
+                  <span className="text-savings font-medium">You save</span>
+                  <span className="text-savings font-semibold tabular-nums">
+                    {formatPrice(totalSaved)}
+                  </span>
+                </div>
+              )}
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Subtotal</span>
                 <span className="font-heading text-lg font-semibold">
                   {formatPrice(subtotalCents)}
                 </span>
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Monthly plans are billed per month; the subtotal shows the first month.
-              </p>
+              {hasRecurring && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Monthly plans are billed per month; the subtotal shows the first month.
+                </p>
+              )}
               <Separator className="my-4" />
               <Button asChild className="w-full glow" size="lg" onClick={closeDrawer}>
                 <Link href="/checkout">Proceed to Checkout</Link>

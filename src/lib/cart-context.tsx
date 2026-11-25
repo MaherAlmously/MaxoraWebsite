@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type { Billing } from '@/lib/products';
+import { effectiveTierPrice, getTier, type Billing } from '@/lib/products';
 
 export type CartItem = {
   productSlug: string;
@@ -94,7 +94,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) dispatch({ type: 'hydrate', items: JSON.parse(raw) });
+      if (raw) {
+        // A cart can sit in localStorage across a campaign boundary, so the
+        // stored prices are re-read from the catalog rather than trusted, and
+        // lines whose tier no longer exists are dropped instead of failing
+        // validation later at checkout.
+        const stored: CartItem[] = JSON.parse(raw);
+        const repriced = stored.flatMap((item) => {
+          const tier = getTier(item.productSlug, item.tierId);
+          if (!tier) return [];
+          return [
+            {
+              ...item,
+              tierName: tier.name,
+              unitPriceCents: effectiveTierPrice(tier),
+              billing: tier.billing,
+              termMonths: tier.termMonths,
+            },
+          ];
+        });
+        dispatch({ type: 'hydrate', items: repriced });
+      }
     } catch {
       // corrupted storage, start empty
     }

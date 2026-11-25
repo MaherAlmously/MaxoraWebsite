@@ -56,6 +56,10 @@ export default function CheckoutPage() {
         tierId: i.tierId,
         quantity: i.quantity,
       })),
+      // What the customer was actually quoted. If campaign pricing lapsed
+      // between page load and submit, the server rejects rather than charging
+      // a different number than the Payment Element showed.
+      expectedTotalCents: subtotalCents,
     });
     if (result.ok) {
       return {
@@ -72,7 +76,7 @@ export default function CheckoutPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 pt-32 pb-24 sm:px-6">
       <Link
-        href="/store"
+        href="/services"
         className="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="size-4" />
@@ -85,7 +89,7 @@ export default function CheckoutPage() {
         <div className="mt-12 rounded-xl border border-border bg-card p-10 text-center">
           <p className="text-muted-foreground">Your cart is empty.</p>
           <Button asChild className="mt-6">
-            <Link href="/store">Browse Packages</Link>
+            <Link href="/services">Browse Packages</Link>
           </Button>
         </div>
       ) : (

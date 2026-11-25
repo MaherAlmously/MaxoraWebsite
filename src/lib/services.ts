@@ -20,6 +20,8 @@ export type MaxoraService = {
   description: string;
   examples: string[];
   packages?: ServicePackage[];
+  /** Slug in `products.ts` holding this service's buyable tiers, if it has any. */
+  packagesProductSlug?: string;
   icon: string; // resolved in components/services/service-icon.tsx
   /** Matches the "What can we help with?" option on the contact form. */
   contactType: ServiceContactType;
@@ -45,6 +47,7 @@ export const services: MaxoraService[] = [
       'Integrations with the tools you already use',
     ],
     icon: 'Globe',
+    packagesProductSlug: 'website-development',
     contactType: 'web-development',
   },
   {
@@ -66,6 +69,7 @@ export const services: MaxoraService[] = [
       'App Store and Google Play submission',
     ],
     icon: 'Smartphone',
+    packagesProductSlug: 'app-development',
     contactType: 'app-development',
   },
   {

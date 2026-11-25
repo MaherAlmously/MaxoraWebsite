@@ -62,3 +62,20 @@ export function promoTimeLeft(promo: Promo, now: Date = new Date()): PromoCountd
 }
 
 export const promoDismissalKey = (promo: Promo) => `maxora-promo-${promo.id}`;
+
+/**
+ * Cheapest live price across a set of tiers, for "from $X" campaign copy.
+ * Derived rather than written into the copy so the headline can never quote a
+ * price the catalog no longer has. Call from client code only - it reads the
+ * current time, so during static render it would be frozen at build time.
+ */
+export function cheapestLivePrice(
+  tiers: { listPriceCents: number; sale?: { priceCents: number; promoId: string } }[],
+  promo: Promo,
+  now: Date = new Date(),
+): number {
+  const live = isPromoActive(promo, now);
+  return Math.min(
+    ...tiers.map((t) => (live && t.sale?.promoId === promo.id ? t.sale.priceCents : t.listPriceCents)),
+  );
+}

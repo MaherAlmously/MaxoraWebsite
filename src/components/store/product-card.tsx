@@ -7,11 +7,12 @@ import { ArrowUpRight, Clock, MessageSquare } from 'lucide-react';
 import {
   productTagLabels,
   tierPriceLabel,
+  tierListPriceLabel,
   tierDiscountPercent,
-  formatPrice,
   type Product,
 } from '@/lib/products';
 import { ServiceArt } from '@/components/store/service-art';
+import { useHydrated } from '@/components/packages/use-hydrated';
 import { Badge } from '@/components/ui/badge';
 import { fireServiceCardConfetti } from '@/lib/confetti';
 import { cn } from '@/lib/utils';
@@ -23,6 +24,7 @@ const tagVariant = {
 } as const;
 
 export function ProductCard({ product }: { product: Product }) {
+  const hydrated = useHydrated();
   const featured = product.tags?.includes('best-seller') ?? false;
   const cardRef = useRef<HTMLAnchorElement>(null);
   const reduce = useReducedMotion();
@@ -101,7 +103,9 @@ export function ProductCard({ product }: { product: Product }) {
         ) : (
           <ul className="mt-3 space-y-1.5 sm:mt-4">
             {product.tiers.map((tier) => {
-              const discount = tierDiscountPercent(tier);
+              // Resolved post-hydration only: a sale evaluated during render
+              // would be frozen at build time on this statically-generated page.
+              const discount = hydrated ? tierDiscountPercent(tier) : null;
               return (
                 <li
                   key={tier.id}
@@ -112,7 +116,7 @@ export function ProductCard({ product }: { product: Product }) {
                     {discount !== null && (
                       <>
                         <span className="text-muted-foreground/70 line-through tabular-nums">
-                          {formatPrice(tier.originalPriceCents!)}
+                          {tierListPriceLabel(tier)}
                         </span>
                         <Badge variant="destructive" className="px-1.5 py-0 text-[10px]">
                           {discount}% OFF
@@ -120,7 +124,7 @@ export function ProductCard({ product }: { product: Product }) {
                       </>
                     )}
                     <span className="font-heading font-semibold text-primary tabular-nums">
-                      {tierPriceLabel(tier)}
+                      {hydrated ? tierPriceLabel(tier) : tierListPriceLabel(tier)}
                     </span>
                   </span>
                 </li>

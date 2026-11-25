@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, User } from 'lucide-react';
+import { Menu, ShoppingCart, User } from 'lucide-react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { useCart } from '@/lib/cart-context';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -23,6 +24,7 @@ const links = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const { count, ready, openDrawer } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -84,6 +86,22 @@ export function Navbar() {
 
         <div className="flex items-center gap-1.5">
           <ThemeToggle />
+
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={count > 0 ? `Open cart, ${count} item${count === 1 ? '' : 's'}` : 'Open cart'}
+            className="relative"
+            onClick={openDrawer}
+          >
+            <ShoppingCart className="size-5" />
+            {/* `ready` gates the badge so it cannot flash a 0 before the cart hydrates. */}
+            {ready && count > 0 && (
+              <span className="bg-primary text-primary-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums">
+                {count > 9 ? '9+' : count}
+              </span>
+            )}
+          </Button>
 
           <Button variant="ghost" size="icon" asChild aria-label="Account">
             <Link href={user ? '/account' : '/login'}>

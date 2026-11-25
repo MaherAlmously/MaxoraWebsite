@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { sendNotification, sendConfirmation } from '@/lib/resend';
-import { getTier, formatPrice } from '@/lib/products';
+import { getTier, formatPrice, effectiveTierPrice } from '@/lib/products';
 import { getStripeClient } from '@/lib/stripe';
 import { applyPromoToAmount, findPromotionCodeId } from '@/lib/stripe-discount';
 import type Stripe from 'stripe';
@@ -23,6 +23,11 @@ export type CheckoutInput = {
   notes?: string;
   promoCode?: string;
   items: CheckoutItemInput[];
+  /**
+   * Subtotal the customer was shown, so a sale that lapses mid-checkout is
+   * caught instead of silently charging more than the Payment Element quoted.
+   */
+  expectedTotalCents?: number;
 };
 
 export type CheckoutResult =
@@ -40,6 +45,8 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
   }
 
   // Re-validate every line against the canonical catalog, never trust client prices.
+  // One `now` for the whole order so a sale cannot expire between two lines.
+  const now = new Date();
   const lines = [];
   for (const item of input.items) {
     const tier = getTier(item.productSlug, item.tierId);
@@ -52,11 +59,20 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
       product_name: item.productName,
       tier_id: tier.id,
       tier_name: tier.name,
-      unit_price_cents: tier.priceCents,
+      unit_price_cents: effectiveTierPrice(tier, now),
       quantity,
     });
   }
   const totalCents = lines.reduce((n, l) => n + l.unit_price_cents * l.quantity, 0);
+
+  // The customer saw a price before submitting. If campaign pricing changed in
+  // between, stop rather than charge a total they never agreed to.
+  if (input.expectedTotalCents !== undefined && input.expectedTotalCents !== totalCents) {
+    return {
+      ok: false,
+      error: `Pricing changed while you were checking out: this order now comes to ${formatPrice(totalCents)}. Refresh the page to see current prices, then try again.`,
+    };
+  }
 
   const supabase = await createClient();
   const {
@@ -217,9 +233,10 @@ export async function placeOrder(input: CheckoutInput): Promise<CheckoutResult> 
       referenceId = paymentIntent.id;
     }
   } catch (err) {
+    // Stripe messages can name internal objects, keys, and account config, so
+    // they stay in the server log. The customer gets a generic failure.
     console.error('[checkout] Stripe payment creation failed:', err);
-    const message = err instanceof Error ? err.message : 'Could not start payment. Please try again.';
-    return { ok: false, error: message };
+    return { ok: false, error: 'Could not start payment. Please try again.' };
   }
 
   if (!clientSecret) {

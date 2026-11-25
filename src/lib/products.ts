@@ -1,11 +1,29 @@
+import { BLACK_FRIDAY, isPromoActive, type Promo } from '@/lib/promo';
+
 export type Billing = 'one_time' | 'monthly' | 'daily';
+
+/**
+ * A price that only applies while a named campaign is running. Gating on the
+ * promo window rather than a hardcoded sale price is what makes the discount
+ * expire on its own: once the window closes, every caller reads the list price
+ * again with no edit and no deploy.
+ */
+export type TierSale = {
+  priceCents: number;
+  /** Must be a key of `promosById` below. */
+  promoId: string;
+};
+
+const promosById: Record<string, Promo> = {
+  [BLACK_FRIDAY.id]: BLACK_FRIDAY,
+};
 
 export type ProductTier = {
   id: string;
   name: string;
-  priceCents: number;
-  /** If set, this tier is on a limited-time sale: priceCents is the sale price, this is the original. */
-  originalPriceCents?: number;
+  /** The everyday price. Never charge this directly - use `effectiveTierPrice`. */
+  listPriceCents: number;
+  sale?: TierSale;
   billing: Billing;
   /** For monthly plans: committed length of the plan in months. */
   termMonths?: number;
@@ -62,7 +80,8 @@ export const products: Product[] = [
       {
         id: 'informative',
         name: 'Informative',
-        priceCents: 19900,
+        listPriceCents: 19900,
+        sale: { priceCents: 9950, promoId: BLACK_FRIDAY.id },
         billing: 'one_time',
         features: [
           'Professional site that presents your business',
@@ -75,7 +94,8 @@ export const products: Product[] = [
       {
         id: 'ecommerce',
         name: 'Ecommerce',
-        priceCents: 29900,
+        listPriceCents: 29900,
+        sale: { priceCents: 14950, promoId: BLACK_FRIDAY.id },
         billing: 'one_time',
         features: [
           'Online store with product listings and cart',
@@ -102,14 +122,19 @@ export const products: Product[] = [
       {
         id: 'basic',
         name: 'Basic Logo',
-        priceCents: 2000,
+        listPriceCents: 2000,
         billing: 'one_time',
-        features: ['1 logo concept', '2 revision rounds', 'PNG + JPG delivery', 'Social media sizes'],
+        features: [
+          '1 logo concept',
+          '2 revision rounds',
+          'PNG + JPG delivery',
+          'Social media sizes',
+        ],
       },
       {
         id: 'pro',
         name: 'Pro Logo',
-        priceCents: 5000,
+        listPriceCents: 5000,
         billing: 'one_time',
         features: [
           '3 logo concepts',
@@ -136,7 +161,7 @@ export const products: Product[] = [
       {
         id: '1-month',
         name: '1-Month Plan',
-        priceCents: 15000,
+        listPriceCents: 15000,
         billing: 'monthly',
         termMonths: 1,
         features: [
@@ -149,7 +174,7 @@ export const products: Product[] = [
       {
         id: '6-month',
         name: '6-Month Plan',
-        priceCents: 12500,
+        listPriceCents: 12500,
         billing: 'monthly',
         termMonths: 6,
         features: [
@@ -162,7 +187,7 @@ export const products: Product[] = [
       {
         id: '1-year',
         name: '1-Year Plan',
-        priceCents: 10000,
+        listPriceCents: 10000,
         billing: 'monthly',
         termMonths: 12,
         features: [
@@ -189,23 +214,31 @@ export const products: Product[] = [
       {
         id: '1-month',
         name: '1-Month Plan',
-        priceCents: 3000,
+        listPriceCents: 3000,
         billing: 'monthly',
         termMonths: 1,
-        features: ['4 flyer designs per month', 'Print + digital formats', '2 revision rounds each'],
+        features: [
+          '4 flyer designs per month',
+          'Print + digital formats',
+          '2 revision rounds each',
+        ],
       },
       {
         id: '6-month',
         name: '6-Month Plan',
-        priceCents: 2500,
+        listPriceCents: 2500,
         billing: 'monthly',
         termMonths: 6,
-        features: ['4 flyer designs per month', 'Print + digital formats', '2 revision rounds each'],
+        features: [
+          '4 flyer designs per month',
+          'Print + digital formats',
+          '2 revision rounds each',
+        ],
       },
       {
         id: '1-year',
         name: '1-Year Plan',
-        priceCents: 2000,
+        listPriceCents: 2000,
         billing: 'monthly',
         termMonths: 12,
         features: [
@@ -231,7 +264,7 @@ export const products: Product[] = [
       {
         id: 'basic-care',
         name: 'Basic Care',
-        priceCents: 2500,
+        listPriceCents: 2500,
         billing: 'monthly',
         features: [
           'Monthly software updates',
@@ -243,7 +276,7 @@ export const products: Product[] = [
       {
         id: 'pro-care',
         name: 'Pro Care',
-        priceCents: 4000,
+        listPriceCents: 4000,
         billing: 'monthly',
         features: [
           'Everything in Basic Care',
@@ -256,11 +289,11 @@ export const products: Product[] = [
   },
   {
     slug: 'app-development',
-    name: 'Mobile App Development',
-    tagline: 'Custom iOS and Android apps that engage your users and simplify your business.',
-    shortTagline: 'Mobile apps',
+    name: 'App Development',
+    tagline: 'Custom apps for iOS, Android, and desktop, built from the idea to the app store.',
+    shortTagline: 'Custom apps',
     description:
-      'We design and build native-feeling apps for iOS and Android, from a first version to a full product with backend, accounts, and payments built in. We handle UI/UX design, development, App Store/Play Store submission, and ongoing updates. Every project is different, so tell us what you want to build and we will send you a quote.',
+      'We design and build the whole app: the screens your users see, the backend and database behind them, and the release itself. Launch gets a first real version of your idea into one store. Scale builds the full product, both platforms from one codebase, with accounts, payments, and an admin dashboard. Either way you own the code and the store accounts at the end.',
     examples: [
       'Marketplace or listings app',
       'Booking / appointment app',
@@ -271,8 +304,43 @@ export const products: Product[] = [
     ],
     icon: 'Smartphone',
     category: 'development',
-    quoteOnly: true,
-    tiers: [],
+    quoteOnly: false,
+    featured: true,
+    tags: ['new'],
+    tiers: [
+      {
+        id: 'launch',
+        name: 'Launch App',
+        listPriceCents: 99900,
+        sale: { priceCents: 49950, promoId: BLACK_FRIDAY.id },
+        billing: 'one_time',
+        features: [
+          'One platform, iOS or Android',
+          'Up to 6 core screens, designed and built',
+          'Your main user flow working end to end',
+          'Backend and database for the app',
+          'App Store or Play Store submission',
+          'Source code and accounts handed over',
+        ],
+      },
+      {
+        id: 'scale',
+        name: 'Scale App',
+        listPriceCents: 149900,
+        sale: { priceCents: 74950, promoId: BLACK_FRIDAY.id },
+        billing: 'one_time',
+        features: [
+          'Both platforms from one codebase',
+          'Unlimited screens within the agreed scope',
+          'User accounts and sign-in',
+          'In-app payments or subscriptions',
+          'Custom API and admin dashboard',
+          'Push notifications and analytics',
+          'Submission to both stores',
+          'One round of post-launch changes',
+        ],
+      },
+    ],
   },
   {
     slug: 'saas-development',
@@ -331,9 +399,14 @@ export function getTier(productSlug: string, tierId: string): ProductTier | unde
   return getProduct(productSlug)?.tiers.find((t) => t.id === tierId);
 }
 
+/** Whole dollars drop the decimals; anything with cents keeps them. Always grouped. */
 export function formatPrice(cents: number): string {
   const dollars = cents / 100;
-  return Number.isInteger(dollars) ? `$${dollars}` : `$${dollars.toFixed(2)}`;
+  const fractionDigits = Number.isInteger(dollars) ? 0 : 2;
+  return `$${dollars.toLocaleString('en-US', {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  })}`;
 }
 
 const billingSuffix: Record<Billing, string> = {
@@ -342,22 +415,45 @@ const billingSuffix: Record<Billing, string> = {
   daily: '/day',
 };
 
-/** "Starting at $180" / "$125/mo" style label for cards. */
-export function startingPriceLabel(product: Product): string {
+/** Is this tier's campaign price in effect right now? */
+export function tierSaleIsLive(tier: ProductTier, now: Date = new Date()): boolean {
+  if (!tier.sale) return false;
+  const promo = promosById[tier.sale.promoId];
+  return promo ? isPromoActive(promo, now) : false;
+}
+
+/**
+ * The price to charge at this instant. The single source of truth: the package
+ * cards, the cart, and `placeOrder` all go through here, so the UI can never
+ * advertise a price the server would not honour.
+ */
+export function effectiveTierPrice(tier: ProductTier, now: Date = new Date()): number {
+  return tierSaleIsLive(tier, now) ? tier.sale!.priceCents : tier.listPriceCents;
+}
+
+/** "From $99.50" / "$125/mo" style label for cards. */
+export function startingPriceLabel(product: Product, now: Date = new Date()): string {
   if (product.quoteOnly || product.tiers.length === 0) return 'Custom quote';
-  const cheapest = [...product.tiers].sort((a, b) => a.priceCents - b.priceCents)[0];
-  const base = formatPrice(cheapest.priceCents);
+  const cheapest = [...product.tiers].sort(
+    (a, b) => effectiveTierPrice(a, now) - effectiveTierPrice(b, now),
+  )[0];
+  const base = formatPrice(effectiveTierPrice(cheapest, now));
   const suffix = billingSuffix[cheapest.billing];
   return suffix ? `From ${base}${suffix}` : `From ${base}`;
 }
 
-export function tierPriceLabel(tier: ProductTier): string {
-  const base = formatPrice(tier.priceCents);
-  return `${base}${billingSuffix[tier.billing]}`;
+export function tierPriceLabel(tier: ProductTier, now: Date = new Date()): string {
+  return `${formatPrice(effectiveTierPrice(tier, now))}${billingSuffix[tier.billing]}`;
 }
 
-/** Whole-percent discount, e.g. 50 for "50% off". */
-export function tierDiscountPercent(tier: ProductTier): number | null {
-  if (!tier.originalPriceCents || tier.originalPriceCents <= tier.priceCents) return null;
-  return Math.round((1 - tier.priceCents / tier.originalPriceCents) * 100);
+export function tierListPriceLabel(tier: ProductTier): string {
+  return `${formatPrice(tier.listPriceCents)}${billingSuffix[tier.billing]}`;
+}
+
+/** Whole-percent discount while the sale runs, e.g. 50 for "50% off". Null otherwise. */
+export function tierDiscountPercent(tier: ProductTier, now: Date = new Date()): number | null {
+  if (!tierSaleIsLive(tier, now)) return null;
+  const sale = tier.sale!.priceCents;
+  if (sale >= tier.listPriceCents) return null;
+  return Math.round((1 - sale / tier.listPriceCents) * 100);
 }

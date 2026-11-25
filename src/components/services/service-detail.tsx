@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowLeft, Check, CreditCard, MessageSquare } from 'lucide-react';
 import type { MaxoraService } from '@/lib/services';
 import { ServiceIcon } from '@/components/services/service-icon';
+import { PackageGrid } from '@/components/packages/package-grid';
 import { Button } from '@/components/ui/button';
 import { Reveal } from '@/components/reveal';
 
@@ -47,6 +48,22 @@ export function ServiceDetail({ service }: { service: MaxoraService }) {
             ))}
           </ul>
         </div>
+
+        {service.packagesProductSlug && (
+          <div className="mt-16">
+            <div className="text-center">
+              <p className="eyebrow mb-3">Packages</p>
+              <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+                Pick a package and get started today
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground text-pretty">
+                Fixed scope, fixed price, paid online. Need something outside these? Tell us what
+                you have in mind and we&apos;ll quote it.
+              </p>
+            </div>
+            <PackageGrid productSlug={service.packagesProductSlug} className="mt-8" />
+          </div>
+        )}
 
         {service.packages && (
           <div className="mx-auto mt-14 max-w-4xl">

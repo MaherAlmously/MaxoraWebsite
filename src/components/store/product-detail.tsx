@@ -5,8 +5,15 @@ import Link from 'next/link';
 import { motion, useReducedMotion, type Variants } from 'motion/react';
 import { ArrowLeft, Check, Sparkles, MessageSquare, ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatPrice, tierPriceLabel, tierDiscountPercent, type Product } from '@/lib/products';
+import {
+  formatPrice,
+  tierPriceLabel,
+  tierDiscountPercent,
+  effectiveTierPrice,
+  type Product,
+} from '@/lib/products';
 import { useCart } from '@/lib/cart-context';
+import { useHydrated } from '@/components/packages/use-hydrated';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Reveal } from '@/components/reveal';
@@ -25,6 +32,8 @@ const exampleItemVariants: Variants = {
 
 export function ProductDetail({ product }: { product: Product }) {
   const { addItem } = useCart();
+  // Campaign pricing resolves after mount; see use-hydrated.ts for why.
+  const hydrated = useHydrated();
   const [selectedTierId, setSelectedTierId] = useState(
     product.tiers.length > 0 ? product.tiers[0].id : '',
   );
@@ -56,7 +65,7 @@ export function ProductDetail({ product }: { product: Product }) {
       productName: product.name,
       tierId: selectedTier.id,
       tierName: selectedTier.name,
-      unitPriceCents: selectedTier.priceCents,
+      unitPriceCents: effectiveTierPrice(selectedTier),
       billing: selectedTier.billing,
       termMonths: selectedTier.termMonths,
     });
@@ -146,7 +155,7 @@ export function ProductDetail({ product }: { product: Product }) {
             {displayTiers.map((tier) => {
               const selected = tier.id === selectedTierId;
               const highlight = tier.billing === 'monthly' && tier.termMonths === 12;
-              const discount = tierDiscountPercent(tier);
+              const discount = hydrated ? tierDiscountPercent(tier) : null;
               return (
                 <button
                   key={tier.id}
@@ -194,7 +203,7 @@ export function ProductDetail({ product }: { product: Product }) {
                         highlight ? 'text-4xl sm:text-5xl' : 'text-3xl sm:text-4xl',
                       )}
                     >
-                      {formatPrice(tier.priceCents)}
+                      {formatPrice(hydrated ? effectiveTierPrice(tier) : tier.listPriceCents)}
                     </span>
                     {tier.billing === 'monthly' && (
                       <span className="text-muted-foreground">/mo</span>
@@ -204,7 +213,7 @@ export function ProductDetail({ product }: { product: Product }) {
                     )}
                     {discount !== null && (
                       <span className="text-base text-muted-foreground/70 line-through tabular-nums">
-                        {formatPrice(tier.originalPriceCents!)}
+                        {formatPrice(tier.listPriceCents)}
                       </span>
                     )}
                   </div>
@@ -224,7 +233,8 @@ export function ProductDetail({ product }: { product: Product }) {
           <div className="mx-auto mt-10 max-w-md sm:mt-14">
             <Button size="lg" className="w-full glow" onClick={handleAdd}>
               <ShoppingCart className="size-4" />
-              Add to Cart{selectedTier ? ` for ${tierPriceLabel(selectedTier)}` : ''}
+              Add to Cart
+              {selectedTier && hydrated ? ` for ${tierPriceLabel(selectedTier)}` : ''}
             </Button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
               No payment is taken until we confirm your order.
